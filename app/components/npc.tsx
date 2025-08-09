@@ -17,6 +17,7 @@ import chatService from './chat_service';
 import summaryMetadata from '@/public/context/summary_metadata_with_vercel_urls.json';
 import ModelViewer from './model-viewer';
 import ReactMarkdown from 'react-markdown';
+import ttsService from './edgeTTSService'; // Adjust path as needed
 
 // Add this type near other types/interfaces
 type WeaponActionParams = {
@@ -54,11 +55,12 @@ const getVercelUrlFromLocalPath = (localPath: string): string | null => {
 };
 
 /*
-const ANIMATION_IDLE = './animations/Idle.fbx';
-const ANIMATION_WALKING = './animations/Walking.fbx';
-const ANIMATION_GREAT_SWORD_IDLE = './animations/Great Sword Idle.fbx';
-const ANIMATION_PISTOL_IDLE = './animations/Pistol Idle.fbx';
+const ANIMATION_IDLE = '/animations/Idle.fbx';
+const ANIMATION_WALKING = '/animations/Walking.fbx';
+const ANIMATION_GREAT_SWORD_IDLE = '/animations/Great Sword Idle.fbx';
+const ANIMATION_PISTOL_IDLE = '/animations/Pistol Idle.fbx';
 */
+const ANIMATION_JUMP = '/animations/Jumping.fbx';
 
 const ANIMATION_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Idle-dG8ldlN0exams4VYcpKIhpPN6L2iu6.fbx';
 const ANIMATION_WALKING = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Walking-TXPtML6DCMpX8XHsfjrAVcgRlnf5qE.fbx';
@@ -80,11 +82,17 @@ const Scene = () => {
     const currentNpcAnimationRef = useRef(null);
     const tweenGroupRef = useRef(new TWEEN.Group());
     const isTransitioningRef = useRef(false);
+    // ADD THIS NEW REF to track if the character is currently in the jump animation
+    const isJumpingRef = useRef(false);
     const chatContainerRef = useRef(null);
     const originalCameraPositionRef = useRef(null);
     const originalCameraTargetRef = useRef(null);
     const [isNearNPC, setIsNearNPC] = useState(false);
     const [isChatting, setIsChatting] = useState(false);
+    // 1. Add a ref to track current audio
+    const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+    const ttsQueueRef = useRef<string[]>([]);
+    const isSpeakingRef = useRef(false);
     const [chatMessages, setChatMessages] = useState([]);
     const [currentMessage, setCurrentMessage] = useState('');
     const [showMobileWarning, setShowMobileWarning] = useState(false);
@@ -227,6 +235,26 @@ const Scene = () => {
 
     // const weapons = [];
 
+    // Initialize TTS
+    useEffect(() => {
+        // Debug mode - set to true only when troubleshooting
+        const DEBUG_MODE = false;
+        ttsService.setDebugMode(DEBUG_MODE);
+        
+        ttsService.initialize().then(() => {
+            if (DEBUG_MODE) {
+                console.log('TTS service initialized');
+                const voices = ttsService.getVoicesForLanguage('en-US');
+                console.log('Available en-US voices:', voices.map(v => ({
+                    name: v.ShortName,
+                    gender: v.Gender
+                })));
+            }
+        }).catch(error => {
+            console.error('Failed to initialize TTS:', error);
+        });
+    }, []);
+
     useEffect(() => {
         equippedWeaponRef.current = equippedWeapon;
         console.log('Equipped weapon ref updated:', equippedWeaponRef.current);
@@ -307,6 +335,13 @@ const Scene = () => {
         } else if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
             event.preventDefault();
             keyStates.current[event.key] = true;
+        }
+
+        // NEW: Add this block to handle the spacebar press
+        if (event.code === 'Space' && !isJumpingRef.current && !isChatting) {
+            event.preventDefault(); // Prevents the page from scrolling
+            isJumpingRef.current = true;
+            playAnimation(ANIMATION_JUMP);
         }
 
         if (event.key.toLowerCase() === 'f' && isNearNPC && !isChatting) {
@@ -434,6 +469,9 @@ const Scene = () => {
                 message: response.message
             }]);
 
+            // ADD THIS: Speak the greeting
+            speakNPCMessage(response.message);
+            
             if (response.animation && npcAnimationActionsRef.current[response.animation]) {
                 playNpcAnimation(response.animation);
             }
@@ -453,6 +491,9 @@ const Scene = () => {
     };
 
     const endChat = () => {
+        // Stop any playing audio
+        stopAllTTS();
+
         returnToShop();
 
         setIsChatting(false);
@@ -482,7 +523,207 @@ const Scene = () => {
         }
     };
 
-    const handleChatSubmit = async (e) => {
+    /**
+     * Clean text for TTS - Remove special characters that could break SSML
+     */
+    const cleanTextForTTS = (text: string): string => {
+        const isDebug = false; // Set to true when debugging text issues
+        
+        // Log original text only in debug mode
+        if (isDebug) console.log('Original text:', text);
+        
+        // Step by step cleaning
+        let cleaned = text;
+        
+        // 1. Remove action markers (text between asterisks)
+        cleaned = cleaned.replace(/\*[^*]*\*/g, '');
+        if (isDebug) console.log('After removing actions:', cleaned);
+        
+        // 2. Remove markdown links [text](url)
+        cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        
+        // 3. Remove HTML tags
+        cleaned = cleaned.replace(/<[^>]*>/g, '');
+        
+        // 4. Escape XML special characters for SSML
+        cleaned = cleaned
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;');
+        
+        // 5. Remove markdown formatting
+        cleaned = cleaned
+            .replace(/#{1,6}\s/g, '') // Headers
+            .replace(/\*\*/g, '') // Bold
+            .replace(/__/g, '') // Bold
+            .replace(/\*/g, '') // Italic
+            .replace(/_/g, '') // Italic
+            .replace(/~~~/g, '') // Strikethrough
+            .replace(/~~/g, '') // Strikethrough
+            .replace(/`{3}[\s\S]*?`{3}/g, '') // Code blocks
+            .replace(/`/g, ''); // Inline code
+        
+        // 6. Remove extra whitespace
+        cleaned = cleaned.replace(/\s+/g, ' ').trim();
+        
+        if (isDebug) console.log('Final cleaned text:', cleaned);
+        return cleaned;
+    };
+
+    /**
+     * Queue-based TTS to prevent overlapping speech
+     */
+    const processNextInQueue = async () => {
+        if (isSpeakingRef.current || ttsQueueRef.current.length === 0) {
+            return;
+        }
+        
+        const text = ttsQueueRef.current.shift();
+        if (!text) return;
+        
+        isSpeakingRef.current = true;
+        
+        try {
+            const audio = await ttsService.speak(text, {
+                language: 'en-US',
+                voiceName: 'en-US-AriaNeural', // Female voice for Agent Zoan
+                // voiceName: 'en-US-GuyNeural', // Alternative male voice
+                pitch: 0,
+                rate: 0,
+                volume: 0
+            });
+            
+            currentAudioRef.current = audio;
+            
+            // Store event handlers so we can remove them later
+            const endedHandler = () => {
+                // console.log('Speech ended'); // Comment out for production
+                currentAudioRef.current = null;
+                isSpeakingRef.current = false;
+                // Process next item in queue
+                processNextInQueue();
+            };
+            
+            const errorHandler = (e: Event) => {
+                // Only log actual playback errors, not abort/stop errors
+                const audio = e.target as HTMLAudioElement;
+                if (audio && !audio.paused && isSpeakingRef.current) {
+                    console.error('Audio playback error:', e);
+                }
+                currentAudioRef.current = null;
+                isSpeakingRef.current = false;
+                processNextInQueue();
+            };
+            
+            audio.addEventListener('ended', endedHandler);
+            audio.addEventListener('error', errorHandler);
+            
+            // Store handlers on the audio element for removal later
+            (audio as any)._endedHandler = endedHandler;
+            (audio as any)._errorHandler = errorHandler;
+            
+        } catch (error) {
+            console.error('TTS error:', error);
+            isSpeakingRef.current = false;
+            processNextInQueue();
+        }
+    };
+
+    /**
+     * Main function to speak NPC messages
+     */
+    const speakNPCMessage = async (message: string) => {
+        const isDebug = false; // Set to true when debugging
+        
+        if (isDebug) {
+            console.group('Speaking NPC Message');
+            console.log('Raw message:', message);
+        }
+        
+        try {
+            // Clean the text
+            const cleanMessage = cleanTextForTTS(message);
+            
+            if (!cleanMessage) {
+                if (isDebug) {
+                    console.log('No text to speak after cleaning');
+                    console.groupEnd();
+                }
+                return;
+            }
+            
+            // Check message length
+            if (cleanMessage.length > 1000) {
+                if (isDebug) console.warn('Message is very long:', cleanMessage.length, 'characters');
+                // Split long messages into chunks if needed
+                const chunks = cleanMessage.match(/.{1,500}[.!?]?\s/g) || [cleanMessage];
+                if (isDebug) console.log('Split into', chunks.length, 'chunks');
+                
+                for (const chunk of chunks) {
+                    ttsQueueRef.current.push(chunk);
+                }
+            } else {
+                ttsQueueRef.current.push(cleanMessage);
+            }
+            
+            // Start processing queue
+            processNextInQueue();
+            
+        } catch (error) {
+            console.error('Failed to speak:', error);
+        } finally {
+            if (isDebug) console.groupEnd();
+        }
+    };
+
+    /**
+     * Stop all TTS playback
+     */
+    const stopAllTTS = () => {
+        // console.log('Stopping all TTS'); // Comment out for production
+        
+        // Clear the queue
+        ttsQueueRef.current = [];
+        
+        // Stop current audio
+        if (currentAudioRef.current) {
+            try {
+                const audio = currentAudioRef.current as any;
+                
+                // Remove event listeners using stored handlers
+                if (audio._endedHandler) {
+                    audio.removeEventListener('ended', audio._endedHandler);
+                }
+                if (audio._errorHandler) {
+                    audio.removeEventListener('error', audio._errorHandler);
+                }
+                
+                // Now stop the audio
+                if (!audio.paused) {
+                    audio.pause();
+                }
+                audio.currentTime = 0;
+                
+                // Clean up the blob URL if it exists
+                const src = audio.src;
+                if (src && src.startsWith('blob:')) {
+                    URL.revokeObjectURL(src);
+                }
+                
+            } catch (e) {
+                // Silently ignore errors when stopping audio
+            } finally {
+                currentAudioRef.current = null;
+            }
+        }
+        
+        isSpeakingRef.current = false;
+    };
+
+    // Update your chat submit handler
+    const handleChatSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!currentMessage.trim()) return;
 
@@ -494,7 +735,6 @@ const Scene = () => {
             message: userMessage
         }]);
 
-        // Scroll after player message
         setTimeout(scrollToBottom, 100);
 
         setChatMessages(prev => [...prev, {
@@ -503,10 +743,11 @@ const Scene = () => {
             isStreaming: true
         }]);
 
-        // Scroll again after adding empty streaming message
         setTimeout(scrollToBottom, 100);
 
-        const streamHandler = (partialMessage) => {
+        let fullResponse = '';
+        const streamHandler = (partialMessage: string) => {
+            fullResponse = partialMessage; // Keep track of full response
             requestAnimationFrame(() => {
                 setChatMessages(prev => {
                     const newMessages = [...prev];
@@ -523,8 +764,7 @@ const Scene = () => {
         try {
             const response = await chatService.getNPCResponse(userMessage, streamHandler);
 
-            // Log the complete message
-            console.log('Complete NPC response:', response.message);
+            // console.log('Complete NPC response:', response.message); // Comment out for production
 
             setChatMessages(prev => {
                 const newMessages = [...prev];
@@ -533,6 +773,9 @@ const Scene = () => {
                 delete lastMessage.isStreaming;
                 return newMessages;
             });
+
+            // Speak the complete response
+            await speakNPCMessage(response.message);
 
             if (response.animation && npcAnimationActionsRef.current[response.animation]) {
                 playNpcAnimation(response.animation);
@@ -602,21 +845,45 @@ const Scene = () => {
             npcMixerRef.current = mixer;
         } else {
             mixerRef.current = mixer;
+            // NEW: Add an event listener to the player's mixer
+            // This will fire every time an animation clip finishes playing.
+            mixer.addEventListener('finished', (event) => {
+                // Check if the animation that just finished is the jump animation
+                if (event.action.getClip().name === 'vrmAnimation') { // Note: 'vrmAnimation' is the name assigned in loadMixamoAnimation.js
+                    // We can't directly check by ANIMATION_JUMP here easily, but we can rely on the fact
+                    // that only our jump animation is non-looping.
+                    // A more robust way is to check the clip name if you customize loadMixamoAnimation
+                    isJumpingRef.current = false; // Allow jumping again
+                }
+            });
         }
 
-        const animations = [ANIMATION_IDLE, ANIMATION_WALKING, ANIMATION_GREAT_SWORD_IDLE, ANIMATION_PISTOL_IDLE];
+        const animations = [
+            ANIMATION_IDLE, 
+            ANIMATION_WALKING, 
+            ANIMATION_GREAT_SWORD_IDLE, 
+            ANIMATION_PISTOL_IDLE,
+            ANIMATION_JUMP // Add the new animation here
+        ];
         const actions = {};
 
         for (const animation of animations) {
             try {
                 console.log(`Loading animation: ${animation}`);
-                // const url = `./animations/${animation}.fbx`;
+                // const url = `/animations/${animation}.fbx`;
                 const url = animation as string;
                 const clip = await loadMixamoAnimation(url, vrm);
                 console.log(`Creating action for: ${animation}`);
                 const action = mixer.clipAction(clip);
                 action.clampWhenFinished = true;
-                action.loop = THREE.LoopRepeat;
+
+                // NEW: Set the jump animation to not loop
+                if (animation === ANIMATION_JUMP) {
+                    action.loop = THREE.LoopOnce; // Play only one time
+                } else {
+                    action.loop = THREE.LoopRepeat; // All other animations loop
+                }
+
                 actions[animation] = action;
             } catch (error) {
                 console.error(`Error loading animation ${animation}:`, error);
@@ -631,8 +898,10 @@ const Scene = () => {
             playAnimation(ANIMATION_IDLE);
         }
     }
-    // const PLAYER_VRM_URL = './avatars/VRoid_Sample_B.vrm';
-    const PLAYER_VRM_URL = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/VRoid_Sample_B-D0UeF1RrEd5ItEeCiUZ3o8DxtxvFIK.vrm';
+    // const PLAYER_VRM_URL = '/avatars/VRoid_Sample_B.vrm';
+    // const PLAYER_VRM_URL = '/avatars/avatar.vrm';
+    const PLAYER_VRM_URL = '/avatars/1347496417698417678.vrm';
+    // const PLAYER_VRM_URL = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/VRoid_Sample_B-D0UeF1RrEd5ItEeCiUZ3o8DxtxvFIK.vrm';
 
     const sceneRef = useRef(null);
     const [selectedAvatar, setSelectedAvatar] = useState(PLAYER_VRM_URL);
@@ -660,7 +929,7 @@ const Scene = () => {
 
         // Load new avatar
         loader.load(
-            `./avatars/${avatarFile}`,
+            `/avatars/${avatarFile}`,
             async (gltf) => {
                 const vrm = gltf.userData.vrm;
 
@@ -769,7 +1038,7 @@ const Scene = () => {
 
         // Load player avatar
         loader.load(
-            // `./avatars/${selectedAvatar}`,
+            // `/avatars/${selectedAvatar}`,
             selectedAvatar,
             async (gltf) => {
                 const vrm = gltf.userData.vrm;
@@ -838,7 +1107,7 @@ const Scene = () => {
 
         // TODO: don't show avatars until idle animation loaded (right now it flickers with t-pose)
 
-        // const MERCHANT_VRM_URL = './avatars/sheriff_agent_7.3.vrm';
+        // const MERCHANT_VRM_URL = '/avatars/sheriff_agent_7.3.vrm';
         const MERCHANT_VRM_URL = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/sheriff_agent_7.3-Nlpi0VmgY7hIcOaIDdomjRDE9Igtrn.vrm';
 
         // Modify the NPC loader section
@@ -894,7 +1163,8 @@ const Scene = () => {
                 const distance = avatar.position.distanceTo(npc.position);
                 setIsNearNPC(distance < INTERACTION_DISTANCE);
 
-                if (!isChatting) {
+                // UPDATE: Wrap this entire block in the new "if" condition
+                if (!isChatting && !isJumpingRef.current) {
                     const moveVector = new THREE.Vector3(0, 0, 0);
 
                     const cameraForward = new THREE.Vector3();
