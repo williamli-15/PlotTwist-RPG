@@ -1,0 +1,12 @@
+node fetch_nfts.js
+node download_models.js
+node convert_to_glb.js
+node take_screenshots.js
+node get_summary.js
+node get_token_supply.js
+node process_metadata.js summary_metadata_with_supply.json
+node upload_to_vercel.mjs
+
+# for deployment
+set OPENROUTER_API_KEY
+set VERCEL_URL

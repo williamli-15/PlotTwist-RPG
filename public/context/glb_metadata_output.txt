@@ -1,0 +1,1016 @@
+base-0xc1374b803dfb1a9c87eab9e76929222dba3a8c39:
+  chain: base
+  contractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+  contractName: Nifty Island Creations
+  assets:
+    - assetName: Wooden Stick
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219864766536287890625371326907368"
+      nftTotalSupply: 1000
+      nftDescription: |-
+        A very sticky wood.
+
+        This sword was created by @zoan on April 3, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a long, thin, and vertically oriented stick-like food item, likely a type of cracker or biscuit. 
+        Its surface has a slightly textured, ridged appearance, as though it's been rolled or pressed, creating a
+        subtle, bumpy pattern.  The color is a light, warm beige or tan, giving it a natural, baked food appearance. 
+        The consistent, uniform shape and smooth, although textured, surfaces are distinctive elements.
+    - assetName: Potato
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219882794938052456414988126389224"
+      nftTotalSupply: 1000
+      nftDescription: |-
+        This potato is more than it looks!
+
+        This pistol was created by @zoan on April 3, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a light yellowish-beige, seemingly smooth, but slightly textured, oval-shaped food item, possibly
+        a bean or seed.  Variations in tone and subtle reddish-brown markings are present on different facets, giving
+        the impression of natural variations or slight imperfections on the surface.  The lighting and rendering create
+        a somewhat glossy appearance, highlighting the shape and texture.  The image sequence shows the object from
+        varied perspectives, showcasing its overall form.
+    - assetName: Galactic Dagger
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219867320405999286938053084446976"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A weapon emanating galactic power.
+
+        This sword was created by @zoan on April 23, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a futuristic, stylized dagger.  Its blade and handle are predominantly purple and black,
+        with swirling patterns of violet, teal, and white that evoke a galaxy or nebula design.  Intricate, almost
+        organic, markings and details accentuate the handle, adding a sense of otherworldliness and technological
+        complexity to the overall aesthetic.
+    - assetName: Galactic Blaster
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219881755379579551569399915741440"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A weapon emanating galactic power.
+
+        This pistol was created by @zoan on April 23, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A futuristic, purple firearm with a stylized, almost organic design.  The gun's body is a deep violet with
+        metallic highlights and flecks of a darker shade.  It has a pronounced, contoured barrel and intricate, almost
+        fluid-like details on the body, giving it a distinctive, non-traditional look.  Gold accents add a contrasting
+        touch.
+    - assetName: Galactic Double Blade
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219901286034167141915888189440256"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A weapon emanating galactic power.
+
+        This sword was created by @zoan on April 24, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, futuristic blade, likely a weapon or part of a larger sci-fi design.  Its shape is
+        elongated and double-edged, with sharp, angular protrusions and grooves suggestive of high-tech or robotic
+        construction.  The material appears to have a deep, dark-purple, and violet sheen, accented by glowing
+        highlights and streaks of neon pink and blue.  The overall aesthetic is sleek and otherworldly.
+    - assetName: Galactic Scimitar
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219868950805959366933511820804352"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A weapon emanating galactic power.
+
+        This sword was created by @zoan on April 24, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A stylized, futuristic sword and dagger set, rendered in exaggerated 3D detail.  The weapons feature a vibrant,
+        swirling mix of purple, blue, and teal colors, evoking galaxy themes.  Intricate metallic accents and embedded
+        gem-like elements decorate the hilts and blades, highlighting an otherworldly aesthetic.  The dagger's curved
+        blade and the sword's ridged hilt and distinct patterns stand out against the stark white background.
+    - assetName: Galactic Chakram
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219899334107107445024531616366848"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A weapon emanating galactic power. 
+
+        This sword was created by @zoan on April 25, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, circular, almost wheel-like device, appearing as a dark purple and deep green, with a
+        highly textured and uneven surface.  Jagged, organic-looking protrusions and indentations cover the entire form,
+        creating a sense of depth and complexity.  Neon-like highlights of pinkish-purple and lime-green accent the
+        design. Circular, recessed details are visible throughout the object, further enhancing the intricate, almost
+        alien-like appearance.
+    - assetName: Galactic Soldier Sword
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219881390044149695245192106344704"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A weapon emanating galactic power.
+
+        This sword was created by @zoan on April 26, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, futuristic knife or blade with a skull-like head.  It's predominantly dark purple with
+        iridescent highlights, and intricate, almost organic patterns in darker shades and lime green.  The skull-like
+        head is detailed with what appear to be sculpted bone structures and glowing, stylized eyes.  The blade's edge
+        is serrated, and the overall design is highly decorative and otherworldly.
+    - assetName: Galactic Buster Sword
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219902124390129534197801326477412"
+      nftTotalSupply: 100
+      nftDescription: |-
+        A large galactic weapon that can cleave through anything.
+
+        This sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, futuristic blade, appearing dark purple and black with iridescent highlights.  Its
+        design incorporates angular, sculpted shapes and features implied details, resembling a complex, interwoven
+        metal or crystalline structure.  A pattern of swirling galaxy-like purple and violet swirls and speckles is
+        applied to the blade.  The hilt/handle is similarly detailed, showcasing a futuristic organic aesthetic.
+    - assetName: Galactic Moon Blade
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219860478810755087724075171184740"
+      nftTotalSupply: 100
+      nftDescription: |-
+        A large galactic weapon with high agility and aftershocks.
+
+        This sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, curved blade weapon, likely from a science fiction or fantasy setting.  Its iridescent
+        purple and dark-purple blade is decorated with dark-purple and black veins/patterns, accented by bright and
+        vivid green highlights and details, giving it a futuristic, otherworldly aesthetic.  The handle/grip area is a
+        dark metallic color with unusual, organic-looking protrusions and glowing green accents; the overall shape is
+        fluid and semi-circular, making it unusual and striking.
+    - assetName: Galactic Ego Sword
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219859907275389321193294152073316"
+      nftTotalSupply: 100
+      nftDescription: |-
+        A large galactic weapon with a soul of its own that can communicate to the wielder telepathically.
+
+        This sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, futuristic sword, rendered in vibrant purples, blacks, and greens.  Its blade features
+        angular, jagged edges and a segmented, almost crystalline texture, interspersed with glowing, lime-green orbs. 
+        The hilt is a complex design of organic and machine-like elements, creating a sense of technological alienism.
+        This visual effect, combined with the unusual color scheme, makes the sword appear both powerful and
+        otherworldly.
+    - assetName: Galactic Monarch Sword
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219900626801634831090991287500900"
+      nftTotalSupply: 100
+      nftDescription: |-
+        A large galactic weapon worthy of rulers of galaxies.
+
+        This sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized sword, rendered in vibrant shades of purple and dark blue, with hints of gold accents. 
+        Its design features intricate, almost organic, patterns along the blade and hilt, evoking a futuristic or
+        otherworldly aesthetic.  Prominent details include glowing, light-emitting features and a complex, multi-layered
+        hilt. The overall effect is one of powerful, otherworldly weaponry.
+    - assetName: Galactic Double Axe
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219830252873040676414454790881380"
+      nftTotalSupply: 100
+      nftDescription: |-
+        A powerful axe with galactic power in every swing.
+
+        This sword was created by @zoan on May 1, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A stylized, double-bladed axe, or warhammer, with a futuristic, almost bio-mechanical aesthetic.  The weapon is
+        predominantly dark purple and black with intricate, glowing patterns and accents.  The curved blades and the
+        unique design of the handle, featuring a central, glowing core and dark, segmented shaft, give it a distinctive
+        and otherworldly look.  The intricate details and color scheme make the item visually striking and unique to a
+        fantasy or sci-fi setting.
+    - assetName: Doginal Bat (Mirror)
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219896219087210145710713390236068"
+      nftTotalSupply: 420
+      nftDescription: >-
+        This is a convenience "mirror" NFT for Doginal Bat holders to use the bat in game. Doginal Bat is a dogecoin
+        inscription (the 3D file is stored onchain). It is listed on Doggy Market: https://doggy.market/nfts/doginalbat
+
+
+        This sword was created by @zoan on December 1, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A stylized golden baseball bat, rendered in 3D, features the words "Doge," "Wow," "Much," and "Mars"  spelled
+        out in different colored text (yellow, teal, red, purple) along its barrel. The text's varied colours and
+        placement create a dynamic and unique visual impact, detaching the object from a conventional baseball bat.  The
+        overall design is somewhat playful and whimsical due to the combination of colors and the words used.
+    - assetName: Doginal Megaphone (Mirror)
+      nftChain: base
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219839797533161627624870695142713"
+      nftTotalSupply: 1337
+      nftDescription: >-
+        This is a convenience "mirror" NFT for Doginal Megaphone holders to use the megaphone in game. Doginal Megaphone
+        is a dogecoin inscription (the 3D file is stored onchain). It is listed on Doggy Market:
+        https://doggy.market/nfts/doginalmegaphone
+
+
+        This pistol was created by @zoan on December 5, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A highly polished, golden-bronze megaphone, rendered in 3D.  Its design is exaggerated and stylized, with a
+        smooth, almost liquid-like texture to the metal.  The words "boom" or "ultra boom" are prominently displayed in
+        vibrant, contrasting colors (pink/purple and teal/blue) on the megaphone's surface, adding a pop of color to the
+        otherwise metallic aesthetic. The overall impression is one of a futuristic, almost futuristic, and
+        attention-grabbing public address system.
+polygon-0xc1374b803dfb1a9c87eab9e76929222dba3a8c39:
+  chain: polygon
+  contractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+  contractName: Nifty Island Creations
+  assets:
+    - assetName: Dragon Dagger
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219844529413980602846078195204352"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A weapon worthy of a Shadow Monarch.
+
+        This sword was created by @zoan on April 4, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized, fantasy-themed dagger.  Its blade is a vibrant red, intricately patterned with
+        darker red and muted blue designs, and has a jagged, almost serrated edge. The hilt features a sculpted, organic
+        design, with a red handle that has a visible texture.  Metal accents, appearing as a silver-gray, are integrated
+        throughout the hilt and blade, adding a decorative touch.  The overall impression is one of a sinister, powerful
+        weapon with decorative flourishes.
+    - assetName: Dragon Pistol
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219903170640319905847890795299072"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A pistol with the firepower of a dragon's breath, worthy of a Shadow Monarch.
+
+        This pistol was created by @ on April 4, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A stylized, fantasy-themed pistol, rendered in a vivid red and dark gray/black color scheme.  Characterized by
+        dragon-like horns and scales along the grip and barrel, giving it an otherworldly appearance.  The design of the
+        pistol appears to combine elements of a traditional revolver with a fantastical, almost organic aesthetic,
+        creating a unique, visually striking weapon.
+    - assetName: Dragon Sword
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219826169492368987446256957653248"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A large heavy hitter with the power of a dragon.
+
+        This sword was created by @zoan on April 7, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized sword, characterized by a vibrant red and dark-blue/gray color scheme.  Its
+        blade exhibits a jagged, almost organic, design with sharp protrusions,  suggesting a dragon-like or demon-like
+        aesthetic.  The hilt features intricate, textured carvings that blend the same color palette.  The overall
+        design is highly stylized and fantasy-inspired.
+    - assetName: Magic Wand
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219837163008939518603436807422208"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A small but powerful wand.
+
+        This pistol was created by @zoan on April 5, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized magic staff, depicted in rich browns, golds, and various shades of blue.  Its design
+        features intricate, swirling, and interwoven patterns that resemble flowing vines or organic growth, enhancing
+        the fantastical feel.  Small, crystalline, translucent blue gems or beads are scattered along the staff, adding
+        a touch of ethereal beauty and highlighting the design's intricate detail. The overall effect is one of a
+        powerful yet delicate magical artifact.
+    - assetName: Magic Blade
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219868635691073532973526414262528"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A very magical blade.
+
+        This sword was created by @zoan on April 5, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The sword is a stylized, light teal-blue, almost iridescent, with darker blue accents and hints of gold.  Its
+        blade has a sculpted, patterned edge, with floral and decorative motifs.  The hilt shows similar decorative
+        flourishes, and the overall impression is one of fantasy or mythical weaponry. The variations in the images from
+        different angles reveals the sword’s three-dimensional form and texture.
+    - assetName: Magic Sword
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219839535975484337754869581480192"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A powerful yet agile weapon favored by spellcasters.
+
+        This sword was created by @zoan on April 7, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A stylized, fantasy-themed sword with a vibrant, swirling blue blade, accented with icy white patterns and hints
+        of gold.  The blade's texture gives it a somewhat rippled or veined appearance.  The hilt is a dark brown/black,
+        with a golden pommel and a unique, eye-like design near the guard. The overall design suggests a magical or
+        celestial quality.
+    - assetName: Beast Blade
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219871764999479426970627564634368"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A giant blade worthy of beasts. Submission for the Nifty Island x AKCB UGC contest.
+
+        This sword was created by @zoan on April 15, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized, fantasy-themed knife.  Its blade exhibits a dark, almost black, iridescent
+        surface with vibrant blue highlights and patterns, creating a striking visual effect.  The blade's shape is
+        angular and sharply pointed, with intricate, almost organic, protrusions and carvings along the edges and hilt,
+        lending a sense of both power and otherworldly design.  The overall aesthetic is dark and futuristic, with a
+        focus on visual drama and intricate detailing.
+    - assetName: Beast Pistol
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219852709071422716363600784523520"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A powerful pistol worthy of beasts. Submission for the Nifty Island x AKCB UGC contest.
+
+        This pistol was created by @zoan on April 15, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, black firearm with a fantastical design.  It features organic, dragon-like
+        head-and-tail forms.  The weapon's body is sculpted with flowing, textured surfaces, and accented with streaks
+        of vibrant blue light. Its overall form is both menacing and otherworldly, suggesting advanced technology and
+        alien design influences.
+    - assetName: Beast Dagger
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219869999750243678418908152332544"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A dagger with the power of a legendary shadow beast. Submission for the Nifty Island x AKCB UGC contest.
+
+        This sword was created by @zoan on April 15, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized, fantastical sword.  Its blade is long and pointed, with a dark, almost black, 
+        surface featuring swirling, vibrant, electric-blue patterns that give the impression of energy or flowing
+        liquid.  The hilt is similarly intricate, decorated with jagged, organic, and spiky protrusions, also
+        incorporating the striking blue highlights.  The overall design evokes a sense of power and otherworldly magic.
+    - assetName: Dragon Chakram
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219879662788676789298310403850496"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A dragon weapon that wreaths destruction along its path.
+
+        This sword was created by @zoan on April 20, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, circular, red-and-black-patterned, spiked ring.  Its design features sharp, pointed
+        projections along the outer edge, giving it a menacing or aggressive appearance.  The variations in shading and
+        patterns on the surface create a textured and almost organic look, despite the geometric forms.  It has a
+        concentric ring interior space.  The overall shape is striking and visually complex.
+    - assetName: Angel Pistol
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219870896035971668489392713892096"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A pistol blessed by an angel.
+
+        This pistol was created by @zoan on May 9, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized, ornate pistol, likely from a fantasy or sci-fi setting.  It features a flowing,
+        almost organic barrel shape, adorned with gold-toned, intricate carvings and patterns reminiscent of classical
+        or steampunk design elements.  The weapon's design is unconventional, with pronounced, sculpted features
+        suggesting a fantastical or futuristic aesthetic.  Small, seemingly jewel-like accents are strategically placed
+        on the gun.
+    - assetName: Angel Dagger
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219897612933583999824725853339904"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A dagger blessed by an angel.
+
+        This sword was created by @zoan on May 10, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized sword, likely for a video game or similar digital application.  Its blade is a
+        light gray-silver with intricate,  diamond-shaped,  blue gems along its length  and the hilt features stylized
+        gold and cream colored patterns with more embedded blue gems.  The hilt's shape suggests stylized bird wings,
+        adding a unique and fantastical flair.
+    - assetName: Angel Hammer
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219887985281321929173642971709696"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A hammer blessed by an angel.
+
+        This sword was created by @zoan on May 10, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized mallet or gavel, presented from various angles.  It features a light gray/off-white
+        handle with gold accents and banding along the shaft. The mallet head is a square/rectangular shape with a
+        slightly raised design, also appearing as gray/off-white with gold embellishments.  The overall style is
+        reminiscent of a ceremonial or decorative object rather than a tool, with a smooth, almost polished finish
+        evident in the textures.
+    - assetName: Jade Dagger
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219897830771981503700407192387840"
+      nftTotalSupply: 256
+      nftDescription: |-
+        Jade dagger, pistol, and sword pack.
+
+        This asset pack was created by @zoan on May 3, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, likely decorative, dagger or knife, featuring a vibrant emerald green blade with
+        intricate, flowing, organic patterns etched into the surface.  A dark, brownish-gold, ornamented hilt, seemingly
+        carved with spiral and knot-like designs complements the blade beautifully, providing a contrasting texture and
+        color.  The overall appearance is fantastical and evokes a sense of mystical power or otherworldly artistry.
+    - assetName: Jade Pistol
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219897830771981503700407192387840"
+      nftTotalSupply: 256
+      nftDescription: |-
+        Jade dagger, pistol, and sword pack.
+
+        This asset pack was created by @zoan on May 3, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The weapon is a stylized, ornate pistol, rendered in a vibrant, mottled green.  Its design features intricate,
+        flowing, plant-like carvings and accents, and a dragon or mythical creature head at the front of the grip.  The
+        combination of the organic patterns and the firearm shape gives the object a unique, fantastical quality.
+    - assetName: Jade Sword
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219897830771981503700407192387840"
+      nftTotalSupply: 256
+      nftDescription: |-
+        Jade dagger, pistol, and sword pack.
+
+        This asset pack was created by @zoan on May 3, 2024 using the Nifty Island creator tool.
+      aiSummary: "The sword is a stylized, fantasy-themed weapon.\_ Its teal-and-gold blade has intricate, patterned designs that look like flowing, crystalline patterns.  Ornate gold accents adorn the hilt and pommel, which also feature a distinctive, eye-like gem or orb.  There is variation in the pattern and detail on the blade, and the overall impression is of a mystical and powerful artifact."
+    - assetName: Crystal Dagger
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219893190305127064075198856691968"
+      nftTotalSupply: 256
+      nftDescription: |-
+        Crystal dagger, pistol, and sword pack.
+
+        This asset pack was created by @ on May 4, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized dagger, appearing as if crafted from frosted glass or ice.  Its blade is a pale,
+        icy blue with subtle, almost shimmering, teal accents.  Ornate designs, including small, glittering, gem-like
+        accents in various shades of blue and teal, decorate the blade and handle. A vibrant, swirling, purple-toned
+        band encircles the handle, adding a pop of color against the cool palette of the weapon.  The overall impression
+        is of a magical, otherworldly weapon, seemingly imbued with ethereal qualities.
+    - assetName: Crystal Pistol
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219893190305127064075198856691968"
+      nftTotalSupply: 256
+      nftDescription: |-
+        Crystal dagger, pistol, and sword pack.
+
+        This asset pack was created by @ on May 4, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, futuristic pistol, light gray or silver in color, with intricate, almost organic,
+        protrusions and angular shapes.  It features  faceted details and small, glowing, azure-blue gems or crystals
+        embedded in the design, lending it a sci-fi or fantasy aesthetic. The overall form is unconventional and
+        emphasizes a unique, non-traditional weapon design.
+    - assetName: Crystal Sword
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219893190305127064075198856691968"
+      nftTotalSupply: 256
+      nftDescription: |-
+        Crystal dagger, pistol, and sword pack.
+
+        This asset pack was created by @ on May 4, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The sword is a stylized, fantasy design, featuring a teal-blue blade with intricate, almost stained-glass-like
+        patterns.  A light gray/silver hilt and guard are adorned with darker accents and subtle, gem-like details.  The
+        overall appearance is both light and ornate, giving the impression of a mystical or magical weapon.  Visually,
+        the inconsistent shades of blue and silver give a subtly textured effect.
+    - assetName: Flower Dagger
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219887938850337228576568578670848"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A dagger with flower power.
+
+        This sword was created by @zoan on May 11, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized dagger or blade with a fantastical design.  Its form is organic and flowing,
+        featuring sculpted floral patterns in shades of vibrant purple,  lime green, and metallic grey.  The blade and
+        hilt exhibit a glossy, almost gem-like surface texture, while the floral elements appear intricately detailed.
+        The overall effect is one of a magical, otherworldly weapon.
+    - assetName: Flower Pistol
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219888026573433258425388202197248"
+      nftTotalSupply: 256
+      nftDescription: |-
+        A pistol with flower power.
+
+        This pistol was created by @zoan on May 11, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A stylized, magenta/pink firearm, seemingly from a video game or graphic design project, is heavily decorated
+        with rose-like floral patterns. The rose motifs are prominent, and the gun's surface has a slightly glossy or
+        metallic texture, though the design is slightly distorted to create a slightly painterly or pixelated
+        appearance.  The firearm's shape is reminiscent of a double-barreled revolver but with an alternative futuristic
+        and ornamental design.
+    - assetName: Excalipoor
+      nftChain: polygon
+      nftContractAddress: "0xc1374b803dfb1a9c87eab9e76929222dba3a8c39"
+      nftTokenId: "88700490005035943529316798097329512194005047219830941341628298369658733461760"
+      nftTotalSupply: 256
+      nftDescription: >-
+        Traveller, this is *totally* the real, legendary Excalibur sword, sought after by legends such as Gilgamesh! No
+        need to make the arduous journey to Sword in the Stone island ;) 
+
+
+        This sword was created by @zoan on May 18, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The sword features a long, slightly tapered, steel-gray blade with a distinct, intricate, golden-hued pattern
+        etched or inlaid along its length and guard.  The hilt is adorned with ornate, golden accents and has a
+        cross-shaped guard with pointed finials extending outward. The pommel is a bulbous golden shape.  The overall
+        design aesthetic is medieval fantasy, emphasizing both strength and decorative flourish.
+polygon-0xeab56d0bfd7fcf84c606db521e81c41e38fb9022:
+  chain: polygon
+  contractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+  contractName: zoan's Open Editions (Polygon)
+  assets:
+    - assetName: Golden Aqua Trident
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "0"
+      nftTotalSupply: 210
+      nftDescription: |-
+        A magical weapon with the power to summon ocean waves.
+
+        This sword was created by @zoan on June 27, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, ornate trident or spear.  Its golden-bronze shaft has intricate, organic-looking
+        carvings and accents.  The turquoise-blue points of the trident are highly detailed, with a crystalline or
+        gem-like texture and decorative elements.  The overall design suggests a blend of fantasy and possibly ancient
+        or mythical influences.
+    - assetName: Golden Aqua Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "1"
+      nftTotalSupply: 191
+      nftDescription: |-
+        A magical pistol imbued with the power of ocean waves.
+
+        This pistol was created by @zoan on June 27, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a decorative handgun, seemingly crafted from a light cream/beige material with intricate
+        turquoise/teal accents.  Ornate gold detailing embellishes the curves and contours of the weapon, creating a
+        fantastical, almost Art Nouveau aesthetic.  The swirling teal accents on the gun's body and the decorative
+        carvings resemble flowing water or waves, further enhancing the unique design.  The overall effect is one of
+        exquisite craftsmanship and a distinctly stylized, non-realistic appearance.
+    - assetName: Iridescent Dragon Blade
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "2"
+      nftTotalSupply: 364
+      nftDescription: |-
+        A weapon with the power of an iridescent dragon.
+
+        This sword was created by @zoan on June 28, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The iridescent sword, rendered in multiple colorful hues spanning the visible spectrum, features a unique
+        design.  Its surface displays a mesmerizing play of color, shifting dramatically with the angle of light. 
+        Intricate, stylized floral and/or animalistic patterns adorn the hilt and blade, adding to the sword's
+        fantastical appearance.  The overall effect is one of otherworldly beauty and power.
+    - assetName: Iridescent Dragon Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "3"
+      nftTotalSupply: 168
+      nftDescription: |-
+        A weapon with the power of an iridescent dragon.
+
+        This pistol was created by @zoan on June 28, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized handgun, featuring a dragon's head and a multicolored, iridescent or opalescent,
+        scale-like pattern covering the entire firearm, barrel, and grip.  The design incorporates intricate, almost
+        decorative, carvings and patterns around the dragon head and along the gun's body, adding a surreal and
+        fantastical aesthetic.  The use of iridescent coloration and various shades of purple, blue, and green creates a
+        visually striking effect.
+    - assetName: Phuc Dagger
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "4"
+      nftTotalSupply: 2422
+      nftDescription: Phuc! This sword was created by @zoan on July 1, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The sword is a stylized, ornate piece, depicted in multiple angles.  Its golden-yellow handle and hilt are
+        intricately carved with dragon imagery, featuring detailed scales and features.  A vibrant, deep red blade
+        contrasts sharply with the gold,  creating a visually striking design.   The dragon figures wrap around the
+        sword's hilt and the blade in a dynamic, almost sculptural manner. Texture and embossing on the dragon figures
+        and hilt give it a sense of depth and richness.
+    - assetName: Phuc Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "5"
+      nftTotalSupply: 1838
+      nftDescription: Phuc! This pistol was created by @zoan on July 1, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized handgun, featuring a unique, ornate design.  The gun's form is sculpted with
+        flowing, organic shapes resembling flames or melted gold, overlaid with intricate floral and decorative
+        patterns.  The color scheme alternates between warm golds and oranges, and the material appears metallic and
+        polished.  Its unusual appearance and unconventional detailing create a striking and visually interesting
+        object.
+    - assetName: Purification Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "6"
+      nftTotalSupply: 23
+      nftDescription: |-
+        A pistol imbued with purification magic. Highly effective against infected zombies!
+
+        This pistol was created by @zoan on July 8, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, ornamental revolver, seemingly crafted from sculpted, light-purple and white
+        material.  Intricate floral and organic patterns, including stylized blossoms, vines, and leaf-like shapes, are
+        intricately carved/painted on the gun's frame.  Sharp, stylized horns or protrusions extend from the grip and
+        barrel, adding to the fantastical design.  A series of translucent, bluish-green accents highlight certain
+        features, further enhancing the surreal aesthetic of the weapon.
+    - assetName: Kraken Dagger
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "9"
+      nftTotalSupply: 32
+      nftDescription: |-
+        A dagger with the power of a legendary kraken.
+
+        This sword was created by @zoan on July 13, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized, fantastical sword.  Its blade, a vibrant mix of purple and blue hues
+        reminiscent of a galaxy or nebula, is intricately etched and seemingly contains stardust or cosmic elements. The
+        hilt is elaborately carved with swirling, organic, flame-like patterns, further emphasizing a celestial theme. 
+        A deep, iridescent sheen adds to the otherworldly, almost liquid metal-like appearance of the entire weapon. 
+        Unique decorative elements give the handle a sense of elaborate craftsmanship.
+    - assetName: Kraken Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "10"
+      nftTotalSupply: 22
+      nftDescription: |-
+        A pistol with the power of a legendary kraken.
+
+        This pistol was created by @zoan on July 13, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized, ornate handgun.  Its design is heavily detailed with intricate, flowing, floral
+        and organic patterns, resembling etched or carved swirls and patterns, that cover the entire surface.  The color
+        palette is primarily muted purples and blues, with hints of lilac and other pastels.  The overall aesthetic is
+        fantastical, steampunk, and ornate, with a focus on elaborate visual embellishments rather than a realistic
+        firearm depiction.
+    - assetName: Xyla's Blade
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "12"
+      nftTotalSupply: 56
+      nftDescription: |-
+        A blade favored by Xyla.
+
+        This sword was created by @zoan on July 16, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized sword, rendered in a low-poly, polygonal style.  Its surface is composed of many small,
+        vibrant, faceted crystals, creating a dynamic, almost gem-like appearance.  The color scheme transitions
+        smoothly from pinks and purples to blues, giving it a gradient, multi-hued effect.  The sword's hilt shows a
+        similarly faceted and textured form, and the overall design evokes a sense of ethereal energy and otherworldly
+        power.
+    - assetName: Xyla's Blaster
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "13"
+      nftTotalSupply: 55
+      nftDescription: |-
+        A mythical blaster favored by Xyla.
+
+        This pistol was created by @zoan on July 16, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, polygonal pistol, rendered in vibrant, iridescent hues of purple, pink, and pastel
+        shades.  Its design features a geometric, almost crystalline texture, composed of numerous small,faceted
+        shapes.  The iridescent effect creates a captivating visual impact, and the polygonal form gives it a unique,
+        futuristic aesthetic.
+    - assetName: Ice Tri Shard
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "14"
+      nftTotalSupply: 160
+      nftDescription: >-
+        Three levitating ice shards emanating arctic power, worthy of an S-Rank penguin. Submission for Nifty Island x
+        Pudgy Penguins UGC contest.
+
+
+        This sword was created by @zoan on July 19, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object appears as three intricately formed, crystalline ice shards or ornaments.  Their jagged, almost
+        fractal edges and vibrant, iridescent blue-lavender hues give an impression of shifting light within the ice. 
+        The varied textures and translucent qualities create a sense of depth and movement.  A pointed, spear-like shape
+        is a prominent feature, extending from the base of each shard.
+    - assetName: Vampire Dagger
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "15"
+      nftTotalSupply: 228
+      nftDescription: |-
+        A dagger that radiates vampire energy.
+
+        This sword was created by @zoan on July 24, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The sword is a dark gray/black metal with intricate, ornate carvings.  Red gemstones, shaped like teardrops or
+        jewels, are embedded in the hilt and blade.  This design gives the weapon a dramatic, almost mystical,
+        appearance.  The variations in the carvings and the placement of gems create a unique and distinctive aesthetic.
+    - assetName: Vampire Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "16"
+      nftTotalSupply: 229
+      nftDescription: |-
+        A pistol radiating vampire energy.
+
+        This pistol was created by @zoan on July 24, 2024 using the Nifty Island creator tool.
+      aiSummary: "The object is a stylized, ornate revolver.  Its dark gray/black metal body is intricately carved with baroque-style floral and scroll patterns, giving it a decorative and fantastical appearance.  A large, red gemstone embellishes the cylinder and there are smaller accent gems.\_ The overall design evokes a blend of steampunk and fantasy aesthetics."
+    - assetName: Wrecker Blade
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "18"
+      nftTotalSupply: 106
+      nftDescription: |-
+        A legendary, powerful dark metal blade that wrecks everything in its path.
+
+        This sword was created by @zoan on August 9, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, dark purple/gray sword with an ornate, almost organic design.  Jagged, spiky
+        protrusions and sculpted, flowing lines cover the blade and hilt, giving it a textured, otherworldly
+        appearance.  A swirling, curved portion forms part of the hilt, adding a dynamic and unconventional aesthetic. 
+        The overall impression is one of both power and intricate, surreal beauty.
+    - assetName: Wrecker Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "19"
+      nftTotalSupply: 51
+      nftDescription: |-
+        A legendary, powerful dark metal pistol that wrecks everything in its path.
+
+        This pistol was created by @zoan on August 10, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, futuristic, double-barreled firearm, resembling a weapon from a science fiction game
+        or movie.  Its design features a dragon-like head with multifaceted, angular, and somewhat bat-like wings
+        extending from the top, contrasted with a metallic, segmented body and twin barrels.  The overall appearance is
+        a mix of organic and mechanical elements, with a muted, cool gray-silver color palette.  The polygonal or
+        low-poly style gives the object a somewhat rough or textured look.
+    - assetName: Three Sword Style - Demon Dragon Sword
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "20"
+      nftTotalSupply: 137
+      nftDescription: |-
+        Use the three sword style, with dragon soldier avatars and demon dragon weapons!
+
+        This asset pack was created by @zoan on September 3, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The sword is a stylized, dark-colored blade, predominantly black with striking red accents, giving it a fiery or
+        demonic aesthetic.  Its design features jagged, spiky edges along the blade and hilt, evoking a sense of power
+        and ferocity.  The red accents are textured and appear somewhat like lava or blood, enhancing the sword's
+        thematic implications.  The overall shape and details suggest a fantasy-inspired weapon.
+    - assetName: Three Sword Style - Demon Dragon Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "20"
+      nftTotalSupply: 137
+      nftDescription: |-
+        Use the three sword style, with dragon soldier avatars and demon dragon weapons!
+
+        This asset pack was created by @zoan on September 3, 2024 using the Nifty Island creator tool.
+      aiSummary: "The object is a stylized, dragon-head-shaped revolver pistol, predominantly black with vibrant red patterns resembling flames or swirling designs.  The dragon's head forms the grip and forend, while the barrel extends from the dragon's snout.\_ Intricate details, like dragon scales and horns, are visible, adding to the creature-like aesthetic.\_ Blue glowing accents highlight features like the dragon's eyes. The overall design is both menacing and imaginative, creating a striking visual effect."
+    - assetName: Cyber Blade - Green
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "21"
+      nftTotalSupply: 168
+      nftDescription: |-
+        Blades made of reinforced steel and lined with plasma! Comes in green, blue, and purple.
+
+        This asset pack was created by @zoan on September 8, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized sword, likely for a video game or animation.  Its simple, blocky design is
+        highly geometric, with a light mint-green colored blade edge and a dark gray or black blade. The hilt is a
+        simple square, and the overall impression is one of a contemporary, low-poly weapon with a soft, pastel colour
+        scheme.  The repeated perspective views emphasize the sword's consistent shape and lack of complex detail.
+    - assetName: Cyber Blade - Blue
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "21"
+      nftTotalSupply: 168
+      nftDescription: |-
+        Blades made of reinforced steel and lined with plasma! Comes in green, blue, and purple.
+
+        This asset pack was created by @zoan on September 8, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized sword, likely for a video game or similar digital application, featuring a
+        light-gray/silver blade with a light-blue/pale-turquoise edge.  The hilt is a simple, dark gray/black
+        square-shaped piece. The design is simple, almost blocky, and emphasizes a clean, futuristic aesthetic.  The
+        coloration of the edge of the blade helps make it noticeable.
+    - assetName: Cyber Blade - Purple
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "21"
+      nftTotalSupply: 168
+      nftDescription: |-
+        Blades made of reinforced steel and lined with plasma! Comes in green, blue, and purple.
+
+        This asset pack was created by @zoan on September 8, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a stylized sword, likely for a video game or animation.  Its simple, blocky design features
+        a long, nearly straight blade with a vibrant magenta/pink edge that extends along its entire length. The hilt is
+        a muted gray/silver square block.  Variations in the model show the blade highlighted in different shades of
+        pink, further emphasizing its design.  The overall effect is a simple, striking weapon.
+    - assetName: Cyber Blaster - Yellow
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "28"
+      nftTotalSupply: 114
+      nftDescription: |-
+        Plasma-powered blasters with reinforced steel body! Comes in yellow, green, blue, and purple.
+         
+        This asset pack was created by @zoan on October 12, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, dark gray, boxy weapon or device with a pale yellowish-cream colored accent strip or
+        band running horizontally across its midsection.  A circular element of the same pale color is centered on the
+        face, and a cylindrical, vertically ribbed handle or grip section is attached.  Its simple, almost blocky form
+        and the contrasting band and circle give it a futuristic or retro-futuristic aesthetic.
+    - assetName: Cyber Blaster - Green
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "28"
+      nftTotalSupply: 114
+      nftDescription: |-
+        Plasma-powered blasters with reinforced steel body! Comes in yellow, green, blue, and purple.
+         
+        This asset pack was created by @zoan on October 12, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, somewhat futuristic pistol-shaped device.  Its dark gray/black matte finish contrasts
+        with the pale mint-green accents. Notably, these accents are visible as a circular band and a horizontal strip
+        across the body, lending a distinct design element. The cylindrical grip and rectangular body's geometric design
+        emphasize a blocky, almost robotic aesthetic.
+    - assetName: Cyber Blaster - Blue
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "28"
+      nftTotalSupply: 114
+      nftDescription: |-
+        Plasma-powered blasters with reinforced steel body! Comes in yellow, green, blue, and purple.
+         
+        This asset pack was created by @zoan on October 12, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, futuristic weapon or device, presented as a boxy, rectangular form with a light-blue
+        accent band encircling a round light-blue element in its center.  The design features a pronounced cylindrical
+        grip and a smooth, dark gray metallic texture that gives it a sleek and slightly futuristic appearance.  The
+        light-blue accents contrast sharply, highlighting key design elements and lending a unique visual identity to
+        the object.
+    - assetName: Cyber Blaster - Purple
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "28"
+      nftTotalSupply: 114
+      nftDescription: |-
+        Plasma-powered blasters with reinforced steel body! Comes in yellow, green, blue, and purple.
+         
+        This asset pack was created by @zoan on October 12, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, three-dimensional model of a firearm, likely from a video game or similar fictional
+        source.  Its design is blocky and geometric, with a dark gray/black surface texture reminiscent of a metallic or
+        plastic material.  A prominent, contrasting hot pink horizontal band or strip sits across the middle of the main
+        body alongside a circular pink feature.  Different perspectives showcase its rectangular shape and a cylindrical
+        handle. The overall aesthetic is simple, modern, and slightly retro-futuristic due to the combination of blocky
+        form and color choices.
+    - assetName: Red Energy Dagger
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "22"
+      nftTotalSupply: 61
+      nftDescription: |-
+        A dagger composed of powerful red energy.
+
+        This sword was created by @zoan on September 23, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The sword is a vibrant, fiery red, with a design that evokes lightning or volcanic energy.  Its blade is sharply
+        pointed and features swirling, stylized lightning patterns running along its length.  The hilt is wrapped with a
+        reddish-brown cord/material, and there are metallic-looking accents and a small gem-like object near the base of
+        the hilt. The overall design is fantasy-inspired and emphasizes a powerful, magical aesthetic.
+    - assetName: Blue Energy Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "23"
+      nftTotalSupply: 53
+      nftDescription: |-
+        A pistol composed of powerful blue energy.
+
+        This pistol was created by @zoan on September 23, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, 3D model of a handgun, rendered in a vibrant, light-blue color scheme.  A distinctive
+        graphic pattern of stylized lightning or electrical circuitry is applied to the gun's surface.  The design is
+        futuristic and somewhat abstract, lending a unique visual identity to the model.
+    - assetName: Dark Phantom
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "26"
+      nftTotalSupply: 118
+      nftDescription: |-
+        A dark metal katana that can phase through dimensions.
+
+        This sword was created by @zoan on October 7, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, likely digital, representation of a sword.  It's depicted in a simple, almost
+        cartoonish, 3D isometric style, with a smooth, solid white blade on one variation, and black on the other.  The
+        hilt is a simple, dark-colored cylinder with a small ring at the base. The overall design emphasizes simplicity,
+        and the lack of realistic details makes it seem more symbolic than a precise likeness of a real sword.
+    - assetName: Fire Phantom
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "27"
+      nftTotalSupply: 125
+      nftDescription: |-
+        A katana that scorches everything in its path.
+
+        This sword was created by @zoan on October 8, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The 3D model depicts a sword, likely a stylized representation for a video game or animation, with a golden hilt
+        and a blade rendered in a pattern resembling fire. The fiery blade's color is a gradient of reds and oranges,
+        visually showing flames.  The overall design is simple, but the choice of a fiery pattern for the blade gives it
+        a dynamic and visually exciting appearance.
+    - assetName: Gravity Blade
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "29"
+      nftTotalSupply: 39
+      nftDescription: |-
+        A blade with the power to manipulate gravity.
+
+        This sword was created by @zoan on October 20, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A dark gray/black sword with intricate, ornate detailing, particularly around the hilt.  Large, glowing purple
+        crystals or gems are embedded in the hilt and blade, dramatically illuminating the design.  The blade itself is
+        also a visually striking feature, with a somewhat textured surface and pronounced purple accents, giving an
+        otherworldly, magical appearance.
+    - assetName: Gravity Pistol
+      nftChain: polygon
+      nftContractAddress: "0xeab56d0bfd7fcf84c606db521e81c41e38fb9022"
+      nftTokenId: "30"
+      nftTotalSupply: 46
+      nftDescription: |-
+        A pistol with the power to manipulate gravity.
+
+        This pistol was created by @zoan on October 22, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a futuristic, steampunk-inspired blaster/gun. It features a long, cylindrical barrel containing a
+        glowing, vibrant purple crystal-like structure.  The barrel is encased in a metallic, intricately patterned
+        casing, appearing as a mix of polished metal and etched details.  Circular, glowing purple lenses/sights accent
+        the design. The revolver-style action, combined with the unique material and the luminous purple elements,
+        provides a distinctive sci-fi aesthetic.
+base-0x44073ea066f39c21c3ec51ef324c280e0870d2c4:
+  chain: base
+  contractAddress: "0x44073ea066f39c21c3ec51ef324c280e0870d2c4"
+  contractName: zoan's Open Editions (Base)
+  assets:
+    - assetName: Time Blade
+      nftChain: base
+      nftContractAddress: "0x44073ea066f39c21c3ec51ef324c280e0870d2c4"
+      nftTokenId: "0"
+      nftTotalSupply: 24
+      nftDescription: |-
+        A weapon with the power of local time manipulation.
+
+        This sword was created by @zoan on July 5, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        The object is a stylized, ornate sword with a long, tapering blade of translucent emerald green.  The blade's
+        shape is reminiscent of a crystal or glass structure.  The hilt is a rich golden-brown with intricate carvings
+        and embellishments, featuring smaller, embedded green gems.  A large, central, spherical emerald green gem sits
+        prominently at the hilt's center. The overall design is fantasy-inspired, combining elements of natural and
+        mystical aesthetics.
+    - assetName: Time Pistol
+      nftChain: base
+      nftContractAddress: "0x44073ea066f39c21c3ec51ef324c280e0870d2c4"
+      nftTokenId: "1"
+      nftTotalSupply: 16
+      nftDescription: |-
+        A weapon with the power of local time manipulation.
+
+        This pistol was created by @zoan on July 5, 2024 using the Nifty Island creator tool.
+      aiSummary: >-
+        A stylized, steampunk-inspired pistol is depicted from four different angles.  It's a golden-brown color,
+        intricately decorated with detailed, ornate engravings and what appear to be metallic gears, rivets, and
+        embellishments.  Large, translucent, light-green crystals are prominent features, particularly the one jutting
+        out from the barrel of the pistol, giving off a futuristic and otherworldly aesthetic.  Internal glowing green
+        lights add to the design's sci-fi feel.
