@@ -13,7 +13,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import TWEEN from '@tweenjs/tween.js';
-import chatService from './chat_service';
+// import chatService from './chat_service';
+import DynamicChatService from './DynamicChatService'; // Adjust filename if needed
 import summaryMetadata from '@/public/context/summary_metadata_with_vercel_urls.json';
 import ModelViewer from './model-viewer';
 import ReactMarkdown from 'react-markdown';
@@ -67,7 +68,29 @@ const ANIMATION_WALKING = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.c
 const ANIMATION_GREAT_SWORD_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Great%20Sword%20Idle-08F04GwJaQuRTyoOJgMseiYBvFodbF.fbx';
 const ANIMATION_PISTOL_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Pistol%20Idle-UNnPpwZlfzGEk7bWquH5YabWhRDHYp.fbx';
 
-const Scene = () => {
+const Scene = ({ currentLobby }) => {
+        //
+    // ====================================================================
+    // ======> ADD THE NEW CODE RIGHT HERE, AT THE TOP OF THE COMPONENT <======
+    // ====================================================================
+    //
+    // Create a state to hold our chat service instance. Initialize it to null.
+    const [chatService, setChatService] = useState(null);
+
+    // Use a useEffect hook to create or update the chat service
+    // whenever the currentLobby prop changes.
+    useEffect(() => {
+        if (currentLobby) {
+            console.log(`Initializing chat service for lobby: ${currentLobby.name}`);
+            setChatService(new DynamicChatService(currentLobby));
+        }
+    }, [currentLobby]); // This dependency array ensures the effect runs when the lobby changes
+
+    // ADD THIS LOADING CHECK
+    if (!currentLobby) {
+        return <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">Loading World...</div>;
+    }
+
     const containerRef = useRef(null);
     const rendererRef = useRef(null);
     const avatarRef = useRef(null);
@@ -96,7 +119,10 @@ const Scene = () => {
     const [chatMessages, setChatMessages] = useState([]);
     const [currentMessage, setCurrentMessage] = useState('');
     const [showMobileWarning, setShowMobileWarning] = useState(false);
-    const NPC_NAME = "Agent Zoan";
+
+    // const MERCHANT_VRM_URL = currentLobby.hostAvatar.modelUrl;
+    // const NPC_NAME = currentLobby.hostAvatar.name;
+
 
     // Update keyStates ref to include arrow keys
     const keyStates = useRef({
@@ -395,6 +421,13 @@ const Scene = () => {
     };
 
     const startChat = () => {
+        // ADD THIS GUARD
+        if (!chatService) {
+            console.error("Chat service not initialized yet!");
+            return;
+        }
+        // This is the important new line!
+        chatService.clearHistory();
         // Store original camera position and target
         originalCameraPositionRef.current = cameraRef.current.position.clone();
         originalCameraTargetRef.current = controlsRef.current.target.clone();
@@ -446,7 +479,7 @@ const Scene = () => {
         animateCamera(targetCameraPosition, midpoint);
 
         setChatMessages([{
-            sender: NPC_NAME,
+            sender: currentLobby.hostAvatar.name,
             message: '',
             isStreaming: true
         }]);
@@ -459,13 +492,13 @@ const Scene = () => {
         // Get initial greeting from chatService
         chatService.getNPCResponse(initialMessage, (partialMessage) => {
             setChatMessages([{
-                sender: NPC_NAME,
+                sender: currentLobby.hostAvatar.name,
                 message: partialMessage,
                 isStreaming: true
             }]);
         }).then(response => {
             setChatMessages([{
-                sender: NPC_NAME,
+                sender: currentLobby.hostAvatar.name,
                 message: response.message
             }]);
 
@@ -725,6 +758,10 @@ const Scene = () => {
     // Update your chat submit handler
     const handleChatSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!chatService) {
+            console.error("Chat service not initialized yet!");
+            return;
+        }
         if (!currentMessage.trim()) return;
 
         const userMessage = currentMessage;
@@ -738,7 +775,7 @@ const Scene = () => {
         setTimeout(scrollToBottom, 100);
 
         setChatMessages(prev => [...prev, {
-            sender: NPC_NAME,
+            sender: currentLobby.hostAvatar.name, // <-- Use dynamic name
             message: '',
             isStreaming: true
         }]);
@@ -1039,7 +1076,8 @@ const Scene = () => {
         // Load player avatar
         loader.load(
             // `/avatars/${selectedAvatar}`,
-            selectedAvatar,
+            // selectedAvatar,
+            '/avatars/1347496417698417678.vrm', // <--- THE SIMPLE FIX
             async (gltf) => {
                 const vrm = gltf.userData.vrm;
                 sceneRef.current.add(vrm.scene);
@@ -1108,11 +1146,11 @@ const Scene = () => {
         // TODO: don't show avatars until idle animation loaded (right now it flickers with t-pose)
 
         // const MERCHANT_VRM_URL = '/avatars/sheriff_agent_7.3.vrm';
-        const MERCHANT_VRM_URL = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/sheriff_agent_7.3-Nlpi0VmgY7hIcOaIDdomjRDE9Igtrn.vrm';
+        // const MERCHANT_VRM_URL = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/sheriff_agent_7.3-Nlpi0VmgY7hIcOaIDdomjRDE9Igtrn.vrm';
 
         // Modify the NPC loader section
         loader.load(
-            MERCHANT_VRM_URL,
+            currentLobby.hostAvatar.modelUrl, // <-- USE THE PROP DIRECTLY HERE
             async (gltf) => {
                 const vrm = gltf.userData.vrm;
                 sceneRef.current.add(vrm.scene);
@@ -1123,7 +1161,7 @@ const Scene = () => {
                 });
 
                 // Create and add name sprite
-                const nameSprite = createTextSprite(NPC_NAME);
+                const nameSprite = createTextSprite(currentLobby.hostAvatar.name); // <-- USE THE PROP DIRECTLY HERE
                 vrm.scene.add(nameSprite);
 
                 VRMUtils.rotateVRM0(vrm);
@@ -1930,7 +1968,7 @@ const Scene = () => {
             }
 
             console.log('Loading weapons...');
-            loadWeapons();
+            // loadWeapons();
             weaponsLoadedRef.current = true;
         }
     }, [sceneRef.current, rendererRef.current]);
@@ -2148,7 +2186,7 @@ const Scene = () => {
                 <Card className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[1000px] bg-white/50 backdrop-blur-sm z-10">
                     <CardContent className="p-4">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="text-sm text-gray-700">Chatting with {NPC_NAME}</span>
+                            <span className="text-sm text-gray-700">Chatting with {currentLobby.hostAvatar.name} {/* <-- Use dynamic name */}</span>
                             <Button
                                 variant="ghost"
                                 size="sm"

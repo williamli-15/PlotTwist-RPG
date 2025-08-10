@@ -49,7 +49,7 @@ export const useLobbyStore = create<LobbyStore>()(
                     userId,
                     username: undefined,
                     avatar: {
-                        model: 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/VRoid_Sample_B-D0UeF1RrEd5ItEeCiUZ3o8DxtxvFIK.vrm',
+                        model: '/avatars/1347496417698417678.vrm', // <-- Use your preferred default player VRM
                         personality: 'You are a curious explorer visiting virtual worlds.',
                         history: []
                     }
