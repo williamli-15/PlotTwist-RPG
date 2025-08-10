@@ -27,26 +27,26 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
         { 
             id: '1', 
             model: '/avatars/raiden.vrm', 
-            name: 'Space Explorer',
-            preview: '🧑‍🚀' 
+            name: 'Raiden',
+            preview: '/avatar-previews/raiden.webp',
         },
         { 
             id: '2', 
-            model: '/avatars/Haejin.vrm', 
-            name: 'Digital Native',
-            preview: '👤'
+            model: '/avatars/ayato.vrm', 
+            name: 'Ayato',
+            preview: '/avatar-previews/ayato.webp',
         },
         { 
             id: '3', 
-            model: '/avatars/Englando.vrm', 
-            name: 'Scholar',
-            preview: '👨‍🏫'
+            model: '/avatars/kazuha.vrm', 
+            name: 'Kazuha',
+            preview: '/avatar-previews/kazuha.webp',
         },
         { 
             id: '4', 
-            model: '/avatars/Linn.vrm', 
-            name: 'Creative',
-            preview: '👩'
+            model: '/avatars/eula.vrm', 
+            name: 'Eula',
+            preview: '/avatar-previews/eula.webp',
         }
     ];
 
@@ -200,7 +200,11 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
                                                 : 'border-gray-600 bg-gray-700 hover:border-gray-500'
                                         }`}
                                     >
-                                        <div className="text-4xl mb-2">{avatar.preview}</div>
+                                        <img 
+                                            src={avatar.preview} 
+                                            alt={avatar.name}
+                                            className="w-16 h-16 object-cover rounded"
+                                        />
                                         <div className="text-xs text-gray-300">{avatar.name}</div>
                                     </button>
                                 ))}
