@@ -134,3 +134,4 @@ dist
 .env*.local
 
 digest/
+backup/

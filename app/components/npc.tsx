@@ -10,11 +10,11 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { loadMixamoAnimation } from './loadMixamoAnimation.js';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import TWEEN from '@tweenjs/tween.js';
-// import chatService from './chat_service';
-// import DynamicChatService from './DynamicChatService'; // Adjust filename if needed
+import DynamicChatService from './DynamicChatService';
 import summaryMetadata from '@/public/context/summary_metadata_with_vercel_urls.json';
 import ModelViewer from './model-viewer';
 import ReactMarkdown from 'react-markdown';
@@ -70,12 +70,16 @@ const ANIMATION_GREAT_SWORD_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-
 const ANIMATION_PISTOL_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Pistol%20Idle-UNnPpwZlfzGEk7bWquH5YabWhRDHYp.fbx';
 
 const Scene = ({ currentLobby }) => {
-    const { chatService } = useLobbyStore();
-
     // ADD THIS LOADING CHECK
     if (!currentLobby) {
         return <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">Loading World...</div>;
     }
+    const { 
+        activeChatService,
+        activeChatTarget,
+        startChat,
+        endChat: endChatStore
+    } = useLobbyStore();
 
     const containerRef = useRef(null);
     const rendererRef = useRef(null);
@@ -105,7 +109,158 @@ const Scene = ({ currentLobby }) => {
     const [chatMessages, setChatMessages] = useState([]);
     const [currentMessage, setCurrentMessage] = useState('');
     const [showMobileWarning, setShowMobileWarning] = useState(false);
+    // 2. ADD THESE REFS inside the Scene component (near other refs):
+    const otherAvatarsRef = useRef(new Map()); // Store other users' VRM instances
+    const positionUpdateInterval = useRef(0);   // For syncing position to database
 
+    // ADD THESE NEW REFS:
+    const nearestAvatarRef = useRef<any>(null);
+    const INTERACTION_DISTANCE = 2.5; // Move this constant here
+
+    // ============================================
+    // MOVE THESE FUNCTIONS OUTSIDE init()
+    // At component level, before init()
+    // ============================================
+    
+    const loadOtherAvatar = async (profileId: string, avatarState: any) => {
+        try {
+            const loader = new GLTFLoader();
+            loader.crossOrigin = 'anonymous';
+            loader.register((parser) => {
+                return new VRMLoaderPlugin(parser, { autoUpdateHumanBones: true });
+            });
+
+            // Get profile info from cache
+            const { profilesCache } = useLobbyStore.getState();
+            const profile = profilesCache.get(profileId);
+            if (!profile) return;
+
+            // Load the avatar model
+            const gltf = await loader.loadAsync(profile.selected_avatar_model);
+            const vrm = gltf.userData.vrm;
+            
+            // Add to scene (only if scene exists)
+            if (sceneRef.current) {
+                sceneRef.current.add(vrm.scene);
+            }
+            
+            // Set initial position and rotation
+            vrm.scene.position.set(
+                avatarState.position.x,
+                avatarState.position.y,
+                avatarState.position.z
+            );
+            vrm.scene.rotation.set(
+                avatarState.rotation.x,
+                avatarState.rotation.y,
+                avatarState.rotation.z
+            );
+
+            // Apply VRM rotation
+            VRMUtils.rotateVRM0(vrm);
+            
+            // Store in ref
+            otherAvatarsRef.current.set(profileId, {
+                vrm: vrm,
+                mixer: new THREE.AnimationMixer(vrm.scene),
+                currentAnimation: avatarState.animation,
+                isOnline: avatarState.is_online
+            });
+
+            // Load animations for this avatar
+            const mixer = otherAvatarsRef.current.get(profileId).mixer;
+            const idleClip = await loadMixamoAnimation(ANIMATION_IDLE, vrm);
+            const walkingClip = await loadMixamoAnimation(ANIMATION_WALKING, vrm);
+            
+            // Play initial animation
+            const clipToPlay = avatarState.animation === 'Walking' ? walkingClip : idleClip;
+            mixer.clipAction(clipToPlay).play();
+            
+            console.log(`Loaded avatar for ${profile.username}`);
+        } catch (error) {
+            console.error(`Error loading avatar for ${profileId}:`, error);
+        }
+    };
+
+    const updateOtherAvatar = (profileId: string, avatarState: any) => {
+        const avatarData = otherAvatarsRef.current.get(profileId);
+        if (!avatarData) return;
+        
+        const { vrm } = avatarData;
+        
+        // Smoothly interpolate position
+        const currentPos = vrm.scene.position;
+        const targetPos = avatarState.position;
+        
+        // Use TWEEN for smooth movement
+        new TWEEN.Tween(currentPos, tweenGroupRef.current)
+            .to(targetPos, 500) // 500ms interpolation
+            .easing(TWEEN.Easing.Linear.None)
+            .start();
+        
+        // Update rotation
+        vrm.scene.rotation.set(
+            avatarState.rotation.x,
+            avatarState.rotation.y,
+            avatarState.rotation.z
+        );
+        
+        // Update animation if changed
+        if (avatarData.currentAnimation !== avatarState.animation) {
+            // Switch animation (you'll need to implement this based on your animation system)
+            avatarData.currentAnimation = avatarState.animation;
+        }
+    };
+
+
+    // ============================================
+    // PUT useEffect AT COMPONENT LEVEL (NOT IN init!)
+    // ============================================
+    
+    useEffect(() => {
+        // Only run if scene is initialized
+        if (!sceneRef.current) return;
+        
+        const { otherAvatars } = useLobbyStore.getState();
+        
+        // Process each avatar from the store
+        otherAvatars.forEach((avatarState, profileId) => {
+            if (!otherAvatarsRef.current.has(profileId)) {
+                // New avatar - load it
+                loadOtherAvatar(profileId, avatarState);
+            } else {
+                // Existing avatar - update it
+                updateOtherAvatar(profileId, avatarState);
+            }
+        });
+        
+        // Remove avatars that left
+        otherAvatarsRef.current.forEach((avatarData, profileId) => {
+            if (!otherAvatars.has(profileId)) {
+                // Remove from scene
+                if (sceneRef.current && avatarData.vrm) {
+                    sceneRef.current.remove(avatarData.vrm.scene);
+                }
+                otherAvatarsRef.current.delete(profileId);
+                console.log(`Removed avatar for profile ${profileId}`);
+            }
+        });
+    }); // Subscribe to store changes through a separate subscription
+
+    // Subscribe to store changes
+    useEffect(() => {
+        const unsubscribe = useLobbyStore.subscribe(
+            (state) => state.otherAvatars,
+            (otherAvatars) => {
+                console.log('Other avatars updated:', otherAvatars.size);
+                // The other useEffect will handle the actual updates
+            }
+        );
+
+        return () => {
+            unsubscribe();
+        };
+    }, []);
 
 
     // Update keyStates ref to include arrow keys
@@ -362,7 +517,7 @@ const Scene = ({ currentLobby }) => {
 
         if (event.key.toLowerCase() === 'f' && isNearNPC && !isChatting) {
             console.log('Starting chat...');
-            startChat();
+            startUniversalChat();
         }
 
         if (event.key === 'Escape' && isChatting) {
@@ -410,38 +565,62 @@ const Scene = ({ currentLobby }) => {
         targetTween.start();
     };
 
-    const startChat = () => {
-        // ADD THIS GUARD
-        if (!chatService) {
-            console.error("Chat service not initialized yet!");
-            return;
-        }
-
-        // Store original camera position and target
+    const startUniversalChat = () => {
+        if (!nearestAvatarRef.current) return;
+        
+        // Store original camera position
         originalCameraPositionRef.current = cameraRef.current.position.clone();
         originalCameraTargetRef.current = controlsRef.current.target.clone();
-
+        
+        // Start the appropriate chat through store
+        if (nearestAvatarRef.current.type === 'npc') {
+            console.log('Starting NPC chat with lobby:', currentLobby);
+            startChat({
+                type: 'npc',
+                lobby: currentLobby
+            });
+        } else if (nearestAvatarRef.current.type === 'digital-twin') {
+            const { profile, avatarState } = nearestAvatarRef.current.data;
+            startChat({
+                type: 'digital-twin',
+                profile,
+                avatarState
+            });
+        }
+        
+        // GET THE SERVICE DIRECTLY FROM STORE AFTER CREATING IT
+        const { activeChatService: newService, activeChatTarget: newTarget } = useLobbyStore.getState();
+        
+        console.log('New chat service:', newService);
+        console.log('New chat target:', newTarget);
+        
+        if (!newService) {
+            console.error('Failed to create chat service!');
+            return;
+        }
+        
         setIsChatting(true);
-
+        
+        // Camera animation
         const avatar = avatarRef.current.scene;
-        const npc = npcRef.current.scene;
-        const camera = cameraRef.current;
-
-        // Calculate midpoint between avatar and NPC
+        const targetEntity = nearestAvatarRef.current.type === 'npc' 
+            ? npcRef.current.scene 
+            : nearestAvatarRef.current.avatar.scene;  // <-- Remove .vrm, already IS the vrm
+                
         const midpoint = new THREE.Vector3().addVectors(
             avatar.position,
-            npc.position
+            targetEntity.position
         ).multiplyScalar(0.5);
 
         // Calculate vector from midpoint to current camera position
         const currentToCameraVector = new THREE.Vector3()
-            .copy(camera.position)
+            .copy(cameraRef.current.position)  // <-- USE THE REF
             .sub(midpoint);
         currentToCameraVector.y = 0; // Project onto XZ plane
 
         // Calculate vector from avatar to NPC
         const avatarToNPC = new THREE.Vector3()
-            .copy(npc.position)
+            .copy(targetEntity.position)  // <-- USE targetEntity INSTEAD
             .sub(avatar.position);
         avatarToNPC.y = 0; // Project onto XZ plane
 
@@ -467,43 +646,39 @@ const Scene = ({ currentLobby }) => {
         // Animate camera to new position
         animateCamera(targetCameraPosition, midpoint);
 
+        // Initial greeting - use newTarget instead of activeChatTarget
+        const chatName = newTarget?.name || 'Host';
         setChatMessages([{
-            sender: currentLobby.hostAvatar.name || 'Host',
+            sender: chatName,
             message: '',
             isStreaming: true
         }]);
-
-        // Modify the initial greeting based on whether we've chatted before
-        const initialMessage = hasChattedBefore 
-            ? "*Same player left, and now has returned and approaches*"
-            : "*Player approaches*";
-
-        // Get initial greeting from chatService
-        chatService.getNPCResponse(initialMessage, (partialMessage) => {
+        
+        const greeting = nearestAvatarRef.current.type === 'npc'
+            ? (hasChattedBefore ? "*Same player left, and now has returned and approaches*" : "*Player approaches*")
+            : "*Someone approaches*";
+        
+        // Use newService instead of activeChatService
+        newService.getResponse(greeting, (partialMessage) => {
             setChatMessages([{
-                sender: currentLobby.hostAvatar.name || 'Host',
+                sender: chatName,
                 message: partialMessage,
                 isStreaming: true
             }]);
         }).then(response => {
             setChatMessages([{
-                sender: currentLobby.hostAvatar.name || 'Host',
+                sender: chatName,
                 message: response.message
             }]);
-
-            // ADD THIS: Speak the greeting
+            
             speakNPCMessage(response.message);
             
-            if (response.animation && npcAnimationActionsRef.current[response.animation]) {
-                playNpcAnimation(response.animation);
-            }
-
-            // Set hasChattedBefore to true after first chat
-            if (!hasChattedBefore) {
+            if (nearestAvatarRef.current.type === 'npc' && !hasChattedBefore) {
                 setHasChattedBefore(true);
             }
         });
-
+        
+        // Focus input
         setTimeout(() => {
             const inputElement = document.querySelector('input[type="text"]');
             if (inputElement) {
@@ -511,11 +686,13 @@ const Scene = ({ currentLobby }) => {
             }
         }, 100);
     };
-
     const endChat = () => {
         // Stop any playing audio
         stopAllTTS();
 
+        // Use store to end chat
+        endChatStore();  // ADD THIS
+        
         returnToShop();
 
         setIsChatting(false);
@@ -747,8 +924,9 @@ const Scene = ({ currentLobby }) => {
     // Update your chat submit handler
     const handleChatSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!chatService) {
-            console.error("Chat service not initialized yet!");
+        // CHANGE FROM chatService TO activeChatService:
+        if (!activeChatService) {
+            console.error("No active chat service!");
             return;
         }
         if (!currentMessage.trim()) return;
@@ -764,7 +942,7 @@ const Scene = ({ currentLobby }) => {
         setTimeout(scrollToBottom, 100);
 
         setChatMessages(prev => [...prev, {
-            sender: currentLobby.hostAvatar.name || 'Host', // <-- Use dynamic name with fallback
+            sender: activeChatTarget?.name || 'Host',
             message: '',
             isStreaming: true
         }]);
@@ -788,7 +966,8 @@ const Scene = ({ currentLobby }) => {
         };
 
         try {
-            const response = await chatService.getNPCResponse(userMessage, streamHandler);
+            // CHANGE TO USE activeChatService:
+            const response = await activeChatService.getResponse(userMessage, streamHandler);
 
             // console.log('Complete NPC response:', response.message); // Comment out for production
 
@@ -925,8 +1104,7 @@ const Scene = ({ currentLobby }) => {
         }
     }
     // const PLAYER_VRM_URL = '/avatars/VRoid_Sample_B.vrm';
-    // const PLAYER_VRM_URL = '/avatars/avatar.vrm';
-    const PLAYER_VRM_URL = '/avatars/1347496417698417678.vrm';
+    const PLAYER_VRM_URL = '/avatars/raiden.vrm';
     // const PLAYER_VRM_URL = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/VRoid_Sample_B-D0UeF1RrEd5ItEeCiUZ3o8DxtxvFIK.vrm';
 
     const sceneRef = useRef(null);
@@ -1066,7 +1244,7 @@ const Scene = ({ currentLobby }) => {
         loader.load(
             // `/avatars/${selectedAvatar}`,
             // selectedAvatar,
-            '/avatars/1347496417698417678.vrm', // <--- THE SIMPLE FIX
+            '/avatars/raiden.vrm', // <--- THE SIMPLE FIX
             async (gltf) => {
                 const vrm = gltf.userData.vrm;
                 sceneRef.current.add(vrm.scene);
@@ -1168,7 +1346,7 @@ const Scene = ({ currentLobby }) => {
         const clock = new THREE.Clock();
         const moveSpeed = 0.05;
         const rotationSpeed = 0.15;
-        const INTERACTION_DISTANCE = 2.5;
+
 
         function animate() {
             requestAnimationFrame(animate);
@@ -1185,15 +1363,59 @@ const Scene = ({ currentLobby }) => {
                 npcMixerRef.current.update(deltaTime);
             }
 
+            // DISTANCE CHECKING TO ALL AVATARS
             if (avatarRef.current && npcRef.current) {
                 const avatar = avatarRef.current.scene;
                 const npc = npcRef.current.scene;
+                
+                // Check distance to ALL avatars (NPCs + Digital Twins)
+                let nearestAvatar = null;
+                let nearestDistance = Infinity;
+                let nearestType = null;
+                let nearestData = null;
+                
+                // Check NPC
+                const npcDistance = avatar.position.distanceTo(npc.position);
+                if (npcDistance < INTERACTION_DISTANCE) {
+                    nearestAvatar = npc;
+                    nearestDistance = npcDistance;
+                    nearestType = 'npc';
+                    nearestData = currentLobby.hostAvatar;
+                }
+                
+                // Check other avatars (digital twins)
+                otherAvatarsRef.current.forEach((avatarData, profileId) => {
+                    if (avatarData.vrm) {
+                        const distance = avatar.position.distanceTo(avatarData.vrm.scene.position);
+                        if (distance < INTERACTION_DISTANCE && distance < nearestDistance) {
+                            const { profilesCache } = useLobbyStore.getState();
+                            const profile = profilesCache.get(profileId);
+                            if (profile) {
+                                nearestAvatar = avatarData.vrm;
+                                nearestDistance = distance;
+                                nearestType = 'digital-twin';
+                                nearestData = { profile, avatarState: avatarData };
+                            }
+                        }
+                    }
+                });
+                
+                // Update who we're near
+                if (nearestAvatar) {
+                    setIsNearNPC(true); // Reuse existing state
+                    nearestAvatarRef.current = {
+                        avatar: nearestAvatar,
+                        type: nearestType,
+                        data: nearestData,
+                        distance: nearestDistance
+                    };
+                } else {
+                    setIsNearNPC(false);
+                    nearestAvatarRef.current = null;
+                }
 
-                const distance = avatar.position.distanceTo(npc.position);
-                setIsNearNPC(distance < INTERACTION_DISTANCE);
-
-                // UPDATE: Wrap this entire block in the new "if" condition
-                if (!isChatting && !isJumpingRef.current) {
+                // MOVEMENT LOGIC
+                if (!isChatting && !isJumpingRef.current && !isTransitioningRef.current) {
                     const moveVector = new THREE.Vector3(0, 0, 0);
 
                     const cameraForward = new THREE.Vector3();
@@ -1234,10 +1456,12 @@ const Scene = ({ currentLobby }) => {
                         camera.position.copy(controls.target).add(cameraOffset);
 
                         // After moving the avatar, update weapon highlighting
-                        handleWeaponHover({
-                            clientX: mouseRef.current.x * window.innerWidth / 2 + window.innerWidth / 2,
-                            clientY: -mouseRef.current.y * window.innerHeight / 2 + window.innerHeight / 2
-                        });
+                        if (typeof handleWeaponHover === 'function') {
+                            handleWeaponHover({
+                                clientX: mouseRef.current.x * window.innerWidth / 2 + window.innerWidth / 2,
+                                clientY: -mouseRef.current.y * window.innerHeight / 2 + window.innerHeight / 2
+                            });
+                        }
                     } else {
                         const currentWeapon = equippedWeaponRef.current;
                         if (currentWeapon) {
@@ -1252,8 +1476,49 @@ const Scene = ({ currentLobby }) => {
                 }
 
                 avatarRef.current.update(deltaTime);
-                npcRef.current.update(deltaTime);
+                if (npcRef.current) {
+                    npcRef.current.update(deltaTime);
+                }
             }
+
+            // POSITION SYNCING TO DATABASE
+            positionUpdateInterval.current += deltaTime;
+            if (positionUpdateInterval.current > 0.1) { // 100ms intervals
+                const { profile, currentLobby } = useLobbyStore.getState();
+                
+                if (profile && currentLobby && avatarRef.current) {
+                    const pos = avatarRef.current.scene.position;
+                    const rot = avatarRef.current.scene.rotation;
+                    
+                    // Check if position actually changed
+                    const lastPos = avatarRef.current.lastSyncedPosition || { x: 0, y: 0, z: 0 };
+                    const moved = Math.abs(pos.x - lastPos.x) > 0.01 || 
+                                Math.abs(pos.z - lastPos.z) > 0.01;
+                    
+                    if (moved || currentAnimationRef.current?.getClip().name !== avatarRef.current.lastSyncedAnimation) {
+                        useLobbyStore.getState().updateAvatarState({
+                            position: { x: pos.x, y: pos.y, z: pos.z },
+                            rotation: { x: rot.x, y: rot.y, z: rot.z },
+                            animation: currentAnimationRef.current?.getClip().name || 'Idle'
+                        });
+                        
+                        avatarRef.current.lastSyncedPosition = { x: pos.x, y: pos.y, z: pos.z };
+                        avatarRef.current.lastSyncedAnimation = currentAnimationRef.current?.getClip().name;
+                    }
+                }
+                
+                positionUpdateInterval.current = 0;
+            }
+
+            // UPDATE OTHER AVATARS' ANIMATIONS
+            otherAvatarsRef.current.forEach((avatarData) => {
+                if (avatarData.mixer) {
+                    avatarData.mixer.update(deltaTime);
+                }
+                if (avatarData.vrm) {
+                    avatarData.vrm.update(deltaTime);
+                }
+            });
 
             controls.update();
             renderer.render(sceneRef.current, camera);
@@ -2094,7 +2359,7 @@ const Scene = ({ currentLobby }) => {
             {isMobile && isNearNPC && !isChatting && (
                 <Button
                     className="fixed bottom-32 right-8 z-20 bg-black/75 text-white px-8 py-4 rounded-full"
-                    onClick={startChat}
+                    onClick={startUniversalChat}
                 >
                     Talk
                 </Button>
@@ -2112,7 +2377,12 @@ const Scene = ({ currentLobby }) => {
                 <Card className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[1000px] bg-white/50 backdrop-blur-sm z-10">
                     <CardContent className="p-4">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="text-sm text-gray-700">Chatting with {currentLobby.hostAvatar.name || 'Host'}</span>
+                            <span className="text-sm text-gray-700">
+                                Chatting with {activeChatTarget?.name || 'Host'}
+                                {activeChatTarget?.type === 'digital-twin' && (
+                                    <Badge className="ml-2" variant="secondary">Digital Twin</Badge>
+                                )}
+                            </span>
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -2133,8 +2403,8 @@ const Scene = ({ currentLobby }) => {
                                 >
                                     {chatMessages.map((msg, index) => {
                                         if (msg.sender === 'Player' || msg.message || !msg.isStreaming) {
-                                            // Parse message and tags if it's an NPC message
-                                            const { cleanMessage, tags } = msg.sender === (currentLobby.hostAvatar.name || 'Host')
+                                            // Should check against the active chat target:
+                                            const { cleanMessage, tags } = msg.sender === activeChatTarget?.name
                                                 ? parseMessageTags(msg.message)
                                                 : { cleanMessage: msg.message, tags: [] };
 
