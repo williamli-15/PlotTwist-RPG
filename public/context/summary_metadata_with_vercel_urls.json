@@ -18,7 +18,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219864766536287890625371326907368",
       "tokenType": "ERC1155",
       "name": "Wooden Stick",
-      "description": "A very sticky wood.\n\nThis sword was created by @zoan on April 3, 2024 using the Nifty Island creator tool.",
+      "description": "A very sticky wood.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c6406208001a704afec4fe2bc0003e8/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/e3395491717ab516b158a935a54fcfd8",
@@ -49,7 +49,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Wooden Stick",
-          "description": "A very sticky wood.\n\nThis sword was created by @zoan on April 3, 2024 using the Nifty Island creator tool.",
+          "description": "A very sticky wood.",
           "attributes": []
         }
       },
@@ -115,7 +115,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219882794938052456414988126389224",
       "tokenType": "ERC1155",
       "name": "Potato",
-      "description": "This potato is more than it looks!\n\nThis pistol was created by @zoan on April 3, 2024 using the Nifty Island creator tool.",
+      "description": "This potato is more than it looks!",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620ba426596aa9847ea960003e8/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/7697059d04d9e60c7af67a33513f6c53",
@@ -146,7 +146,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Potato",
-          "description": "This potato is more than it looks!\n\nThis pistol was created by @zoan on April 3, 2024 using the Nifty Island creator tool.",
+          "description": "This potato is more than it looks!",
           "attributes": []
         }
       },
@@ -223,7 +223,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219844529413980602846078195204352",
       "tokenType": "ERC1155",
       "name": "Dragon Dagger",
-      "description": "A weapon worthy of a Shadow Monarch.\n\nThis sword was created by @zoan on April 4, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon worthy of a Shadow Monarch.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c6406203e9de5ae2a9843a6ad000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/72e7d276244c66e720cea8fe97ea70ff",
@@ -254,7 +254,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Dragon Dagger",
-          "description": "A weapon worthy of a Shadow Monarch.\n\nThis sword was created by @zoan on April 4, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon worthy of a Shadow Monarch.",
           "attributes": []
         }
       },
@@ -336,7 +336,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219903170640319905847890795299072",
       "tokenType": "ERC1155",
       "name": "Dragon Pistol",
-      "description": "A pistol with the firepower of a dragon's breath, worthy of a Shadow Monarch.\n\nThis pistol was created by @ on April 4, 2024 using the Nifty Island creator tool.",
+      "description": "A pistol with the firepower of a dragon's breath, worthy of a Shadow Monarch.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620fc18c85fe17643939f000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/5b151c6de7a3fafe5d447d3fdadd6482",
@@ -367,7 +367,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Dragon Pistol",
-          "description": "A pistol with the firepower of a dragon's breath, worthy of a Shadow Monarch.\n\nThis pistol was created by @ on April 4, 2024 using the Nifty Island creator tool.",
+          "description": "A pistol with the firepower of a dragon's breath, worthy of a Shadow Monarch.",
           "attributes": []
         }
       },
@@ -449,7 +449,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219826169492368987446256957653248",
       "tokenType": "ERC1155",
       "name": "Dragon Sword",
-      "description": "A large heavy hitter with the power of a dragon.\n\nThis sword was created by @zoan on April 7, 2024 using the Nifty Island creator tool.",
+      "description": "A large heavy hitter with the power of a dragon.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620034aed0d447d4b9aa9000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/87d9f418392e025611c8cacf2b0e4f0f",
@@ -480,7 +480,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Dragon Sword",
-          "description": "A large heavy hitter with the power of a dragon.\n\nThis sword was created by @zoan on April 7, 2024 using the Nifty Island creator tool.",
+          "description": "A large heavy hitter with the power of a dragon.",
           "attributes": []
         }
       },
@@ -562,7 +562,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219837163008939518603436807422208",
       "tokenType": "ERC1155",
       "name": "Magic Wand",
-      "description": "A small but powerful wand.\n\nThis pistol was created by @zoan on April 5, 2024 using the Nifty Island creator tool.",
+      "description": "A small but powerful wand.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c64062026d08cbcb8034f34ba000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/6f29db76b5d4faa9a7cd13becd20785f",
@@ -593,7 +593,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Magic Wand",
-          "description": "A small but powerful wand.\n\nThis pistol was created by @zoan on April 5, 2024 using the Nifty Island creator tool.",
+          "description": "A small but powerful wand.",
           "attributes": []
         }
       },
@@ -675,7 +675,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219868635691073532973526414262528",
       "tokenType": "ERC1155",
       "name": "Magic Blade",
-      "description": "A very magical blade.\n\nThis sword was created by @zoan on April 5, 2024 using the Nifty Island creator tool.",
+      "description": "A very magical blade.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c6406208c822469e6a84d6795000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/134cf7722705282af08378c211ac3e7f",
@@ -706,7 +706,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Magic Blade",
-          "description": "A very magical blade.\n\nThis sword was created by @zoan on April 5, 2024 using the Nifty Island creator tool.",
+          "description": "A very magical blade.",
           "attributes": []
         }
       },
@@ -788,7 +788,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219839535975484337754869581480192",
       "tokenType": "ERC1155",
       "name": "Magic Sword",
-      "description": "A powerful yet agile weapon favored by spellcasters.\n\nThis sword was created by @zoan on April 7, 2024 using the Nifty Island creator tool.",
+      "description": "A powerful yet agile weapon favored by spellcasters.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c6406202e7b6bf2e00e45499a000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/dc26e7d1e7a1bb61a7ce8d77119d690c",
@@ -819,7 +819,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Magic Sword",
-          "description": "A powerful yet agile weapon favored by spellcasters.\n\nThis sword was created by @zoan on April 7, 2024 using the Nifty Island creator tool.",
+          "description": "A powerful yet agile weapon favored by spellcasters.",
           "attributes": []
         }
       },
@@ -901,7 +901,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219871764999479426970627564634368",
       "tokenType": "ERC1155",
       "name": "Beast Blade",
-      "description": "A giant blade worthy of beasts. Submission for the Nifty Island x AKCB UGC contest.\n\nThis sword was created by @zoan on April 15, 2024 using the Nifty Island creator tool.",
+      "description": "A giant blade worthy of beasts.",
       "tokenUri": " https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620969ea53e80dd4bc494000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/0f0f3e0fc38097e017989eddc810c84b",
@@ -932,7 +932,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Beast Blade",
-          "description": "A giant blade worthy of beasts. Submission for the Nifty Island x AKCB UGC contest.\n\nThis sword was created by @zoan on April 15, 2024 using the Nifty Island creator tool.",
+          "description": "A giant blade worthy of beasts.",
           "attributes": []
         }
       },
@@ -1014,7 +1014,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219852709071422716363600784523520",
       "tokenType": "ERC1155",
       "name": "Beast Pistol",
-      "description": "A powerful pistol worthy of beasts. Submission for the Nifty Island x AKCB UGC contest.\n\nThis pistol was created by @zoan on April 15, 2024 using the Nifty Island creator tool.",
+      "description": "A powerful pistol worthy of beasts.",
       "tokenUri": " https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620590bf3849cdb464ab5000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/c5931a8a8a1edb56bfe742a5ee19e51f",
@@ -1045,7 +1045,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Beast Pistol",
-          "description": "A powerful pistol worthy of beasts. Submission for the Nifty Island x AKCB UGC contest.\n\nThis pistol was created by @zoan on April 15, 2024 using the Nifty Island creator tool.",
+          "description": "A powerful pistol worthy of beasts.",
           "attributes": []
         }
       },
@@ -1127,7 +1127,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219869999750243678418908152332544",
       "tokenType": "ERC1155",
       "name": "Beast Dagger",
-      "description": "A dagger with the power of a legendary shadow beast. Submission for the Nifty Island x AKCB UGC contest.\n\nThis sword was created by @zoan on April 15, 2024 using the Nifty Island creator tool.",
+      "description": "A dagger with the power of a legendary shadow beast.",
       "tokenUri": " https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c64062090ea772daf3d493ab9000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/4c089d277d373ef82ae1859855187a2e",
@@ -1158,7 +1158,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Beast Dagger",
-          "description": "A dagger with the power of a legendary shadow beast. Submission for the Nifty Island x AKCB UGC contest.\n\nThis sword was created by @zoan on April 15, 2024 using the Nifty Island creator tool.",
+          "description": "A dagger with the power of a legendary shadow beast.",
           "attributes": []
         }
       },
@@ -1240,7 +1240,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219879662788676789298310403850496",
       "tokenType": "ERC1155",
       "name": "Dragon Chakram",
-      "description": "A dragon weapon that wreaths destruction along its path.\n\nThis sword was created by @zoan on April 20, 2024 using the Nifty Island creator tool.",
+      "description": "A dragon weapon that wreaths destruction along its path.",
       "tokenUri": " https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620b0238b28c8b544429c000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/727a82355c3ab621c2bcc588828b80a5",
@@ -1271,7 +1271,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Dragon Chakram",
-          "description": "A dragon weapon that wreaths destruction along its path.\n\nThis sword was created by @zoan on April 20, 2024 using the Nifty Island creator tool.",
+          "description": "A dragon weapon that wreaths destruction along its path.",
           "attributes": []
         }
       },
@@ -1342,7 +1342,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219867320405999286938053084446976",
       "tokenType": "ERC1155",
       "name": "Galactic Dagger",
-      "description": "A weapon emanating galactic power.\n\nThis sword was created by @zoan on April 23, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon emanating galactic power.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620884229f7277c4798b9000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/49f83014d6118ec6ad282182f99b4cb1",
@@ -1373,7 +1373,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Dagger",
-          "description": "A weapon emanating galactic power.\n\nThis sword was created by @zoan on April 23, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon emanating galactic power.",
           "attributes": []
         }
       },
@@ -1439,7 +1439,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219881755379579551569399915741440",
       "tokenType": "ERC1155",
       "name": "Galactic Blaster",
-      "description": "A weapon emanating galactic power.\n\nThis pistol was created by @zoan on April 23, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon emanating galactic power.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620b6e67e84edce46ad90000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/decae565997049b6800cb48e71f2f933",
@@ -1470,7 +1470,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Blaster",
-          "description": "A weapon emanating galactic power.\n\nThis pistol was created by @zoan on April 23, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon emanating galactic power.",
           "attributes": []
         }
       },
@@ -1536,7 +1536,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219901286034167141915888189440256",
       "tokenType": "ERC1155",
       "name": "Galactic Double Blade",
-      "description": "A weapon emanating galactic power.\n\nThis sword was created by @zoan on April 24, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon emanating galactic power.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620f601df7fa01a419a81000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/2cd8cd53f6d9b60cd3521b5b79fa5c2c",
@@ -1567,7 +1567,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Double Blade",
-          "description": "A weapon emanating galactic power.\n\nThis sword was created by @zoan on April 24, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon emanating galactic power.",
           "attributes": []
         }
       },
@@ -1633,7 +1633,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219868950805959366933511820804352",
       "tokenType": "ERC1155",
       "name": "Galactic Scimitar",
-      "description": "A weapon emanating galactic power.\n\nThis sword was created by @zoan on April 24, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon emanating galactic power.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c6406208d86cc961758452baf000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/1104b5e9fd030b65a37460b746887307",
@@ -1664,7 +1664,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Scimitar",
-          "description": "A weapon emanating galactic power.\n\nThis sword was created by @zoan on April 24, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon emanating galactic power.",
           "attributes": []
         }
       },
@@ -1730,7 +1730,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219899334107107445024531616366848",
       "tokenType": "ERC1155",
       "name": "Galactic Chakram",
-      "description": "A weapon emanating galactic power. \n\nThis sword was created by @zoan on April 25, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon emanating galactic power.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620efb346ddb14c44b4ad000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/517b72d025d71de3579e509aa40ca32c",
@@ -1761,7 +1761,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Chakram",
-          "description": "A weapon emanating galactic power. \n\nThis sword was created by @zoan on April 25, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon emanating galactic power.",
           "attributes": []
         }
       },
@@ -1827,7 +1827,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219881390044149695245192106344704",
       "tokenType": "ERC1155",
       "name": "Galactic Soldier Sword",
-      "description": "A weapon emanating galactic power.\n\nThis sword was created by @zoan on April 26, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon emanating galactic power.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620b5b84bbb9795408cb2000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/fe169fe298a016a86204b16573697dd4",
@@ -1858,7 +1858,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Soldier Sword",
-          "description": "A weapon emanating galactic power.\n\nThis sword was created by @zoan on April 26, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon emanating galactic power.",
           "attributes": []
         }
       },
@@ -1924,7 +1924,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219902124390129534197801326477412",
       "tokenType": "ERC1155",
       "name": "Galactic Buster Sword",
-      "description": "A large galactic weapon that can cleave through anything.\n\nThis sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.",
+      "description": "A large galactic weapon that can cleave through anything.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620f8b758476999464899000064/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/af4d258968751891611c802d73c2b96a",
@@ -1955,7 +1955,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Buster Sword",
-          "description": "A large galactic weapon that can cleave through anything.\n\nThis sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.",
+          "description": "A large galactic weapon that can cleave through anything.",
           "attributes": []
         }
       },
@@ -2021,7 +2021,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219860478810755087724075171184740",
       "tokenType": "ERC1155",
       "name": "Galactic Moon Blade",
-      "description": "A large galactic weapon with high agility and aftershocks.\n\nThis sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.",
+      "description": "A large galactic weapon with high agility and aftershocks.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c6406207226edd1cd894756b3000064/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/dec9b874219cb7efa1daddf09bdf1e62",
@@ -2052,7 +2052,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Moon Blade",
-          "description": "A large galactic weapon with high agility and aftershocks.\n\nThis sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.",
+          "description": "A large galactic weapon with high agility and aftershocks.",
           "attributes": []
         }
       },
@@ -2118,7 +2118,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219859907275389321193294152073316",
       "tokenType": "ERC1155",
       "name": "Galactic Ego Sword",
-      "description": "A large galactic weapon with a soul of its own that can communicate to the wielder telepathically.\n\nThis sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.",
+      "description": "A large galactic weapon with a soul of its own that can communicate to the wielder telepathically.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620704e2a7f8ac446f78e000064/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/cc568599128f6277a3e1685ca9ac3b56",
@@ -2149,7 +2149,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Ego Sword",
-          "description": "A large galactic weapon with a soul of its own that can communicate to the wielder telepathically.\n\nThis sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.",
+          "description": "A large galactic weapon with a soul of its own that can communicate to the wielder telepathically.",
           "attributes": []
         }
       },
@@ -2215,7 +2215,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219900626801634831090991287500900",
       "tokenType": "ERC1155",
       "name": "Galactic Monarch Sword",
-      "description": "A large galactic weapon worthy of rulers of galaxies.\n\nThis sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.",
+      "description": "A large galactic weapon worthy of rulers of galaxies.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620f3e0919470af4ba2a2000064/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/5051614e4f1bea0bb18e3221203747a9",
@@ -2246,7 +2246,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Monarch Sword",
-          "description": "A large galactic weapon worthy of rulers of galaxies.\n\nThis sword was created by @zoan on April 27, 2024 using the Nifty Island creator tool.",
+          "description": "A large galactic weapon worthy of rulers of galaxies.",
           "attributes": []
         }
       },
@@ -2312,7 +2312,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219830252873040676414454790881380",
       "tokenType": "ERC1155",
       "name": "Galactic Double Axe",
-      "description": "A powerful axe with galactic power in every swing.\n\nThis sword was created by @zoan on May 1, 2024 using the Nifty Island creator tool.",
+      "description": "A powerful axe with galactic power in every swing.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620107c9e8b08b84520a6000064/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/3da5df691bbf84caefb3ac47f9f5135d",
@@ -2343,7 +2343,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Galactic Double Axe",
-          "description": "A powerful axe with galactic power in every swing.\n\nThis sword was created by @zoan on May 1, 2024 using the Nifty Island creator tool.",
+          "description": "A powerful axe with galactic power in every swing.",
           "attributes": []
         }
       },
@@ -2420,7 +2420,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219870896035971668489392713892096",
       "tokenType": "ERC1155",
       "name": "Angel Pistol",
-      "description": "A pistol blessed by an angel.\n\nThis pistol was created by @zoan on May 9, 2024 using the Nifty Island creator tool.",
+      "description": "A pistol blessed by an angel.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c64062093cfdb105b7546439d000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/54242e3b6ecdea3b52e65786974074a0",
@@ -2451,7 +2451,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Angel Pistol",
-          "description": "A pistol blessed by an angel.\n\nThis pistol was created by @zoan on May 9, 2024 using the Nifty Island creator tool.",
+          "description": "A pistol blessed by an angel.",
           "attributes": []
         }
       },
@@ -2533,7 +2533,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219897612933583999824725853339904",
       "tokenType": "ERC1155",
       "name": "Angel Dagger",
-      "description": "A dagger blessed by an angel.\n\nThis sword was created by @zoan on May 10, 2024 using the Nifty Island creator tool.",
+      "description": "A dagger blessed by an angel.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620ea238e32067f409994000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/60334a6523101100d03abd7cd50e1e1a",
@@ -2564,7 +2564,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Angel Dagger",
-          "description": "A dagger blessed by an angel.\n\nThis sword was created by @zoan on May 10, 2024 using the Nifty Island creator tool.",
+          "description": "A dagger blessed by an angel.",
           "attributes": []
         }
       },
@@ -2646,7 +2646,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219887985281321929173642971709696",
       "tokenType": "ERC1155",
       "name": "Angel Hammer",
-      "description": "A hammer blessed by an angel.\n\nThis sword was created by @zoan on May 10, 2024 using the Nifty Island creator tool.",
+      "description": "A hammer blessed by an angel.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620cb07bf871a0e43daaf000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/cd85827db1fe646564fabc0cc0a53336",
@@ -2677,7 +2677,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Angel Hammer",
-          "description": "A hammer blessed by an angel.\n\nThis sword was created by @zoan on May 10, 2024 using the Nifty Island creator tool.",
+          "description": "A hammer blessed by an angel.",
           "attributes": []
         }
       },
@@ -2759,7 +2759,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219897830771981503700407192387840",
       "tokenType": "ERC1155",
       "name": "Jade Weapon Pack",
-      "description": "Jade dagger, pistol, and sword pack.\n\nThis asset pack was created by @zoan on May 3, 2024 using the Nifty Island creator tool.",
+      "description": "Jade dagger, pistol, and sword pack.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620ead7bf453773409b98000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/792bdc1a043e3d082fe05b57e4e13114",
@@ -2810,7 +2810,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Jade Weapon Pack",
-          "description": "Jade dagger, pistol, and sword pack.\n\nThis asset pack was created by @zoan on May 3, 2024 using the Nifty Island creator tool.",
+          "description": "Jade dagger, pistol, and sword pack.",
           "attributes": []
         }
       },
@@ -2956,7 +2956,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219893190305127064075198856691968",
       "tokenType": "ERC1155",
       "name": "Crystal Weapon Pack",
-      "description": "Crystal dagger, pistol, and sword pack.\n\nThis asset pack was created by @ on May 4, 2024 using the Nifty Island creator tool.",
+      "description": "Crystal dagger, pistol, and sword pack.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620dbd93e30f857434998000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/8c6aed0a667233946afb4eac22f3feb2",
@@ -3007,7 +3007,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Crystal Weapon Pack",
-          "description": "Crystal dagger, pistol, and sword pack.\n\nThis asset pack was created by @ on May 4, 2024 using the Nifty Island creator tool.",
+          "description": "Crystal dagger, pistol, and sword pack.",
           "attributes": []
         }
       },
@@ -3153,7 +3153,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219887938850337228576568578670848",
       "tokenType": "ERC1155",
       "name": "Flower Dagger",
-      "description": "A dagger with flower power.\n\nThis sword was created by @zoan on May 11, 2024 using the Nifty Island creator tool.",
+      "description": "A dagger with flower power.",
       "tokenUri": " https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620cae1576260ac46eca2000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/3ea19d82908e72d2e66656f1deb2fb43",
@@ -3184,7 +3184,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Flower Dagger",
-          "description": "A dagger with flower power.\n\nThis sword was created by @zoan on May 11, 2024 using the Nifty Island creator tool.",
+          "description": "A dagger with flower power.",
           "attributes": []
         }
       },
@@ -3266,7 +3266,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219888026573433258425388202197248",
       "tokenType": "ERC1155",
       "name": "Flower Pistol",
-      "description": "A pistol with flower power.\n\nThis pistol was created by @zoan on May 11, 2024 using the Nifty Island creator tool.",
+      "description": "A pistol with flower power.",
       "tokenUri": " https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620cb29e778f1384038bf000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/1e8268c773dc673c033756f915d37769",
@@ -3297,7 +3297,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Flower Pistol",
-          "description": "A pistol with flower power.\n\nThis pistol was created by @zoan on May 11, 2024 using the Nifty Island creator tool.",
+          "description": "A pistol with flower power.",
           "attributes": []
         }
       },
@@ -3379,7 +3379,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219830941341628298369658733461760",
       "tokenType": "ERC1155",
       "name": "Excalipoor",
-      "description": "Traveller, this is *totally* the real, legendary Excalibur sword, sought after by legends such as Gilgamesh! No need to make the arduous journey to Sword in the Stone island ;) \n\nThis sword was created by @zoan on May 18, 2024 using the Nifty Island creator tool.",
+      "description": "Traveller, this is *totally* the real, legendary Excalibur sword, sought after by legends such as Gilgamesh! No need to make the arduous journey to Sword in the Stone island ;)",
       "tokenUri": " https://metadata.niftyisland.com/metadata/evm/137/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c64062012b61b6ff41540639a000100/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/8b93a3ca9373740e78a40b238acb27d6",
@@ -3410,7 +3410,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Excalipoor",
-          "description": "Traveller, this is *totally* the real, legendary Excalibur sword, sought after by legends such as Gilgamesh! No need to make the arduous journey to Sword in the Stone island ;) \n\nThis sword was created by @zoan on May 18, 2024 using the Nifty Island creator tool.",
+          "description": "Traveller, this is *totally* the real, legendary Excalibur sword, sought after by legends such as Gilgamesh! No need to make the arduous journey to Sword in the Stone island ;)",
           "attributes": []
         }
       },
@@ -3480,7 +3480,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -3488,7 +3488,7 @@
       "tokenId": "0",
       "tokenType": "ERC1155",
       "name": "Golden Aqua Trident",
-      "description": "A magical weapon with the power to summon ocean waves.\n\nThis sword was created by @zoan on June 27, 2024 using the Nifty Island creator tool.",
+      "description": "A magical weapon with the power to summon ocean waves.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000000/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/d7d18ce79a408a7e88e040c6f68902d6",
@@ -3519,7 +3519,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Golden Aqua Trident",
-          "description": "A magical weapon with the power to summon ocean waves.\n\nThis sword was created by @zoan on June 27, 2024 using the Nifty Island creator tool.",
+          "description": "A magical weapon with the power to summon ocean waves.",
           "attributes": []
         }
       },
@@ -3588,7 +3588,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -3596,7 +3596,7 @@
       "tokenId": "1",
       "tokenType": "ERC1155",
       "name": "Golden Aqua Pistol",
-      "description": "A magical pistol imbued with the power of ocean waves.\n\nThis pistol was created by @zoan on June 27, 2024 using the Nifty Island creator tool.",
+      "description": "A magical pistol imbued with the power of ocean waves.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000001/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/4de2f7be047761b54ca87312e967b2ab",
@@ -3627,7 +3627,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Golden Aqua Pistol",
-          "description": "A magical pistol imbued with the power of ocean waves.\n\nThis pistol was created by @zoan on June 27, 2024 using the Nifty Island creator tool.",
+          "description": "A magical pistol imbued with the power of ocean waves.",
           "attributes": []
         }
       },
@@ -3696,7 +3696,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -3704,7 +3704,7 @@
       "tokenId": "2",
       "tokenType": "ERC1155",
       "name": "Iridescent Dragon Blade",
-      "description": "A weapon with the power of an iridescent dragon.\n\nThis sword was created by @zoan on June 28, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon with the power of an iridescent dragon.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000002/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/232ef77b7a28959701cc5e8f98096865",
@@ -3735,7 +3735,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Iridescent Dragon Blade",
-          "description": "A weapon with the power of an iridescent dragon.\n\nThis sword was created by @zoan on June 28, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon with the power of an iridescent dragon.",
           "attributes": []
         }
       },
@@ -3804,7 +3804,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -3812,7 +3812,7 @@
       "tokenId": "3",
       "tokenType": "ERC1155",
       "name": "Iridescent Dragon Pistol",
-      "description": "A weapon with the power of an iridescent dragon.\n\nThis pistol was created by @zoan on June 28, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon with the power of an iridescent dragon.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000003/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/d3e1fa183d3959976017ca8d6c3a5b25",
@@ -3843,7 +3843,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Iridescent Dragon Pistol",
-          "description": "A weapon with the power of an iridescent dragon.\n\nThis pistol was created by @zoan on June 28, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon with the power of an iridescent dragon.",
           "attributes": []
         }
       },
@@ -3912,7 +3912,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -3920,7 +3920,7 @@
       "tokenId": "4",
       "tokenType": "ERC1155",
       "name": "Phuc Dagger",
-      "description": "Phuc! This sword was created by @zoan on July 1, 2024 using the Nifty Island creator tool.",
+      "description": "Phuc! This sword was created by the creator tool.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000004/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/cd86a4cb80dbfcde457a51fd1c07ed89",
@@ -3951,7 +3951,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Phuc Dagger",
-          "description": "Phuc! This sword was created by @zoan on July 1, 2024 using the Nifty Island creator tool.",
+          "description": "Phuc! This sword was created by the creator tool.",
           "attributes": []
         }
       },
@@ -4025,7 +4025,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -4033,7 +4033,7 @@
       "tokenId": "5",
       "tokenType": "ERC1155",
       "name": "Phuc Pistol",
-      "description": "Phuc! This pistol was created by @zoan on July 1, 2024 using the Nifty Island creator tool.",
+      "description": "Phuc!",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000005/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/be57f73577e87b00f2c9f6ab674372a7",
@@ -4064,7 +4064,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Phuc Pistol",
-          "description": "Phuc! This pistol was created by @zoan on July 1, 2024 using the Nifty Island creator tool.",
+          "description": "Phuc!",
           "attributes": []
         }
       },
@@ -4137,7 +4137,7 @@
       "tokenId": "0",
       "tokenType": "ERC1155",
       "name": "Time Blade",
-      "description": "A weapon with the power of local time manipulation.\n\nThis sword was created by @zoan on July 5, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon with the power of local time manipulation.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/8453/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/0000000000000000000000000000000000000000000000000000000000000000/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/c3868938fd6db1e492b55c8bfdaba660",
@@ -4168,7 +4168,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Time Blade",
-          "description": "A weapon with the power of local time manipulation.\n\nThis sword was created by @zoan on July 5, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon with the power of local time manipulation.",
           "attributes": []
         }
       },
@@ -4237,7 +4237,7 @@
       "tokenId": "1",
       "tokenType": "ERC1155",
       "name": "Time Pistol",
-      "description": "A weapon with the power of local time manipulation.\n\nThis pistol was created by @zoan on July 5, 2024 using the Nifty Island creator tool.",
+      "description": "A weapon with the power of local time manipulation.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/8453/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/0000000000000000000000000000000000000000000000000000000000000001/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/a7b5c8e907945edfe4235850ee21bc6b",
@@ -4268,7 +4268,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Time Pistol",
-          "description": "A weapon with the power of local time manipulation.\n\nThis pistol was created by @zoan on July 5, 2024 using the Nifty Island creator tool.",
+          "description": "A weapon with the power of local time manipulation.",
           "attributes": []
         }
       },
@@ -4338,7 +4338,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -4346,7 +4346,7 @@
       "tokenId": "6",
       "tokenType": "ERC1155",
       "name": "Purification Pistol",
-      "description": "A pistol imbued with purification magic. Highly effective against infected zombies!\n\nThis pistol was created by @zoan on July 8, 2024 using the Nifty Island creator tool.",
+      "description": "A pistol imbued with purification magic. Highly effective against infected zombies!",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000006/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/94fbe631d366b71f31dbcfc60f94aed7",
@@ -4377,7 +4377,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Purification Pistol",
-          "description": "A pistol imbued with purification magic. Highly effective against infected zombies!\n\nThis pistol was created by @zoan on July 8, 2024 using the Nifty Island creator tool.",
+          "description": "A pistol imbued with purification magic. Highly effective against infected zombies!",
           "attributes": []
         }
       },
@@ -4446,7 +4446,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -4454,7 +4454,7 @@
       "tokenId": "9",
       "tokenType": "ERC1155",
       "name": "Kraken Dagger",
-      "description": "A dagger with the power of a legendary kraken.\n\nThis sword was created by @zoan on July 13, 2024 using the Nifty Island creator tool.",
+      "description": "A dagger with the power of a legendary kraken.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000009/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/884ed87ba5852668374b01450b7c81aa",
@@ -4485,7 +4485,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Kraken Dagger",
-          "description": "A dagger with the power of a legendary kraken.\n\nThis sword was created by @zoan on July 13, 2024 using the Nifty Island creator tool.",
+          "description": "A dagger with the power of a legendary kraken.",
           "attributes": []
         }
       },
@@ -4554,7 +4554,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -4562,7 +4562,7 @@
       "tokenId": "10",
       "tokenType": "ERC1155",
       "name": "Kraken Pistol",
-      "description": "A pistol with the power of a legendary kraken.\n\nThis pistol was created by @zoan on July 13, 2024 using the Nifty Island creator tool.",
+      "description": "A pistol with the power of a legendary kraken.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000000a/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/140ead8bfaf9ac62cc964dd153f4645f",
@@ -4593,7 +4593,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Kraken Pistol",
-          "description": "A pistol with the power of a legendary kraken.\n\nThis pistol was created by @zoan on July 13, 2024 using the Nifty Island creator tool.",
+          "description": "A pistol with the power of a legendary kraken.",
           "attributes": []
         }
       },
@@ -4667,7 +4667,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -4675,7 +4675,7 @@
       "tokenId": "12",
       "tokenType": "ERC1155",
       "name": "Xyla's Blade",
-      "description": "A blade favored by Xyla.\n\nThis sword was created by @zoan on July 16, 2024 using the Nifty Island creator tool.",
+      "description": "A blade favored by Xyla.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000000c/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/3fe5b2171436492ebe8fa28bd936de85",
@@ -4706,7 +4706,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Xyla's Blade",
-          "description": "A blade favored by Xyla.\n\nThis sword was created by @zoan on July 16, 2024 using the Nifty Island creator tool.",
+          "description": "A blade favored by Xyla.",
           "attributes": []
         }
       },
@@ -4780,7 +4780,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -4788,7 +4788,7 @@
       "tokenId": "13",
       "tokenType": "ERC1155",
       "name": "Xyla's Blaster",
-      "description": "A mythical blaster favored by Xyla.\n\nThis pistol was created by @zoan on July 16, 2024 using the Nifty Island creator tool.",
+      "description": "A mythical blaster favored by Xyla.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000000d/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/e64098f2d5639dfb684813c97129316a",
@@ -4819,7 +4819,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Xyla's Blaster",
-          "description": "A mythical blaster favored by Xyla.\n\nThis pistol was created by @zoan on July 16, 2024 using the Nifty Island creator tool.",
+          "description": "A mythical blaster favored by Xyla.",
           "attributes": []
         }
       },
@@ -4893,7 +4893,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -4901,7 +4901,7 @@
       "tokenId": "14",
       "tokenType": "ERC1155",
       "name": "Ice Tri Shard",
-      "description": "Three levitating ice shards emanating arctic power, worthy of an S-Rank penguin. Submission for Nifty Island x Pudgy Penguins UGC contest.\n\nThis sword was created by @zoan on July 19, 2024 using the Nifty Island creator tool.",
+      "description": "Three levitating ice shards emanating arctic power, worthy of an S-Rank penguin.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000000e/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/f6396f08679cb49f4be3d285fee55494",
@@ -4932,7 +4932,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Ice Tri Shard",
-          "description": "Three levitating ice shards emanating arctic power, worthy of an S-Rank penguin. Submission for Nifty Island x Pudgy Penguins UGC contest.\n\nThis sword was created by @zoan on July 19, 2024 using the Nifty Island creator tool.",
+          "description": "Three levitating ice shards emanating arctic power, worthy of an S-Rank penguin.",
           "attributes": []
         }
       },
@@ -5006,7 +5006,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -5014,7 +5014,7 @@
       "tokenId": "15",
       "tokenType": "ERC1155",
       "name": "Vampire Dagger",
-      "description": "A dagger that radiates vampire energy.\n\nThis sword was created by @zoan on July 24, 2024 using the Nifty Island creator tool.",
+      "description": "A dagger that radiates vampire energy.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000000f/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/8115140d40c1d24bd4349d3ff21d3f79",
@@ -5045,7 +5045,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Vampire Dagger",
-          "description": "A dagger that radiates vampire energy.\n\nThis sword was created by @zoan on July 24, 2024 using the Nifty Island creator tool.",
+          "description": "A dagger that radiates vampire energy.",
           "attributes": []
         }
       },
@@ -5119,7 +5119,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -5127,7 +5127,7 @@
       "tokenId": "16",
       "tokenType": "ERC1155",
       "name": "Vampire Pistol",
-      "description": "A pistol radiating vampire energy.\n\nThis pistol was created by @zoan on July 24, 2024 using the Nifty Island creator tool.",
+      "description": "A pistol radiating vampire energy.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000010/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/f7f284861d29af357faf6a7c7bacc8e3",
@@ -5158,7 +5158,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Vampire Pistol",
-          "description": "A pistol radiating vampire energy.\n\nThis pistol was created by @zoan on July 24, 2024 using the Nifty Island creator tool.",
+          "description": "A pistol radiating vampire energy.",
           "attributes": []
         }
       },
@@ -5227,7 +5227,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -5235,7 +5235,7 @@
       "tokenId": "18",
       "tokenType": "ERC1155",
       "name": "Wrecker Blade",
-      "description": "A legendary, powerful dark metal blade that wrecks everything in its path.\n\nThis sword was created by @zoan on August 9, 2024 using the Nifty Island creator tool.",
+      "description": "A legendary, powerful dark metal blade that wrecks everything in its path.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000012/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/6a96f4a8648948ed5042b0eb121aafb2",
@@ -5266,7 +5266,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Wrecker Blade",
-          "description": "A legendary, powerful dark metal blade that wrecks everything in its path.\n\nThis sword was created by @zoan on August 9, 2024 using the Nifty Island creator tool.",
+          "description": "A legendary, powerful dark metal blade that wrecks everything in its path.",
           "attributes": []
         }
       },
@@ -5340,7 +5340,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -5348,7 +5348,7 @@
       "tokenId": "19",
       "tokenType": "ERC1155",
       "name": "Wrecker Pistol",
-      "description": "A legendary, powerful dark metal pistol that wrecks everything in its path.\n\nThis pistol was created by @zoan on August 10, 2024 using the Nifty Island creator tool.",
+      "description": "A legendary, powerful dark metal pistol that wrecks everything in its path.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000013/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/b792e6e232aad8c33cc727181c9c112e",
@@ -5379,7 +5379,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Wrecker Pistol",
-          "description": "A legendary, powerful dark metal pistol that wrecks everything in its path.\n\nThis pistol was created by @zoan on August 10, 2024 using the Nifty Island creator tool.",
+          "description": "A legendary, powerful dark metal pistol that wrecks everything in its path.",
           "attributes": []
         }
       },
@@ -5453,7 +5453,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -5461,7 +5461,7 @@
       "tokenId": "20",
       "tokenType": "ERC1155",
       "name": "Three Sword Style - Demon Dragon Pack",
-      "description": "Use the three sword style, with dragon soldier avatars and demon dragon weapons!\n\nThis asset pack was created by @zoan on September 3, 2024 using the Nifty Island creator tool.",
+      "description": "Use the three sword style, with dragon soldier avatars and demon dragon weapons!",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000014/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/4db2f2015df921abda7c8e191a61cfc9",
@@ -5522,7 +5522,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Three Sword Style - Demon Dragon Pack",
-          "description": "Use the three sword style, with dragon soldier avatars and demon dragon weapons!\n\nThis asset pack was created by @zoan on September 3, 2024 using the Nifty Island creator tool.",
+          "description": "Use the three sword style, with dragon soldier avatars and demon dragon weapons!",
           "attributes": []
         }
       },
@@ -5623,7 +5623,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -5631,7 +5631,7 @@
       "tokenId": "21",
       "tokenType": "ERC1155",
       "name": "Cyber Blade Pack",
-      "description": "Blades made of reinforced steel and lined with plasma! Comes in green, blue, and purple.\n\nThis asset pack was created by @zoan on September 8, 2024 using the Nifty Island creator tool.",
+      "description": "Blades made of reinforced steel and lined with plasma! Comes in green, blue, and purple.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000015/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/dde89c8afea611b0dca8150535936da8",
@@ -5682,7 +5682,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Cyber Blade Pack",
-          "description": "Blades made of reinforced steel and lined with plasma! Comes in green, blue, and purple.\n\nThis asset pack was created by @zoan on September 8, 2024 using the Nifty Island creator tool.",
+          "description": "Blades made of reinforced steel and lined with plasma! Comes in green, blue, and purple.",
           "attributes": []
         }
       },
@@ -5820,7 +5820,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -5828,7 +5828,7 @@
       "tokenId": "28",
       "tokenType": "ERC1155",
       "name": "Cyber Blaster Pack",
-      "description": "Plasma-powered blasters with reinforced steel body! Comes in yellow, green, blue, and purple.\n \nThis asset pack was created by @zoan on October 12, 2024 using the Nifty Island creator tool.",
+      "description": "Plasma-powered blasters with reinforced steel body! Comes in yellow, green, blue, and purple.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000001c/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/11fb2ddaf7e1ca1fa218d3973bd5461d",
@@ -5889,7 +5889,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Cyber Blaster Pack",
-          "description": "Plasma-powered blasters with reinforced steel body! Comes in yellow, green, blue, and purple.\n \nThis asset pack was created by @zoan on October 12, 2024 using the Nifty Island creator tool.",
+          "description": "Plasma-powered blasters with reinforced steel body! Comes in yellow, green, blue, and purple.",
           "attributes": []
         }
       },
@@ -6059,7 +6059,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -6067,7 +6067,7 @@
       "tokenId": "22",
       "tokenType": "ERC1155",
       "name": "Red Energy Dagger",
-      "description": "A dagger composed of powerful red energy.\n\nThis sword was created by @zoan on September 23, 2024 using the Nifty Island creator tool.",
+      "description": "A dagger composed of powerful red energy.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000016/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/dc4247f45aab927b8cad255909c7bdd2",
@@ -6098,7 +6098,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Red Energy Dagger",
-          "description": "A dagger composed of powerful red energy.\n\nThis sword was created by @zoan on September 23, 2024 using the Nifty Island creator tool.",
+          "description": "A dagger composed of powerful red energy.",
           "attributes": []
         }
       },
@@ -6172,7 +6172,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -6180,7 +6180,7 @@
       "tokenId": "23",
       "tokenType": "ERC1155",
       "name": "Blue Energy Pistol",
-      "description": "A pistol composed of powerful blue energy.\n\nThis pistol was created by @zoan on September 23, 2024 using the Nifty Island creator tool.",
+      "description": "A pistol composed of powerful blue energy.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/0000000000000000000000000000000000000000000000000000000000000017/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/9f7db70a61b9d2d7fc347fab123bf6bb",
@@ -6211,7 +6211,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Blue Energy Pistol",
-          "description": "A pistol composed of powerful blue energy.\n\nThis pistol was created by @zoan on September 23, 2024 using the Nifty Island creator tool.",
+          "description": "A pistol composed of powerful blue energy.",
           "attributes": []
         }
       },
@@ -6285,7 +6285,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -6293,7 +6293,7 @@
       "tokenId": "26",
       "tokenType": "ERC1155",
       "name": "Dark Phantom",
-      "description": "A dark metal katana that can phase through dimensions.\n\nThis sword was created by @zoan on October 7, 2024 using the Nifty Island creator tool.",
+      "description": "A dark metal katana that can phase through dimensions.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000001a/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/312c70d8b36c6d9d3c75849f4db614d2",
@@ -6324,7 +6324,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Dark Phantom",
-          "description": "A dark metal katana that can phase through dimensions.\n\nThis sword was created by @zoan on October 7, 2024 using the Nifty Island creator tool.",
+          "description": "A dark metal katana that can phase through dimensions.",
           "attributes": []
         }
       },
@@ -6398,7 +6398,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -6406,7 +6406,7 @@
       "tokenId": "27",
       "tokenType": "ERC1155",
       "name": "Fire Phantom",
-      "description": "A katana that scorches everything in its path.\n\nThis sword was created by @zoan on October 8, 2024 using the Nifty Island creator tool.",
+      "description": "A katana that scorches everything in its path.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000001b/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/5fe513516f5bcfd5bd833bfcce7ccd84",
@@ -6437,7 +6437,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Fire Phantom",
-          "description": "A katana that scorches everything in its path.\n\nThis sword was created by @zoan on October 8, 2024 using the Nifty Island creator tool.",
+          "description": "A katana that scorches everything in its path.",
           "attributes": []
         }
       },
@@ -6511,7 +6511,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -6519,7 +6519,7 @@
       "tokenId": "29",
       "tokenType": "ERC1155",
       "name": "Gravity Blade",
-      "description": "A blade with the power to manipulate gravity.\n\nThis sword was created by @zoan on October 20, 2024 using the Nifty Island creator tool.",
+      "description": "A blade with the power to manipulate gravity.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000001d/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/3753874275a9b1c15a3a996ac9839393",
@@ -6550,7 +6550,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Gravity Blade",
-          "description": "A blade with the power to manipulate gravity.\n\nThis sword was created by @zoan on October 20, 2024 using the Nifty Island creator tool.",
+          "description": "A blade with the power to manipulate gravity.",
           "attributes": []
         }
       },
@@ -6619,7 +6619,7 @@
           "collectionSlug": "zoan-s-open-editions-polygon",
           "safelistRequestStatus": "not_requested",
           "imageUrl": "https://i.seadn.io/s/raw/files/bdcf12e5e709e485c36130d09543af0a.png?w=500&auto=format",
-          "description": "This is zoan's open edition collection made with Nifty Island's creator tool.",
+          "description": "",
           "lastIngestedAt": "2024-12-19T09:29:39.000Z"
         },
         "spamClassifications": []
@@ -6627,7 +6627,7 @@
       "tokenId": "30",
       "tokenType": "ERC1155",
       "name": "Gravity Pistol",
-      "description": "A pistol with the power to manipulate gravity.\n\nThis pistol was created by @zoan on October 22, 2024 using the Nifty Island creator tool.",
+      "description": "A pistol with the power to manipulate gravity.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/137/0xeab56d0bfd7fcf84c606db521e81c41e38fb9022/000000000000000000000000000000000000000000000000000000000000001e/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/matic-mainnet/181bab03043b84b959fec7a5b4f4b66b",
@@ -6658,7 +6658,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Gravity Pistol",
-          "description": "A pistol with the power to manipulate gravity.\n\nThis pistol was created by @zoan on October 22, 2024 using the Nifty Island creator tool.",
+          "description": "A pistol with the power to manipulate gravity.",
           "attributes": []
         }
       },
@@ -6733,7 +6733,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219896219087210145710713390236068",
       "tokenType": "ERC1155",
       "name": "Doginal Bat (Mirror)",
-      "description": "This is a convenience \"mirror\" NFT for Doginal Bat holders to use the bat in game. Doginal Bat is a dogecoin inscription (the 3D file is stored onchain). It is listed on Doggy Market: https://doggy.market/nfts/doginalbat\n\nThis sword was created by @zoan on December 1, 2024 using the Nifty Island creator tool.",
+      "description": "This is a convenience \"mirror\" NFT for Doginal Bat holders to use the bat in game. Doginal Bat is a dogecoin inscription (the 3D file is stored onchain). It is listed on Doggy Market: https://doggy.market/nfts/doginalbat",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c640620e5a297beb17543bca30001a4/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/3085e6990f10a2daa79783436cd5852d",
@@ -6764,7 +6764,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Doginal Bat (Mirror)",
-          "description": "This is a convenience \"mirror\" NFT for Doginal Bat holders to use the bat in game. Doginal Bat is a dogecoin inscription (the 3D file is stored onchain). It is listed on Doggy Market: https://doggy.market/nfts/doginalbat\n\nThis sword was created by @zoan on December 1, 2024 using the Nifty Island creator tool.",
+          "description": "This is a convenience \"mirror\" NFT for Doginal Bat holders to use the bat in game. Doginal Bat is a dogecoin inscription (the 3D file is stored onchain). It is listed on Doggy Market: https://doggy.market/nfts/doginalbat",
           "attributes": []
         }
       },
@@ -6830,7 +6830,7 @@
       "tokenId": "88700490005035943529316798097329512194005047219839797533161627624870695142713",
       "tokenType": "ERC1155",
       "name": "Doginal Megaphone (Mirror)",
-      "description": "This is a convenience \"mirror\" NFT for Doginal Megaphone holders to use the megaphone in game. Doginal Megaphone is a dogecoin inscription (the 3D file is stored onchain). It is listed on Doggy Market: https://doggy.market/nfts/doginalmegaphone\n\nThis pistol was created by @zoan on December 5, 2024 using the Nifty Island creator tool.",
+      "description": "This is a convenience \"mirror\" NFT for Doginal Megaphone holders to use the megaphone in game. Doginal Megaphone is a dogecoin inscription (the 3D file is stored onchain).",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/8453/0xc1374b803dfb1a9c87eab9e76929222dba3a8c39/c41ab2bef4e8a17d8e2089ee7a6aa25e4c6406202f53c6f0f8fd4768bc000539/metadata.json",
       "image": {
         "cachedUrl": "https://nft-cdn.alchemy.com/base-mainnet/7f40e77ae13c7e5d6447978bafc4ffbe",
@@ -6861,7 +6861,7 @@
           ],
           "metadata_standard": "ETM_v1.0.0",
           "name": "Doginal Megaphone (Mirror)",
-          "description": "This is a convenience \"mirror\" NFT for Doginal Megaphone holders to use the megaphone in game. Doginal Megaphone is a dogecoin inscription (the 3D file is stored onchain). It is listed on Doggy Market: https://doggy.market/nfts/doginalmegaphone\n\nThis pistol was created by @zoan on December 5, 2024 using the Nifty Island creator tool.",
+          "description": "This is a convenience \"mirror\" NFT for Doginal Megaphone holders to use the megaphone in game. Doginal Megaphone is a dogecoin inscription (the 3D file is stored onchain).",
           "attributes": []
         }
       },
@@ -6925,7 +6925,7 @@
       "tokenId": "2",
       "tokenType": "ERC1155",
       "name": "Quantum Sword",
-      "description": "A giant sword that deals quantum damage.\n\nThis sword was created by @zoan on January 7, 2025 using the Nifty Island creator tool.",
+      "description": "A giant sword that deals quantum damage.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/8453/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/0000000000000000000000000000000000000000000000000000000000000002/metadata.json",
       "image": {
         "cachedUrl": "https://content.niftyisland.com/nftables/94503923-4914-4bde-9875-b541f2f6f5ea/v/1/preview.mp4",
@@ -6935,7 +6935,7 @@
         "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/8453/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/0000000000000000000000000000000000000000000000000000000000000002/metadata.json",
         "metadata": {
           "name": "Quantum Sword",
-          "description": "A giant sword that deals quantum damage.\n\nThis sword was created by @zoan on January 7, 2025 using the Nifty Island creator tool.",
+          "description": "A giant sword that deals quantum damage.",
           "image": "https://content.niftyisland.com/nftables/94503923-4914-4bde-9875-b541f2f6f5ea/v/1/preview.mp4",
           "assets": [
             {
@@ -7021,7 +7021,7 @@
       "tokenId": "3",
       "tokenType": "ERC1155",
       "name": "Quantum Pistol",
-      "description": "A pistol that deals quantum damage.\n\nThis pistol was created by @zoan on January 7, 2025 using the Nifty Island creator tool.",
+      "description": "A pistol that deals quantum damage.",
       "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/8453/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/0000000000000000000000000000000000000000000000000000000000000003/metadata.json",
       "image": {
         "cachedUrl": "https://content.niftyisland.com/nftables/e96f25f9-17bb-4310-bb2a-6dbb59e00691/v/1/preview.mp4",
@@ -7031,7 +7031,7 @@
         "tokenUri": "https://metadata.niftyisland.com/metadata/evm/drops/8453/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/0000000000000000000000000000000000000000000000000000000000000003/metadata.json",
         "metadata": {
           "name": "Quantum Pistol",
-          "description": "A pistol that deals quantum damage.\n\nThis pistol was created by @zoan on January 7, 2025 using the Nifty Island creator tool.",
+          "description": "A pistol that deals quantum damage.",
           "image": "https://content.niftyisland.com/nftables/e96f25f9-17bb-4310-bb2a-6dbb59e00691/v/1/preview.mp4",
           "assets": [
             {
