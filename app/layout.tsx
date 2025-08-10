@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>AI Merchant</title>
+        <title>You Never Go Offline</title>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
