@@ -87,24 +87,18 @@ const LobbySelector = () => {
 
     const { currentLobby, isInLobby } = useLobbyStore();
 
-    // Use transparent background if in a lobby, otherwise use gradient
-    const backgroundStyle = isInLobby && currentLobby
-        ? "min-h-screen bg-black/60 backdrop-blur-sm p-8"
-        : "min-h-screen bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] p-8";
+    // Always use transparent background to show 3D world behind
+    const backgroundStyle = "min-h-screen bg-black/60 backdrop-blur-sm p-8";
 
     return (
         <div className={backgroundStyle}>
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h1 className={`text-4xl font-bold mb-2 ${
-                        isInLobby && currentLobby ? 'text-white' : 'text-gray-900'
-                    }`}>
+                    <h1 className="text-4xl font-bold text-white mb-2">
                         🌐 YNGO - You Never Go Offline
                     </h1>
-                    <p className={`mb-4 ${
-                        isInLobby && currentLobby ? 'text-gray-200' : 'text-gray-600'
-                    }`}>
+                    <p className="text-gray-200 mb-4">
                         Choose your virtual world adventure
                     </p>
                     
@@ -127,13 +121,9 @@ const LobbySelector = () => {
                     </div>
                     
                     {currentUser?.username && (
-                        <p className={`${
-                            isInLobby && currentLobby ? 'text-green-300' : 'text-green-600'
-                        }`}>
+                        <p className="text-green-300">
                             Welcome, <span className="font-semibold">{currentUser.username}</span>! 
-                            <span className={`text-xs ml-2 ${
-                                isInLobby && currentLobby ? 'text-gray-300' : 'text-gray-500'
-                            }`}>ID: {currentUser.userId}</span>
+                            <span className="text-xs text-gray-300 ml-2">ID: {currentUser.userId}</span>
                         </p>
                     )}
                 </div>
