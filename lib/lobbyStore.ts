@@ -1,7 +1,9 @@
+// lib/lobbyStore.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { LobbyState, User, Lobby } from './types';
 import { getAvailableLobbies } from './lobbyConfig';
+import DynamicChatService from '@/app/components/DynamicChatService';
 
 // Generate a unique user ID
 function generateUserId(): string {
@@ -21,6 +23,9 @@ function getOrCreateUserId(): string {
 }
 
 interface LobbyStore extends LobbyState {
+    // Add chat service
+    chatService: DynamicChatService | null;
+    
     // Actions
     initializeUser: () => void;
     setCurrentLobby: (lobby: Lobby | null) => void;
@@ -38,6 +43,7 @@ export const useLobbyStore = create<LobbyStore>()(
             // Initial state
             currentUser: null,
             currentLobby: null,
+            chatService: null, // ADD THIS
             availableLobbies: getAvailableLobbies(),
             isInLobby: false,
             showLobbySelector: true,
@@ -49,7 +55,7 @@ export const useLobbyStore = create<LobbyStore>()(
                     userId,
                     username: undefined,
                     avatar: {
-                        model: '/avatars/1347496417698417678.vrm', // <-- Use your preferred default player VRM
+                        model: '/avatars/1347496417698417678.vrm',
                         personality: 'You are a curious explorer visiting virtual worlds.',
                         history: []
                     }
@@ -58,16 +64,32 @@ export const useLobbyStore = create<LobbyStore>()(
             },
 
             setCurrentLobby: (lobby: Lobby | null) => {
+                const { chatService } = get();
+                
+                // Clean up old chat service
+                if (chatService && !lobby) {
+                    chatService.clearHistory();
+                }
+                
+                // Create new chat service if entering lobby
+                const newChatService = lobby ? new DynamicChatService(lobby) : null;
+                
                 set({ 
                     currentLobby: lobby,
+                    chatService: newChatService,
                     isInLobby: lobby !== null,
                     showLobbySelector: lobby === null
                 });
             },
 
             joinLobby: (lobbyId: string) => {
-                const { currentUser, availableLobbies } = get();
+                const { currentUser, availableLobbies, chatService } = get();
                 if (!currentUser) return false;
+
+                // Clean up any existing chat service
+                if (chatService) {
+                    chatService.clearHistory();
+                }
 
                 const lobby = availableLobbies.find(l => l.lobbyId === lobbyId);
                 if (!lobby) return false;
@@ -75,8 +97,12 @@ export const useLobbyStore = create<LobbyStore>()(
                 // Check if user is already in the lobby
                 const alreadyJoined = lobby.currentPlayers.some(p => p.userId === currentUser.userId);
                 if (alreadyJoined) {
+                    // Create fresh chat service for this lobby
+                    const newChatService = new DynamicChatService(lobby);
+                    
                     set({ 
                         currentLobby: lobby,
+                        chatService: newChatService,
                         isInLobby: true,
                         showLobbySelector: false 
                     });
@@ -99,8 +125,12 @@ export const useLobbyStore = create<LobbyStore>()(
                     l.lobbyId === lobbyId ? updatedLobby : l
                 );
 
+                // Create chat service for this lobby
+                const newChatService = new DynamicChatService(updatedLobby);
+
                 set({ 
                     currentLobby: updatedLobby,
+                    chatService: newChatService,
                     availableLobbies: updatedLobbies,
                     isInLobby: true,
                     showLobbySelector: false 
@@ -109,8 +139,13 @@ export const useLobbyStore = create<LobbyStore>()(
             },
 
             leaveLobby: () => {
-                const { currentUser, currentLobby, availableLobbies } = get();
+                const { currentUser, currentLobby, availableLobbies, chatService } = get();
                 if (!currentUser || !currentLobby) return;
+
+                // Clean up chat service
+                if (chatService) {
+                    chatService.clearHistory();
+                }
 
                 // Remove user from current lobby
                 const updatedLobby = {
@@ -125,6 +160,7 @@ export const useLobbyStore = create<LobbyStore>()(
 
                 set({ 
                     currentLobby: null,
+                    chatService: null,
                     availableLobbies: updatedLobbies,
                     isInLobby: false,
                     showLobbySelector: true 
@@ -155,7 +191,7 @@ export const useLobbyStore = create<LobbyStore>()(
             name: 'plottwist-lobby-store',
             partialize: (state) => ({
                 currentUser: state.currentUser,
-                // Don't persist lobby state as it should be fresh on each session
+                // Don't persist lobby state or chat service
             }),
         }
     )

@@ -22,6 +22,9 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 import inventoryData from '@/public/context/glb_metadata_output.txt';
 
 class DynamicChatService {
+    /**
+     * @param {import('@/lib/types').Lobby | null} lobbyConfig
+     */
     constructor(lobbyConfig = null) {
         this.lobbyConfig = lobbyConfig;
         this.messageHistory = [];

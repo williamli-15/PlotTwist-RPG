@@ -14,11 +14,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import TWEEN from '@tweenjs/tween.js';
 // import chatService from './chat_service';
-import DynamicChatService from './DynamicChatService'; // Adjust filename if needed
+// import DynamicChatService from './DynamicChatService'; // Adjust filename if needed
 import summaryMetadata from '@/public/context/summary_metadata_with_vercel_urls.json';
 import ModelViewer from './model-viewer';
 import ReactMarkdown from 'react-markdown';
 import ttsService from './edgeTTSService'; // Adjust path as needed
+import { useLobbyStore } from '@/lib/lobbyStore';
 
 // Add this type near other types/interfaces
 type WeaponActionParams = {
@@ -69,22 +70,7 @@ const ANIMATION_GREAT_SWORD_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-
 const ANIMATION_PISTOL_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Pistol%20Idle-UNnPpwZlfzGEk7bWquH5YabWhRDHYp.fbx';
 
 const Scene = ({ currentLobby }) => {
-        //
-    // ====================================================================
-    // ======> ADD THE NEW CODE RIGHT HERE, AT THE TOP OF THE COMPONENT <======
-    // ====================================================================
-    //
-    // Create a state to hold our chat service instance. Initialize it to null.
-    const [chatService, setChatService] = useState(null);
-
-    // Use a useEffect hook to create or update the chat service
-    // whenever the currentLobby prop changes.
-    useEffect(() => {
-        if (currentLobby) {
-            console.log(`Initializing chat service for lobby: ${currentLobby.name}`);
-            setChatService(new DynamicChatService(currentLobby));
-        }
-    }, [currentLobby]); // This dependency array ensures the effect runs when the lobby changes
+    const { chatService } = useLobbyStore();
 
     // ADD THIS LOADING CHECK
     if (!currentLobby) {
@@ -430,8 +416,7 @@ const Scene = ({ currentLobby }) => {
             console.error("Chat service not initialized yet!");
             return;
         }
-        // This is the important new line!
-        chatService.clearHistory();
+
         // Store original camera position and target
         originalCameraPositionRef.current = cameraRef.current.position.clone();
         originalCameraTargetRef.current = controlsRef.current.target.clone();
@@ -1164,9 +1149,11 @@ const Scene = ({ currentLobby }) => {
                     obj.frustumCulled = false;
                 });
 
-                // Create and add name sprite
-                const nameSprite = createTextSprite(currentLobby.hostAvatar.name); // <-- USE THE PROP DIRECTLY HERE
-                vrm.scene.add(nameSprite);
+                // Create and add name sprite (only if name exists)
+                if (currentLobby.hostAvatar.name) {
+                    const nameSprite = createTextSprite(currentLobby.hostAvatar.name);
+                    vrm.scene.add(nameSprite);
+                }
 
                 VRMUtils.rotateVRM0(vrm);
                 vrm.scene.position.set(0, 0, -6);
@@ -2112,68 +2099,6 @@ const Scene = ({ currentLobby }) => {
                     Talk
                 </Button>
             )}
-
-            {/* {showSettings && (
-                <Card className="fixed top-16 right-4 bg-black bg-opacity-75 text-white p-4 rounded-lg z-10 w-64">
-                    <CardContent>
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-semibold">Info</h3>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setShowSettings(false)}
-                                className="text-white hover:text-gray-300"
-                            >
-                                ✕
-                            </Button>
-                        </div>
-
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Controls</label>
-                                <div className="space-y-2 text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <kbd className="px-2 py-1 bg-gray-700 rounded">WASD</kbd>
-                                        <kbd className="px-2 py-1 bg-gray-700 rounded">↑←↓→</kbd>
-                                        <span>Move</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <kbd className="px-2 py-1 bg-gray-700 rounded">F</kbd>
-                                        <span>Interact</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center">
-                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 101.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z" clipRule="evenodd" />
-                                            </svg>
-                                        </div>
-                                        <span>Click + Drag to look</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center">
-                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 101.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z" clipRule="evenodd" />
-                                            </svg>
-                                        </div>
-                                        <span>Click certain objects to view details</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <kbd className="px-2 py-1 bg-gray-700 rounded">ESC</kbd>
-                                        <span>Exit chat</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-2">About</label>
-                                <p className="text-sm">
-                                    This repo was cloned from merchant-npc, created by <a href="https://x.com/zoan37" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-300">@zoan37</a>
-                                </p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            )} */}
 
             {/* Interaction Prompt */}
             {isNearNPC && !isChatting && (

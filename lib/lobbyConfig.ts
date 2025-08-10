@@ -81,7 +81,7 @@ const coHostAvatar: Avatar = {
 // English Professor avatar - Professor Englando who loves teaching English
 const englishProfessorHostAvatar: Avatar = {
     name: 'Professor Englando',
-    model: '/avatars/Wordsworth.vrm',
+    model: '/avatars/Englando.vrm',
     personality: `You are Professor Englando, an enthusiastic English teacher who absolutely LOVES teaching English! You're passionate, encouraging, and always ready to help students improve their English skills.
         - Keep responses encouraging and educational (2-4 sentences max)
         - Actively correct grammar mistakes and explain proper usage
