@@ -120,8 +120,6 @@ const Scene = ({ currentLobby }) => {
     const [currentMessage, setCurrentMessage] = useState('');
     const [showMobileWarning, setShowMobileWarning] = useState(false);
 
-    // const MERCHANT_VRM_URL = currentLobby.hostAvatar.modelUrl;
-    // const NPC_NAME = currentLobby.hostAvatar.name;
 
 
     // Update keyStates ref to include arrow keys
@@ -287,9 +285,15 @@ const Scene = ({ currentLobby }) => {
     }, [equippedWeapon]);
 
     useEffect(() => {
-        if (!rendererRef.current) {
+        // ADD currentLobby TO THE CONDITION
+        if (!rendererRef.current && currentLobby) { 
             init();
         }
+
+
+        // if (!rendererRef.current) {
+        //     init();
+        // }
 
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
@@ -302,11 +306,11 @@ const Scene = ({ currentLobby }) => {
             window.removeEventListener('mousemove', handleWeaponHover);
             window.removeEventListener('click', handleWeaponClick);
         };
-    }, [isNearNPC, isChatting]);
+    }, [currentLobby, isNearNPC, isChatting]); // <-- ADD currentLobby HERE
 
     useEffect(() => {
-        if (npcRef.current?.scene) {
-            // Find the sprite in the NPC's children
+        if (npcRef.current?.scene && currentLobby?.hostAvatar?.name) {
+            // Find the sprite in the NPC's children (only if the NPC has a name)
             const nameSprite = npcRef.current.scene.children.find(
                 child => child instanceof THREE.Sprite
             );
@@ -314,7 +318,7 @@ const Scene = ({ currentLobby }) => {
                 nameSprite.visible = isNearNPC;
             }
         }
-    }, [isNearNPC]);
+    }, [isNearNPC, currentLobby?.hostAvatar?.name]);
 
     useEffect(() => {
         console.log('Equipped weapon changed:', equippedWeapon);
@@ -479,7 +483,7 @@ const Scene = ({ currentLobby }) => {
         animateCamera(targetCameraPosition, midpoint);
 
         setChatMessages([{
-            sender: currentLobby.hostAvatar.name,
+            sender: currentLobby.hostAvatar.name || 'Host',
             message: '',
             isStreaming: true
         }]);
@@ -492,13 +496,13 @@ const Scene = ({ currentLobby }) => {
         // Get initial greeting from chatService
         chatService.getNPCResponse(initialMessage, (partialMessage) => {
             setChatMessages([{
-                sender: currentLobby.hostAvatar.name,
+                sender: currentLobby.hostAvatar.name || 'Host',
                 message: partialMessage,
                 isStreaming: true
             }]);
         }).then(response => {
             setChatMessages([{
-                sender: currentLobby.hostAvatar.name,
+                sender: currentLobby.hostAvatar.name || 'Host',
                 message: response.message
             }]);
 
@@ -775,7 +779,7 @@ const Scene = ({ currentLobby }) => {
         setTimeout(scrollToBottom, 100);
 
         setChatMessages(prev => [...prev, {
-            sender: currentLobby.hostAvatar.name, // <-- Use dynamic name
+            sender: currentLobby.hostAvatar.name || 'Host', // <-- Use dynamic name with fallback
             message: '',
             isStreaming: true
         }]);
@@ -1150,7 +1154,7 @@ const Scene = ({ currentLobby }) => {
 
         // Modify the NPC loader section
         loader.load(
-            currentLobby.hostAvatar.modelUrl, // <-- USE THE PROP DIRECTLY HERE
+            currentLobby.hostAvatar.model, // <-- USE THE PROP DIRECTLY HERE
             async (gltf) => {
                 const vrm = gltf.userData.vrm;
                 sceneRef.current.add(vrm.scene);
@@ -2186,7 +2190,7 @@ const Scene = ({ currentLobby }) => {
                 <Card className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[1000px] bg-white/50 backdrop-blur-sm z-10">
                     <CardContent className="p-4">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="text-sm text-gray-700">Chatting with {currentLobby.hostAvatar.name} {/* <-- Use dynamic name */}</span>
+                            <span className="text-sm text-gray-700">Chatting with {currentLobby.hostAvatar.name || 'Host'}</span>
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -2208,7 +2212,7 @@ const Scene = ({ currentLobby }) => {
                                     {chatMessages.map((msg, index) => {
                                         if (msg.sender === 'Player' || msg.message || !msg.isStreaming) {
                                             // Parse message and tags if it's an NPC message
-                                            const { cleanMessage, tags } = msg.sender === NPC_NAME
+                                            const { cleanMessage, tags } = msg.sender === (currentLobby.hostAvatar.name || 'Host')
                                                 ? parseMessageTags(msg.message)
                                                 : { cleanMessage: msg.message, tags: [] };
 
@@ -2281,7 +2285,7 @@ const Scene = ({ currentLobby }) => {
                             </div>
 
                             {/* Shop column */}
-                            <div className="w-80 border-l pl-4 overflow-y-auto">
+                            {/* <div className="w-80 border-l pl-4 overflow-y-auto">
                                 <h3 className="font-semibold mb-3">
                                     {showShop ? 'New Items' : 'Equipped Weapon'}
                                 </h3>
@@ -2365,7 +2369,7 @@ const Scene = ({ currentLobby }) => {
                                         </div>
                                     </div>
                                 )}
-                            </div>
+                            </div> */}
                         </div>
                     </CardContent>
                 </Card>

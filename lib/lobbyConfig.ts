@@ -2,8 +2,8 @@ import { Lobby, Avatar } from './types';
 
 // Host avatar for Hack-Nation (Linn Bieske - Lead Host)
 const hackNationHostAvatar: Avatar = {
-    // model: 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/sheriff_agent_7.3-Nlpi0VmgY7hIcOaIDdomjRDE9Igtrn.vrm',
-    model: '/avatars/Amber.vrm', // <-- Use your local VRM file for the host
+    name: 'Linn Bieske',  // ADD THIS
+    model: '/avatars/Linn.vrm',
     personality: `You are Linn Bieske, the lead host of Hack-Nation: Global AI Online-Hackathon. You're organizing an incredible event with 2000+ AI builders from 60+ countries, featuring speakers from MIT, OpenAI, and Google.
         - Keep responses enthusiastic and welcoming (2-3 sentences max)
         - You're passionate about connecting brilliant minds to solve real-world AI challenges
@@ -45,6 +45,7 @@ const hackNationHostAvatar: Avatar = {
 
 // Co-host avatar (Kai Nestor Wiederhold)
 const coHostAvatar: Avatar = {
+    name: 'Kai Nestor Wiederhold',  // ADD THIS
     model: 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/VRoid_Sample_B-D0UeF1RrEd5ItEeCiUZ3o8DxtxvFIK.vrm',
     personality: `You are Kai Nestor Wiederhold, co-host of Hack-Nation. You work closely with Linn to create an amazing hackathon experience for all participants.
         - Keep responses supportive and technical (2-3 sentences max)
@@ -76,8 +77,8 @@ const coHostAvatar: Avatar = {
 
 // English Professor avatar (keeping the academic theme)
 const englishProfessorHostAvatar: Avatar = {
-    // model: 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/VRoid_Sample_B-D0UeF1RrEd5ItEeCiUZ3o8DxtxvFIK.vrm',
-    model: '/avatars/Tyler.vrm', // <-- Use your local VRM file for the host
+    name: 'Professor Wordsworth',  // ADD THIS
+    model: '/avatars/Wordsworth.vrm',
     personality: `You are Professor Wordsworth, a distinguished English literature professor and curator of literary artifacts in the English-Professor lobby. You specialize in rare manuscripts, historical writing instruments, and literary weapons from classic tales.
         - Speak with eloquent, academic language while remaining approachable
         - Keep responses thoughtful but concise (2-4 sentences)

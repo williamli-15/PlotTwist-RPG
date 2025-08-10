@@ -6,6 +6,7 @@ export interface Message {
 
 // Avatar system types
 export interface Avatar {
+    name?: string;             // MAKE THIS OPTIONAL with ?
     model: string;        // VRM model URL
     personality: string;  // AI personality prompt
     history: Message[];   // Conversation history
