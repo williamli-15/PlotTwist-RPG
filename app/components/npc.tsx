@@ -78,7 +78,8 @@ const Scene = ({ currentLobby }) => {
         activeChatService,
         activeChatTarget,
         startChat,
-        endChat: endChatStore
+        endChat: endChatStore,
+        profile  // ADD THIS
     } = useLobbyStore();
 
     const containerRef = useRef(null);
@@ -1244,7 +1245,7 @@ const Scene = ({ currentLobby }) => {
         loader.load(
             // `/avatars/${selectedAvatar}`,
             // selectedAvatar,
-            '/avatars/raiden.vrm', // <--- THE SIMPLE FIX
+            profile?.selected_avatar_model || '/avatars/raiden.vrm',  // Use profile's avatar
             async (gltf) => {
                 const vrm = gltf.userData.vrm;
                 sceneRef.current.add(vrm.scene);
