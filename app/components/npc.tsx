@@ -14,8 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import TWEEN from '@tweenjs/tween.js';
 import chatService from './chat_service';
-import DynamicChatService from './DynamicChatService';
-import { getLobbyById } from '@/lib/lobbyConfig';
 import summaryMetadata from '@/public/context/summary_metadata_with_vercel_urls.json';
 import ModelViewer from './model-viewer';
 import ReactMarkdown from 'react-markdown';
@@ -67,7 +65,7 @@ const ANIMATION_WALKING = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.c
 const ANIMATION_GREAT_SWORD_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Great%20Sword%20Idle-08F04GwJaQuRTyoOJgMseiYBvFodbF.fbx';
 const ANIMATION_PISTOL_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Pistol%20Idle-UNnPpwZlfzGEk7bWquH5YabWhRDHYp.fbx';
 
-const Scene = ({ currentLobby, onShowLobbyModal }) => {
+const Scene = () => {
     const containerRef = useRef(null);
     const rendererRef = useRef(null);
     const avatarRef = useRef(null);
@@ -81,8 +79,6 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
     const npcAnimationActionsRef = useRef({});
     const currentNpcAnimationRef = useRef(null);
     const tweenGroupRef = useRef(new TWEEN.Group());
-    // Removed loadNPCRef as NPC loading is now handled by dedicated useEffect
-    const dynamicChatServiceRef = useRef(null); // Reference to the dynamic chat service
     const isTransitioningRef = useRef(false);
     const chatContainerRef = useRef(null);
     const originalCameraPositionRef = useRef(null);
@@ -92,17 +88,7 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
     const [chatMessages, setChatMessages] = useState([]);
     const [currentMessage, setCurrentMessage] = useState('');
     const [showMobileWarning, setShowMobileWarning] = useState(false);
-    // Get NPC name based on current lobby
-    const getNPCName = () => {
-        if (currentLobby?.lobbyId === 'hack-nation') {
-            return "Linn Bieske";
-        } else if (currentLobby?.lobbyId === 'english-professor') {
-            return "Professor Englando";
-        }
-        return "JordanTheJet"; // Default fallback
-    };
-    
-    const NPC_NAME = getNPCName();
+    const NPC_NAME = "Agent Zoan";
 
     // Update keyStates ref to include arrow keys
     const keyStates = useRef({
@@ -198,62 +184,46 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
         return 'sword';
     };
 
-    // Dynamic quick links based on current lobby
-    const getQuickLinks = () => {
-        if (currentLobby?.lobbyId === 'hack-nation') {
-            return [
-                {
-                    id: 'website',
-                    name: 'Website',
-                    description: 'Visit Hack-Nation.ai',
-                    url: 'https://hack-nation.ai',
-                    icon: '🌐',
-                    bgColor: 'bg-blue-500 hover:bg-blue-600'
-                },
-                {
-                    id: 'discord',
-                    name: 'Discord',
-                    description: 'Join the hackathon community',
-                    url: 'https://discord.gg/4sNa3QZ6ZP',
-                    icon: '💬',
-                    bgColor: 'bg-indigo-500 hover:bg-indigo-600'
-                }
-            ];
-        } else if (currentLobby?.lobbyId === 'english-professor') {
-            return [
-                {
-                    id: 'discord',
-                    name: 'Discord',
-                    description: 'Join the English learning community',
-                    url: 'https://discord.gg/tZgjmNAmbZ',
-                    icon: '💬',
-                    bgColor: 'bg-indigo-500 hover:bg-indigo-600'
-                }
-            ];
-        } else {
-            // Default fallback links
-            return [
-                {
-                    id: 'website',
-                    name: 'Website',
-                    description: 'Visit the main website',
-                    url: 'https://hack-nation.ai',
-                    icon: '🌐',
-                    bgColor: 'bg-blue-500 hover:bg-blue-600'
-                },
-                {
-                    id: 'discord',
-                    name: 'Discord',
-                    description: 'Join the community',
-                    url: 'https://discord.gg/4sNa3QZ6ZP',
-                    icon: '💬',
-                    bgColor: 'bg-indigo-500 hover:bg-indigo-600'
-                }
-            ];
+    const weapons = [
+        {
+            id: 'sword',
+            name: 'Quantum Sword',
+            price: '10 ISLAND',
+            model: 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/weapons/weapon_models_glb/base_0x44073ea066f39c21c3ec51ef324c280e0870d2c4_2_quantum_sword-YXvamvKYDL4qMLTgVe0Z2kowYraxfK.glb',
+            animation: ANIMATION_GREAT_SWORD_IDLE,
+            weaponType: 'sword',
+            position: { x: 0.05, y: -0.025, z: 0.0 },
+            rotation: {
+                x: -Math.PI / 2 - 0 * Math.PI / 16,
+                y: Math.PI / 2 + 2 * Math.PI / 16,
+                z: Math.PI / 8 + -2 * Math.PI / 16
+            },
+            scale: 1.0,
+            niftyIslandLink: 'https://www.niftyisland.com/item/base/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/2',
+            chain: 'base',
+            contractAddress: '0x44073ea066f39c21c3ec51ef324c280e0870d2c4',
+            tokenId: '2'
+        },
+        {
+            id: 'pistol',
+            name: 'Quantum Pistol',
+            price: '10 ISLAND',
+            model: 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/weapons/weapon_models_glb/base_0x44073ea066f39c21c3ec51ef324c280e0870d2c4_3_quantum_pistol-9IYG7ctGW9QectUgSXSDysLt6KLVi7.glb',
+            animation: ANIMATION_PISTOL_IDLE,
+            weaponType: 'pistol',
+            position: { x: 0.05, y: -0.03, z: 0 },
+            rotation: {
+                x: -Math.PI / 2,
+                y: Math.PI / 2 + Math.PI / 16,
+                z: 0
+            },
+            scale: 1.0,
+            niftyIslandLink: 'https://www.niftyisland.com/item/base/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/3',
+            chain: 'base',
+            contractAddress: '0x44073ea066f39c21c3ec51ef324c280e0870d2c4',
+            tokenId: '3'
         }
-    };
-    
-    const quickLinks = getQuickLinks();
+    ];
 
     // const weapons = [];
 
@@ -278,7 +248,7 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
             window.removeEventListener('mousemove', handleWeaponHover);
             window.removeEventListener('click', handleWeaponClick);
         };
-    }, [isNearNPC, isChatting]); // Removed currentLobby from dependencies
+    }, [isNearNPC, isChatting]);
 
     useEffect(() => {
         if (npcRef.current?.scene) {
@@ -295,151 +265,6 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
     useEffect(() => {
         console.log('Equipped weapon changed:', equippedWeapon);
     }, [equippedWeapon]);
-    
-    // Watch for lobby changes and update chat service
-    useEffect(() => {
-        console.log('Current lobby changed:', currentLobby?.name || 'None');
-        
-        // Update the dynamic chat service for the new lobby
-        if (currentLobby) {
-            console.log('Updating chat service for lobby:', currentLobby.name);
-            dynamicChatServiceRef.current = new DynamicChatService(currentLobby);
-        } else {
-            // Use default chat service
-            dynamicChatServiceRef.current = new DynamicChatService(null);
-        }
-    }, [currentLobby]);
-    
-    // Separate useEffect for NPC loading when scene is ready and lobby changes
-    useEffect(() => {
-        if (!sceneRef.current) return; // Wait for scene to be initialized
-        
-        const loadNPCForLobby = async () => {
-            const loader = new GLTFLoader();
-            loader.register((parser) => new VRMLoaderPlugin(parser));
-            
-            // Remove existing NPC if it exists
-            if (npcRef.current?.scene) {
-                sceneRef.current.remove(npcRef.current.scene);
-                npcRef.current = null;
-            }
-            
-            // Dispose of existing NPC mixer
-            if (npcMixerRef.current) {
-                npcMixerRef.current.stopAllAction();
-                npcMixerRef.current = null;
-                npcAnimationActionsRef.current = {};
-            }
-            
-            // Get model URL for current lobby
-            let modelUrl = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/sheriff_agent_7.3-Nlpi0VmgY7hIcOaIDdomjRDE9Igtrn.vrm'; // Default
-            if (currentLobby?.hostAvatar?.model) {
-                modelUrl = currentLobby.hostAvatar.model;
-            }
-            
-            // Get NPC name for current lobby
-            let npcName = 'JordanTheJet'; // Default
-            if (currentLobby?.lobbyId === 'hack-nation') {
-                npcName = 'Linn Bieske';
-            } else if (currentLobby?.lobbyId === 'english-professor') {
-                npcName = 'Professor Englando';
-            }
-            
-            console.log('Loading NPC for lobby:', currentLobby?.name || 'Default', '- Model:', modelUrl, '- Name:', npcName);
-            
-            try {
-                const gltf = await loader.loadAsync(modelUrl);
-                const vrm = gltf.userData.vrm;
-                sceneRef.current.add(vrm.scene);
-                npcRef.current = vrm;
-
-                vrm.scene.traverse((obj) => {
-                    obj.frustumCulled = false;
-                });
-
-                // Create and add name sprite
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.width = 512;
-                canvas.height = 128;
-
-                if (context) {
-                    context.clearRect(0, 0, canvas.width, canvas.height);
-                    context.font = 'Bold 42px Arial';
-                    context.textAlign = 'center';
-
-                    // Create outline
-                    context.fillStyle = 'black';
-                    for (let i = -3; i <= 3; i++) {
-                        for (let j = -3; j <= 3; j++) {
-                            context.fillText(npcName, canvas.width / 2 + i, canvas.height / 2 + j);
-                        }
-                    }
-
-                    // Draw the main text
-                    context.fillStyle = 'white';
-                    context.fillText(npcName, canvas.width / 2, canvas.height / 2);
-                }
-
-                const texture = new THREE.CanvasTexture(canvas);
-                texture.minFilter = THREE.LinearFilter;
-                texture.magFilter = THREE.LinearFilter;
-
-                const spriteMaterial = new THREE.SpriteMaterial({
-                    map: texture,
-                    transparent: true,
-                    depthTest: false,
-                    depthWrite: false,
-                });
-                const nameSprite = new THREE.Sprite(spriteMaterial);
-                nameSprite.scale.set(1 * 1.5, 0.25 * 1.5, 1);
-                nameSprite.position.y = 1.95;
-                nameSprite.renderOrder = 999;
-                nameSprite.visible = false;
-                
-                vrm.scene.add(nameSprite);
-
-                VRMUtils.rotateVRM0(vrm);
-                vrm.scene.position.set(0, 0, -6);
-                vrm.scene.rotation.y = 2 * Math.PI / 2;
-
-                // Initialize NPC animations
-                const mixer = new THREE.AnimationMixer(vrm.scene);
-                npcMixerRef.current = mixer;
-                
-                const animations = [ANIMATION_IDLE, ANIMATION_WALKING, ANIMATION_GREAT_SWORD_IDLE, ANIMATION_PISTOL_IDLE];
-                const actions = {};
-                
-                // Use the existing loadMixamoAnimation helper function
-                
-                for (const animation of animations) {
-                    try {
-                        const clip = await loadMixamoAnimation(animation, vrm);
-                        const action = mixer.clipAction(clip);
-                        action.clampWhenFinished = true;
-                        action.loop = THREE.LoopRepeat;
-                        actions[animation] = action;
-                    } catch (error) {
-                        console.error(`Error loading NPC animation ${animation}:`, error);
-                    }
-                }
-                
-                npcAnimationActionsRef.current = actions;
-                
-                // Play idle animation
-                if (actions[ANIMATION_IDLE]) {
-                    actions[ANIMATION_IDLE].reset().fadeIn(0.5).play();
-                }
-                
-                console.log('NPC loaded successfully:', npcName);
-                
-            } catch (error) {
-                console.error('Error loading NPC for lobby:', error);
-            }
-        };
-        
-        loadNPCForLobby();
-    }, [currentLobby]); // Run when lobby changes
 
     // Update the mobile detection useEffect
     useEffect(() => {
@@ -596,9 +421,8 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
             ? "*Same player left, and now has returned and approaches*"
             : "*Player approaches*";
 
-        // Get initial greeting from appropriate chat service
-        const currentChatService = dynamicChatServiceRef.current || chatService;
-        currentChatService.getNPCResponse(initialMessage, (partialMessage) => {
+        // Get initial greeting from chatService
+        chatService.getNPCResponse(initialMessage, (partialMessage) => {
             setChatMessages([{
                 sender: NPC_NAME,
                 message: partialMessage,
@@ -697,8 +521,7 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
         };
 
         try {
-            const currentChatService = dynamicChatServiceRef.current || chatService;
-            const response = await currentChatService.getNPCResponse(userMessage, streamHandler);
+            const response = await chatService.getNPCResponse(userMessage, streamHandler);
 
             // Log the complete message
             console.log('Complete NPC response:', response.message);
@@ -1015,8 +838,34 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
 
         // TODO: don't show avatars until idle animation loaded (right now it flickers with t-pose)
 
-        // NPC loading is now handled by the dedicated useEffect
-        // No need to load NPC here as it will be loaded dynamically based on lobby
+        // const MERCHANT_VRM_URL = './avatars/sheriff_agent_7.3.vrm';
+        const MERCHANT_VRM_URL = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/avatars/sheriff_agent_7.3-Nlpi0VmgY7hIcOaIDdomjRDE9Igtrn.vrm';
+
+        // Modify the NPC loader section
+        loader.load(
+            MERCHANT_VRM_URL,
+            async (gltf) => {
+                const vrm = gltf.userData.vrm;
+                sceneRef.current.add(vrm.scene);
+                npcRef.current = vrm;
+
+                vrm.scene.traverse((obj) => {
+                    obj.frustumCulled = false;
+                });
+
+                // Create and add name sprite
+                const nameSprite = createTextSprite(NPC_NAME);
+                vrm.scene.add(nameSprite);
+
+                VRMUtils.rotateVRM0(vrm);
+                vrm.scene.position.set(0, 0, -6);
+                vrm.scene.rotation.y = 2 * Math.PI / 2;
+
+                await initializeAnimations(vrm, true);
+            },
+            (progress) => console.log('Loading NPC...', 100.0 * (progress.loaded / progress.total), '%'),
+            (error) => console.error(error)
+        );
 
         const clock = new THREE.Clock();
         const moveSpeed = 0.05;
@@ -1193,12 +1042,10 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
     // Add these constants near the top of the file with other constants
     const MARKETPLACE_LINKS = {
         sword: {
-            website: 'https://hack-nation.ai',
-            discord: 'https://discord.gg/4sNa3QZ6ZP'
+            niftyIsland: 'https://www.niftyisland.com/item/base/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/2'
         },
         pistol: {
-            website: 'https://hack-nation.ai',
-            discord: 'https://discord.gg/4sNa3QZ6ZP'
+            niftyIsland: 'https://www.niftyisland.com/item/base/0x44073ea066f39c21c3ec51ef324c280e0870d2c4/3'
         },
         bat: {
             doggyMarket: 'https://doggy.market/nfts/doginalbat'
@@ -2128,52 +1975,82 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
                             {/* Shop column */}
                             <div className="w-80 border-l pl-4 overflow-y-auto">
                                 <h3 className="font-semibold mb-3">
-                                    {showShop ? 'Quick Links' : 'Equipped Weapon'}
+                                    {showShop ? 'New Items' : 'Equipped Weapon'}
                                 </h3>
                                 {showShop ? (
                                     <div className="space-y-4">
-                                        {quickLinks.map((link) => (
-                                            <div key={link.id} className="p-4 bg-gray-100/95 rounded">
-                                                <div className="text-center">
-                                                    <h3 className="font-semibold mb-2">{link.name}</h3>
-                                                    <p className="text-sm text-gray-600 mb-3">{link.description}</p>
-                                                    <a
-                                                        href={link.url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={`inline-flex items-center justify-center px-4 py-2 text-white rounded ${link.bgColor} text-sm w-full`}
-                                                    >
-                                                        <span className="mr-2">{link.icon}</span>
-                                                        Visit {link.name}
-                                                    </a>
+                                        {weapons.length > 0 ? (
+                                            weapons.map((weapon) => (
+                                                <div key={weapon.id} className="p-2 bg-gray-100/95 rounded">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <div>
+                                                            <h3 className="font-semibold">{weapon.name}</h3>
+                                                            <p className="text-sm text-gray-600">{weapon.price}</p>
+                                                        </div>
+                                                        <Button onClick={() => tryWeapon(weapon)}>
+                                                            Try It
+                                                        </Button>
+                                                    </div>
+                                                    <div className="flex gap-2 mt-2 justify-end">
+                                                        {weapon.id === 'bat' || weapon.id === 'megaphone' ? (
+                                                            <a
+                                                                href={MARKETPLACE_LINKS[weapon.id].doggyMarket}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="inline-flex items-center px-3 py-1.5 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
+                                                            >
+                                                                <img
+                                                                    src="/images/logos/Doggy Market.png"
+                                                                    alt="Doggy Market"
+                                                                    className="w-4 h-4 mr-1"
+                                                                />
+                                                                Doggy Market
+                                                            </a>
+                                                        ) : (
+                                                            <>
+                                                                <a
+                                                                    href={MARKETPLACE_LINKS[weapon.id].niftyIsland}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center px-3 py-1.5 bg-purple-500 text-white rounded hover:bg-purple-600 text-sm"
+                                                                >
+                                                                    <img
+                                                                        src="/images/logos/Icon - Color - Nifty Island.svg"
+                                                                        alt="Nifty Island"
+                                                                        className="w-4 h-4 mr-1"
+                                                                    />
+                                                                    Buy on Nifty Island
+                                                                </a>
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </div>
+                                            ))
+                                        ) : (
+                                            <div className="p-4 text-center bg-gray-100/95 rounded">
+                                                <p className="text-gray-600">In the works!</p>
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
                                 ) : (
                                     <div className="text-center p-4 bg-gray-100/95 rounded">
                                         <p className="mb-4">{equippedWeapon?.name}</p>
                                         <div className="flex flex-col gap-2">
-                                            <div className="flex gap-2 justify-center">
+                                            {equippedWeapon?.contractAddress && equippedWeapon?.tokenId && equippedWeapon?.chain && (
                                                 <a
-                                                    href="https://hack-nation.ai"
+                                                    href={getNiftyIslandUrl(equippedWeapon.chain, equippedWeapon.contractAddress, equippedWeapon.tokenId)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="inline-flex items-center justify-center px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                                                    className="inline-flex items-center justify-center px-3 py-1.5 bg-purple-500 text-white rounded hover:bg-purple-600 text-sm"
                                                 >
-                                                    🌐
-                                                    Visit Hack-Nation
+                                                    <img
+                                                        src="/images/logos/Icon - Color - Nifty Island.svg"
+                                                        alt="Nifty Island"
+                                                        className="w-4 h-4 mr-1"
+                                                    />
+                                                    View on Nifty Island
                                                 </a>
-                                                <a
-                                                    href="https://discord.gg/4sNa3QZ6ZP"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center justify-center px-3 py-1.5 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-sm"
-                                                >
-                                                    💬
-                                                    Join Discord
-                                                </a>
-                                            </div>
+                                            )}
                                             <Button onClick={returnToShop}>
                                                 Return to Shop
                                             </Button>
@@ -2186,56 +2063,28 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
                 </Card>
             )}
 
-            {/* UI buttons in top right corner */}
-            <div className="fixed top-4 right-4 flex gap-2 z-10">
-                {/* Return to Lobby Button */}
-                {onShowLobbyModal && (
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onShowLobbyModal}
-                        className="w-10 h-10 rounded-full bg-black bg-opacity-75 text-white hover:bg-opacity-90"
-                        title="Return to Lobby Selection"
-                    >
-                        <svg 
-                            className="w-5 h-5"
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                        >
-                            <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                            />
-                        </svg>
-                    </Button>
-                )}
-                
-                {/* Info & Controls Button */}
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setShowSettings(!showSettings)}
-                    className="w-10 h-10 rounded-full bg-black bg-opacity-75 text-white hover:bg-opacity-90"
-                    title="Info & Controls"
+            {/* Replace the settings button with info button in top right */}
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowSettings(!showSettings)}
+                className="fixed top-4 right-4 w-10 h-10 rounded-full bg-black bg-opacity-75 text-white hover:bg-opacity-90 z-10"
+                title="Info & Controls"
+            >
+                <svg 
+                    className="w-6 h-6 scale-150"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
                 >
-                    <svg 
-                        className="w-6 h-6 scale-150"
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                    >
-                        <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                    </svg>
-                </Button>
-            </div>
+                    <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                </svg>
+            </Button>
 
             {showWeaponDetails && selectedWeaponDetails && (
                 <Card
@@ -2287,7 +2136,20 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
                                 </div>
                             )}
 
-                            <div className="flex justify-center mt-6">
+                            <div className="flex justify-center gap-2 mt-6">
+                                <a
+                                    href={selectedWeaponDetails.niftyIslandLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center px-3 py-1.5 bg-purple-500 text-white rounded hover:bg-purple-600 text-sm"
+                                >
+                                    <img
+                                        src="/images/logos/Icon - Color - Nifty Island.svg"
+                                        alt="Nifty Island"
+                                        className="w-4 h-4 mr-1"
+                                    />
+                                    View on Nifty Island
+                                </a>
                                 <Button
                                     onClick={() => {
                                         agentActionTryWeapon({
@@ -2317,9 +2179,4 @@ const Scene = ({ currentLobby, onShowLobbyModal }) => {
     );
 };
 
-// Wrapper component to match the expected interface
-const NPC = ({ currentLobby, onShowLobbyModal }) => {
-    return <Scene currentLobby={currentLobby} onShowLobbyModal={onShowLobbyModal} />;
-};
-
-export default NPC;
+export default Scene;
