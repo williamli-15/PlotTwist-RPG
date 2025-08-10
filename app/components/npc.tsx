@@ -2113,8 +2113,7 @@ const Scene = ({ currentLobby }) => {
                 </Button>
             )}
 
-            {/* Settings Panel */}
-            {showSettings && (
+            {/* {showSettings && (
                 <Card className="fixed top-16 right-4 bg-black bg-opacity-75 text-white p-4 rounded-lg z-10 w-64">
                     <CardContent>
                         <div className="flex justify-between items-center mb-4">
@@ -2130,7 +2129,6 @@ const Scene = ({ currentLobby }) => {
                         </div>
 
                         <div className="space-y-6">
-                            {/* Controls Section */}
                             <div>
                                 <label className="block text-sm font-medium mb-2">Controls</label>
                                 <div className="space-y-2 text-sm">
@@ -2166,17 +2164,16 @@ const Scene = ({ currentLobby }) => {
                                 </div>
                             </div>
 
-                            {/* Add About Section */}
                             <div>
                                 <label className="block text-sm font-medium mb-2">About</label>
                                 <p className="text-sm">
-                                    Created by <a href="https://x.com/zoan37" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-300">@zoan37</a>
+                                    This repo was cloned from merchant-npc, created by <a href="https://x.com/zoan37" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-300">@zoan37</a>
                                 </p>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
-            )}
+            )} */}
 
             {/* Interaction Prompt */}
             {isNearNPC && !isChatting && (
