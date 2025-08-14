@@ -292,14 +292,14 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
                         <div>
                             <label className="text-white mb-2 block">Bio (optional)</label>
                             <Textarea
-                                placeholder="Tell others about yourself..."
+                                placeholder="Tell others about yourself... (feel free to copy and paste your resume)"
                                 value={bio}
                                 onChange={(e) => setBio(e.target.value)}
                                 className="bg-gray-700 border-gray-600 text-white"
-                                rows={2}
-                                maxLength={200}
+                                rows={6}
+                                maxLength={100000}
                             />
-                            <p className="text-xs text-gray-400 mt-1">{bio.length}/200</p>
+                            <p className="text-xs text-gray-400 mt-1">{bio.length}/100000</p>
                         </div>
 
                         <div className="flex gap-2">
