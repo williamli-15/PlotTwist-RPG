@@ -131,7 +131,7 @@ export const useLobbyStore = create<LobbyStore>()(
             },
 
             // Unified chat management
-            startChat: (target) => {
+            startChat: async (target) => {
                 const { activeChatService } = get();
                 
                 // Clean up any existing chat
@@ -145,6 +145,8 @@ export const useLobbyStore = create<LobbyStore>()(
                 if (target.type === 'npc' && target.lobby) {
                     // Create NPC chat service
                     newService = new DynamicChatService(target.lobby, 'npc');
+                    // Initialize personality asynchronously for NPC hosts
+                    await newService.initializePersonality();
                     chatTarget = {
                         type: 'npc',
                         name: target.lobby.hostAvatar.name || 'Host'

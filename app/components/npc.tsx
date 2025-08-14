@@ -572,7 +572,7 @@ const Scene = ({ currentLobby }) => {
         targetTween.start();
     };
 
-    const startUniversalChat = () => {
+    const startUniversalChat = async () => {
         if (!nearestAvatarRef.current) return;
         
         // Store original camera position
@@ -580,110 +580,115 @@ const Scene = ({ currentLobby }) => {
         originalCameraTargetRef.current = controlsRef.current.target.clone();
         
         // Start the appropriate chat through store
-        if (nearestAvatarRef.current.type === 'npc') {
-            console.log('Starting NPC chat with lobby:', currentLobby);
-            startChat({
-                type: 'npc',
-                lobby: currentLobby
-            });
-        } else if (nearestAvatarRef.current.type === 'digital-twin') {
-            const { profile, avatarState } = nearestAvatarRef.current.data;
-            startChat({
-                type: 'digital-twin',
-                profile,
-                avatarState
-            });
-        }
-        
-        // GET THE SERVICE DIRECTLY FROM STORE AFTER CREATING IT
-        const { activeChatService: newService, activeChatTarget: newTarget } = useLobbyStore.getState();
-        
-        console.log('New chat service:', newService);
-        console.log('New chat target:', newTarget);
-        
-        if (!newService) {
-            console.error('Failed to create chat service!');
-            return;
-        }
-        
-        setIsChatting(true);
-        
-        // Camera animation
-        const avatar = avatarRef.current.scene;
-        const targetEntity = nearestAvatarRef.current.type === 'npc' 
-            ? npcRef.current.scene 
-            : nearestAvatarRef.current.avatar.scene;  // <-- Remove .vrm, already IS the vrm
-                
-        const midpoint = new THREE.Vector3().addVectors(
-            avatar.position,
-            targetEntity.position
-        ).multiplyScalar(0.5);
-
-        // Calculate vector from midpoint to current camera position
-        const currentToCameraVector = new THREE.Vector3()
-            .copy(cameraRef.current.position)  // <-- USE THE REF
-            .sub(midpoint);
-        currentToCameraVector.y = 0; // Project onto XZ plane
-
-        // Calculate vector from avatar to NPC
-        const avatarToNPC = new THREE.Vector3()
-            .copy(targetEntity.position)  // <-- USE targetEntity INSTEAD
-            .sub(avatar.position);
-        avatarToNPC.y = 0; // Project onto XZ plane
-
-        // Determine if camera is on left or right using cross product
-        const crossProduct = new THREE.Vector3()
-            .crossVectors(avatarToNPC, currentToCameraVector);
-        const isOnLeftSide = crossProduct.y > 0;
-
-        // Calculate the angle for camera positioning (45 degrees = π/4 radians)
-        const angle = isOnLeftSide ? -Math.PI / 4 : Math.PI / 4;
-        const targetDistance = 2.5;
-        const targetHeight = midpoint.y + 1.5;
-
-        // Calculate camera position behind and to the side of the avatar
-        const targetCameraPosition = new THREE.Vector3();
-        const avatarToNPCAngle = Math.atan2(avatarToNPC.z, avatarToNPC.x);
-
-        // Position camera behind avatar at the calculated angle
-        targetCameraPosition.x = avatar.position.x - Math.cos(avatarToNPCAngle - angle) * targetDistance;
-        targetCameraPosition.z = avatar.position.z - Math.sin(avatarToNPCAngle - angle) * targetDistance;
-        targetCameraPosition.y = targetHeight;
-
-        // Animate camera to new position
-        animateCamera(targetCameraPosition, midpoint);
-
-        // Initial greeting - use newTarget instead of activeChatTarget
-        const chatName = newTarget?.name || 'Host';
-        setChatMessages([{
-            sender: chatName,
-            message: '',
-            isStreaming: true
-        }]);
-        
-        const greeting = nearestAvatarRef.current.type === 'npc'
-            ? (hasChattedBefore ? "*Same player left, and now has returned and approaches*" : "*Player approaches*")
-            : "*Someone approaches*";
-        
-        // Use newService instead of activeChatService
-        newService.getResponse(greeting, (partialMessage) => {
+        try {
+            if (nearestAvatarRef.current.type === 'npc') {
+                console.log('Starting NPC chat with lobby:', currentLobby);
+                await startChat({
+                    type: 'npc',
+                    lobby: currentLobby
+                });
+            } else if (nearestAvatarRef.current.type === 'digital-twin') {
+                const { profile, avatarState } = nearestAvatarRef.current.data;
+                await startChat({
+                    type: 'digital-twin',
+                    profile,
+                    avatarState
+                });
+            }
+            
+            // GET THE SERVICE DIRECTLY FROM STORE AFTER CREATING IT
+            const { activeChatService: newService, activeChatTarget: newTarget } = useLobbyStore.getState();
+            
+            console.log('New chat service:', newService);
+            console.log('New chat target:', newTarget);
+            
+            if (!newService) {
+                console.error('Failed to create chat service!');
+                return;
+            }
+            
+            // Set chatting state and initialize chat
+            setIsChatting(true);
+            
+            // Initial greeting
+            const chatName = newTarget?.name || 'Host';
             setChatMessages([{
                 sender: chatName,
-                message: partialMessage,
+                message: '',
                 isStreaming: true
             }]);
-        }).then(response => {
-            setChatMessages([{
-                sender: chatName,
-                message: response.message
-            }]);
             
-            speakNPCMessage(response.message);
+            // Camera animation - move inside try block
+            const avatar = avatarRef.current.scene;
+            const targetEntity = nearestAvatarRef.current.type === 'npc' 
+                ? npcRef.current.scene 
+                : nearestAvatarRef.current.avatar.scene;
+                    
+            const midpoint = new THREE.Vector3().addVectors(
+                avatar.position,
+                targetEntity.position
+            ).multiplyScalar(0.5);
+
+            // Calculate vector from midpoint to current camera position
+            const currentToCameraVector = new THREE.Vector3()
+                .copy(cameraRef.current.position)
+                .sub(midpoint);
+            currentToCameraVector.y = 0; // Project onto XZ plane
+
+            // Calculate vector from avatar to NPC
+            const avatarToNPC = new THREE.Vector3()
+                .copy(targetEntity.position)
+                .sub(avatar.position);
+            avatarToNPC.y = 0; // Project onto XZ plane
+
+            // Determine if camera is on left or right using cross product
+            const cross = currentToCameraVector.clone().cross(avatarToNPC);
+            const isLeftSide = cross.y > 0;
             
-            if (nearestAvatarRef.current.type === 'npc' && !hasChattedBefore) {
-                setHasChattedBefore(true);
-            }
-        });
+            // Calculate angle based on side
+            const angle = isLeftSide ? Math.PI / 4 : -Math.PI / 4; // 45 degrees left or right
+            const targetDistance = 3;
+            const targetHeight = 1.5;
+            
+            const targetCameraPosition = new THREE.Vector3();
+            const avatarToNPCAngle = Math.atan2(avatarToNPC.z, avatarToNPC.x);
+
+            // Position camera behind avatar at the calculated angle
+            targetCameraPosition.x = avatar.position.x - Math.cos(avatarToNPCAngle - angle) * targetDistance;
+            targetCameraPosition.z = avatar.position.z - Math.sin(avatarToNPCAngle - angle) * targetDistance;
+            targetCameraPosition.y = targetHeight;
+
+            // Animate camera to new position
+            animateCamera(targetCameraPosition, midpoint);
+            
+            const greeting = nearestAvatarRef.current.type === 'npc'
+                ? (hasChattedBefore ? "*Same player left, and now has returned and approaches*" : "*Player approaches*")
+                : "*Someone approaches*";
+            
+            // Start the greeting with the properly initialized service
+            newService.getResponse(greeting, (partialMessage) => {
+                setChatMessages([{
+                    sender: chatName,
+                    message: partialMessage,
+                    isStreaming: true
+                }]);
+            }).then(response => {
+                setChatMessages([{
+                    sender: chatName,
+                    message: response.message
+                }]);
+                
+                speakNPCMessage(response.message);
+                
+                if (nearestAvatarRef.current.type === 'npc' && !hasChattedBefore) {
+                    setHasChattedBefore(true);
+                }
+            });
+            
+        } catch (error) {
+            console.error('Error starting chat:', error);
+            return;
+        }
         
         // Focus input
         setTimeout(() => {

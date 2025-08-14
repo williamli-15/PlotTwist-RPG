@@ -11,13 +11,17 @@ class DynamicChatService {
         this.config = config;
         this.chatType = chatType;
         this.messageHistory = [];
-        this.initializePersonality();
+        // For digital twins, initialize immediately (synchronous)
+        // For NPCs, we'll call initializePersonality() manually to handle async
+        if (chatType === 'digital-twin') {
+            this.initializePersonality();
+        }
     }
 
     /**
      * Initialize personality based on chat type
      */
-    initializePersonality() {
+    async initializePersonality() {
         let systemPrompt = '';
 
         if (this.chatType === 'digital-twin') {
@@ -28,7 +32,7 @@ class DynamicChatService {
             if (!this.config) {
                 systemPrompt = this.getDefaultPersonality();
             } else {
-                systemPrompt = this.buildLobbyPersonality();
+                systemPrompt = await this.buildLobbyPersonality();
             }
         }
 
@@ -70,16 +74,24 @@ class DynamicChatService {
     /**
      * Build personality for lobby NPC host
      */
-    buildLobbyPersonality() {
+    async buildLobbyPersonality() {
         const hostAvatar = this.config.hostAvatar;
-        let prompt = hostAvatar.personality;
-        if (!prompt) {
-            prompt = `You are the lobby host here, ${hostAvatar.username}. 
+        let prompt = hostAvatar.personality || `You are the lobby host here, ${hostAvatar.name}. 
             You are friendly and welcoming to all players. 
             Your role is to help new players get started and answer any questions they have about the event. 
             You can also share interesting facts about the event world and its history. 
             Always be polite and encouraging, and try to make everyone feel at home in the lobby.`;
+        
+        // Get attendee context for this lobby
+        const attendees = await this.getLobbyAttendees();
+        if (attendees.length > 0) {
+            prompt += `\n\nAttendees you know about in this lobby:\n`;
+            attendees.forEach(attendee => {
+                prompt += `- ${attendee.username}: ${attendee.ai_personality_prompt || 'A participant in the hackathon'}\n`;
+            });
+            prompt += `\nYou can reference these attendees in conversations, mention their interests, and help connect people with similar backgrounds.`;
         }
+        
         return prompt;
     }
 
@@ -265,6 +277,50 @@ class DynamicChatService {
                 isDigitalTwin: true,
                 originalUser: this.config?.profile?.username
             };
+        }
+    }
+
+    /**
+     * Get all attendees (profiles) for this lobby
+     */
+    async getLobbyAttendees() {
+        try {
+            if (!this.config?.lobbyId) return [];
+            
+            // Import supabase client
+            const { supabase } = await import('@/lib/supabase');
+            
+            // Use a simpler query - get profile IDs from avatar_states first
+            const { data: avatarStates, error: avatarError } = await supabase
+                .from('avatar_states')
+                .select('profile_id')
+                .eq('lobby_id', this.config.lobbyId);
+
+            if (avatarError) {
+                console.error('Error fetching avatar states:', avatarError);
+                return [];
+            }
+
+            if (!avatarStates || avatarStates.length === 0) {
+                return [];
+            }
+
+            // Get profiles for those profile IDs
+            const profileIds = avatarStates.map(state => state.profile_id);
+            const { data: profiles, error: profileError } = await supabase
+                .from('profiles')
+                .select('id, username, ai_personality_prompt, bio, interests')
+                .in('id', profileIds);
+
+            if (profileError) {
+                console.error('Error fetching profiles:', profileError);
+                return [];
+            }
+            
+            return profiles || [];
+        } catch (error) {
+            console.error('Error fetching lobby attendees:', error);
+            return [];
         }
     }
 
