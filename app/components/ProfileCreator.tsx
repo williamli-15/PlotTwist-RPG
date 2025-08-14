@@ -290,7 +290,7 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
                         </div>
 
                         <div>
-                            <label className="text-white mb-2 block">Bio (optional)</label>
+                            <label className="text-white mb-2 block">Background</label>
                             <Textarea
                                 placeholder="Tell others about yourself... (feel free to copy and paste your resume)"
                                 value={bio}
