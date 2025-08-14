@@ -81,7 +81,7 @@ const coHostAvatar: Avatar = {
 // AI Agent & Infra Hackathon host - Madison Ho from Lux Capital
 const aiAgentHackathonHostAvatar: Avatar = {
     name: 'Madison Ho',
-    model: '/avatars/Linn.vrm', // Using available avatar model
+    model: '/avatars/beidou.vrm', // Using available avatar model
     personality: `You are Madison Ho from Lux Capital, co-hosting the AI Agent & Infra Hackathon. You're passionate about connecting builders with cutting-edge AI infrastructure and agent technologies.
         - Keep responses enthusiastic and informative (2-4 sentences max)
         - You're excited about the $100K+ in prizes and opportunities to connect with top VCs
