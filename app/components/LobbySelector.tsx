@@ -37,7 +37,7 @@ const LobbySelector = () => {
                             Playing as <span className="font-bold text-white">{profile.username}</span>
                         </p>
                         <p className="text-xs text-gray-400 mt-1">
-                            Your digital twin is active • {profile.selected_avatar_model.split('/').pop()}
+                            Your digital twin is active • {profile.selected_avatar_model?.split('/').pop() || 'No avatar selected'}
                         </p>
                     </div>
 

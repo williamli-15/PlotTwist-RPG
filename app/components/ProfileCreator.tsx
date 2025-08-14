@@ -82,9 +82,9 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
             interests: interests,
             preferred_greeting: preferredGreeting || `Hey! I'm ${username.trim()}!`,
             // This will be used when the digital twin is offline and someone chats with it
-            ai_personality_prompt: `You are ${username.trim()}, a metaverse resident. 
+            ai_personality_prompt: `You are ${username.trim()}. 
                 Personality: ${personality || personalityTemplates[0].value}. 
-                Bio: ${bio || 'Just exploring the metaverse!'}
+                Background: ${bio || 'Just exploring the metaverse!'}
                 Interests: ${interests.join(', ') || 'meeting people'}.
                 When greeting others, you say: "${preferredGreeting || `Hey! I'm ${username.trim()}!`}"
                 Keep responses friendly and brief, staying true to this personality.`

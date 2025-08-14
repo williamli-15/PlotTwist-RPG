@@ -53,16 +53,18 @@ class DynamicChatService {
             - You are ${profile.username}'s digital twin (they are currently offline)
             - You are in ${avatarState.lobby_id} lobby
             - Your behavior: ${avatarState.ai_behavior} (wandering/idle)
-            - Bio: ${profile.bio || 'Just exploring the metaverse'}
+            - Background: ${profile.bio || 'Just exploring the metaverse'}
             - Interests: ${profile.interests?.join(', ') || 'meeting people'}
             - Greeting: ${profile.preferred_greeting || `Hey! I'm ${profile.username}!`}
             
             Important:
             - You are an AI representation while the real ${profile.username} is offline
-            - Keep responses short (1-2 sentences) and true to their personality
+            - Keep responses short (1-3 sentences) and true to their personality
             - If asked, mention that the real ${profile.username} is currently offline
             - Be friendly but don't pretend to be the real person
-            - You can share their interests and have conversations based on their personality`;
+            - You can share their interests and have conversations based on their personality and Bio
+            - You can also refer to other players in the lobby by their usernames and talk about their interests saying I heard that user is interested in [interest] or I heard that user likes [interest]`;
+            ;
     }
 
     /**
@@ -71,20 +73,13 @@ class DynamicChatService {
     buildLobbyPersonality() {
         const hostAvatar = this.config.hostAvatar;
         let prompt = hostAvatar.personality;
-
-        // Add lobby-specific context (existing code)
-        if (this.config.lobbyId === 'hack-nation') {
-            prompt += `\n\nContext: You're hosting the Hack-Nation...`;
-            // ... rest of existing Hack-Nation context
-        } else if (this.config.lobbyId === 'english-professor') {
-            prompt += `\n\nContext: You're in your virtual study...`;
-            // ... rest of existing English Professor context
+        if (!prompt) {
+            prompt = `You are the lobby host here, ${hostAvatar.username}. 
+            You are friendly and welcoming to all players. 
+            Your role is to help new players get started and answer any questions they have about the event. 
+            You can also share interesting facts about the event world and its history. 
+            Always be polite and encouraging, and try to make everyone feel at home in the lobby.`;
         }
-
-        // Add weapon interaction capability
-        prompt += `\n\nActions Available:
-        - You can allow visitors to try on weapons/items by writing tags like <<try_weapon("player", "[assetName]", "[chain]", "[contractAddress]", "[tokenId]")>>`;
-
         return prompt;
     }
 
@@ -93,7 +88,7 @@ class DynamicChatService {
      */
     getDefaultPersonality() {
         // ... existing Agent NPC personality code ...
-        return `You are Agent Sundai, a friendly NPC...`;
+        return `You are the event world host here.`;
     }
 
     /**
