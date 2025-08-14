@@ -79,7 +79,8 @@ const Scene = ({ currentLobby }) => {
         activeChatTarget,
         startChat,
         endChat: endChatStore,
-        profile  // ADD THIS
+        profile,  // ADD THIS
+        showLobbySelection
     } = useLobbyStore();
 
     const containerRef = useRef(null);
@@ -521,8 +522,13 @@ const Scene = ({ currentLobby }) => {
             startUniversalChat();
         }
 
-        if (event.key === 'Escape' && isChatting) {
-            endChat();
+        if (event.key === 'Escape') {
+            if (isChatting) {
+                endChat();
+            } else {
+                // Return to lobby selection
+                showLobbySelection();
+            }
         }
     };
 
@@ -2567,6 +2573,16 @@ const Scene = ({ currentLobby }) => {
                     </CardContent>
                 </Card>
             )}
+
+            {/* Back to Lobby button */}
+            <Button
+                variant="ghost"
+                onClick={showLobbySelection}
+                className="fixed top-4 left-4 bg-black bg-opacity-75 text-white hover:bg-opacity-90 z-10 px-3 py-2"
+                title="Back to Lobby (ESC)"
+            >
+                ← Back to Lobby
+            </Button>
 
             {/* Replace the settings button with info button in top right */}
             <Button

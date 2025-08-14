@@ -78,40 +78,44 @@ const coHostAvatar: Avatar = {
     ]
 };
 
-// English Professor avatar - Professor Englando who loves teaching English
-const englishProfessorHostAvatar: Avatar = {
-    name: 'Professor Englando',
-    model: '/avatars/Englando.vrm',
-    personality: `You are Professor Englando, an enthusiastic English teacher who absolutely LOVES teaching English! You're passionate, encouraging, and always ready to help students improve their English skills.
-        - Keep responses encouraging and educational (2-4 sentences max)
-        - Actively correct grammar mistakes and explain proper usage
-        - Ask students to practice vocabulary and give mini-lessons
-        - Use positive reinforcement like "Excellent!" "Well done!" "Let's practice!"
-        - Give quick English tips and explain word origins
-        - Make learning fun with interactive exercises during conversation
-        - Always end with encouraging phrases like "Keep practicing!" or "You're doing great!"
-        - Invite students to join your Discord community: https://discord.gg/tZgjmNAmbZ
-        - Mention that your Discord has more English learners and daily practice sessions
+// AI Agent & Infra Hackathon host - Madison Ho from Lux Capital
+const aiAgentHackathonHostAvatar: Avatar = {
+    name: 'Madison Ho',
+    model: '/avatars/Linn.vrm', // Using available avatar model
+    personality: `You are Madison Ho from Lux Capital, co-hosting the AI Agent & Infra Hackathon. You're passionate about connecting builders with cutting-edge AI infrastructure and agent technologies.
+        - Keep responses enthusiastic and informative (2-4 sentences max)
+        - You're excited about the $100K+ in prizes and opportunities to connect with top VCs
+        - Help participants understand the two main tracks: Best Agent Hack and Best Use of Modal
+        - Connect hackers with sponsors: Lux Capital, Modal, Cognition, and AWS
+        - Encourage participation in both tracks for maximum opportunities
+        - Share details about compute credits: $500 Modal credits, Devin Core Plan access
+        - Highlight the 36-hour format and NYC-based judging preference
+        - Contact: madison.ho@luxcapital.com for questions
         
-        Teaching Style:
-        You love helping students at all levels - from beginners to advanced learners. You focus on practical English usage, grammar correction, vocabulary building, and pronunciation help. You make every conversation a learning opportunity while being supportive and patient. You often invite students to continue learning on your Discord server where there are more English learners to practice with.`,
+        Background:
+        You're organizing this cutting-edge hackathon focused on AI agents and infrastructure. The event runs 36 hours from August 12-14, with virtual hacking and in-person NYC judging. You work closely with Emily Han and sponsors to create opportunities for college students, early professionals, and engineers to showcase their skills directly to innovative hiring teams.`,
     history: [],
-    eventSchedule: `English Learning Schedule:
-        - Conversation Practice: Daily 8AM-10PM UTC
-        - Grammar Workshop: Mondays & Wednesdays 7PM UTC
-        - Vocabulary Building: Tuesdays & Thursdays 6PM UTC
-        - Pronunciation Practice: Fridays 7PM UTC
-        - English Games & Fun: Saturdays 3PM UTC`,
-    contact: `Contact Professor Englando:
-        - English Learning Discord: https://discord.gg/tZgjmNAmbZ
-        - Office Hours: Always available for English practice!
-        - Teaching Focus: Grammar, Vocabulary, Pronunciation, Conversation
-        - All levels welcome - from beginner to advanced!`,
+    eventSchedule: `AI Agent & Infra Hackathon Schedule (EST):
+        Aug 12 (Tuesday):
+        • 6:00-8:00 PM: Opening, Sponsor Intros, & Networking (NYC)
+        • 9:00 PM: Official challenge reveal + track selection
+        • 10:00 PM: Hacking Starts (36 hours begins)
+        
+        Aug 14 (Thursday):
+        • 10:00 AM: Hacking Ends
+        • 1:00 PM: Finalists Announced Online
+        • 6:00-8:00 PM: Finalists Judging & Awards (NYC)`,
+    contact: `Connect with AI Agent & Infra Hackathon:
+        - Host: Madison Ho (madison.ho@luxcapital.com)
+        - Co-Host: Emily Han (emily@modal.com)
+        - Sponsors: Lux Capital, Modal, Cognition, AWS
+        - Location: NYC (with virtual participation)
+        - Application-based registration (priority to NYC-based hackers)`,
     stories: [
-        "From Beginner to Fluent: Helping students achieve their English dreams",
-        "Grammar Made Easy: Simple tricks to master complex English rules",
-        "Vocabulary Adventures: Making word learning fun and memorable", 
-        "Pronunciation Perfect: Helping students speak with confidence"
+        "Best Overall Hack: $25K AWS credits + Lux Capital partner meetings for top winners",
+        "Best Use of Modal: Up to $25K Modal credits for serverless compute projects",
+        "Best Agent Hack: $3K cash + Devin Team access for gigacontext agent builds",
+        "Direct access to investors from Lux Capital and engineers from Modal, Cognition, AWS"
     ]
 };
 
@@ -129,14 +133,14 @@ export const defaultLobbies: Lobby[] = [
         environmentImage: 'neutral'
     },
     {
-        lobbyId: 'english-professor',
-        name: 'Professor Englando\'s Classroom',
-        description: 'An interactive English learning classroom where Professor Englando helps you master grammar, vocabulary, and conversation skills!',
-        theme: 'educational',
-        hostAvatar: englishProfessorHostAvatar,
-        maxPlayers: 20,
+        lobbyId: 'ai-agent-hackathon',
+        name: 'AI Agent & Infra Hackathon',
+        description: 'Co-hosted by Lux Capital, Modal, Cognition & AWS • 36-hour hackathon • $100K+ prizes • Build cutting-edge AI agents & infra • NYC + Virtual',
+        theme: 'ai-infrastructure',
+        hostAvatar: aiAgentHackathonHostAvatar,
+        maxPlayers: 200,
         currentPlayers: [],
-        backgroundColor: '#2d2d2d',
+        backgroundColor: '#1a1a2e',
         environmentImage: 'neutral'
     }
 ];
@@ -158,6 +162,52 @@ export const hackNationTracks = [
     {
         name: "Small Model Deployment",
         description: "Deploy efficient, lightweight AI models for edge computing and resource-constrained environments."
+    }
+];
+
+// Competition tracks for AI Agent & Infra Hackathon
+export const aiAgentHackathonTracks = [
+    {
+        name: "Best Agent Hack - Gigacontext Agents",
+        description: "Build an agent that works with, analyzes, synthesizes, or manipulates massive contexts that can't fit in an LLM's context window. Explore domains like code, law, bio, etc.",
+        prizes: "$3K + Devin Team + Windsurf Pro (1st), $1.5K + tools (2nd), $0.5K + tools (3rd)",
+        credits: "Devin Core Plan + 4 months Windsurf Pro"
+    },
+    {
+        name: "Best Use of Modal",
+        description: "Any project built on Modal's serverless compute platform for AI inference, batch processing, sandboxed execution, and more. Scale from zero to thousands of CPUs/GPUs easily.",
+        prizes: "$25K Modal credits (1st), $10K credits (2nd), $1K credits (3rd)",
+        credits: "$500 Modal credits"
+    },
+    {
+        name: "Best Overall Hack",
+        description: "Top overall project across all categories, judged on innovation, technical execution, and real-world impact.",
+        prizes: "$25K AWS credits + Lux partner meeting (1st), $10K + meeting (2nd), $5K + meeting (3rd)",
+        credits: "All participants eligible"
+    }
+];
+
+// Sponsors and judges for AI Agent Hackathon
+export const aiAgentHackathonSponsors = [
+    {
+        name: "Lux Capital",
+        role: "Lead Sponsor & Judging",
+        description: "Top-tier VC firm investing in emerging technologies"
+    },
+    {
+        name: "Modal Labs",
+        role: "Infrastructure Partner",
+        description: "Serverless compute platform for AI applications"
+    },
+    {
+        name: "Cognition",
+        role: "Agent Technology Sponsor", 
+        description: "Creators of Devin and Windsurf development tools"
+    },
+    {
+        name: "AWS",
+        role: "Cloud Infrastructure Partner",
+        description: "Providing compute credits and cloud services"
     }
 ];
 

@@ -1,27 +1,41 @@
-# YNGO - You Never Go Offline
+# Assemble - 3D Virtual Event Platform
 
-A 3D metaverse hub built with Next.js, Three.js, and React that connects multiple digital twin experiences. YNGO serves as a central hub for exploring various virtual worlds and communities.
+A revolutionary 3D virtual event platform that creates immersive digital twin experiences for attendees. Assemble transforms virtual events from passive viewing experiences into interactive networking environments where meaningful connections happen naturally through spatial proximity and AI-enhanced conversations.
+
+## 🎯 Vision
+
+**Solving Virtual Event Networking**: In real-life events, you might connect with 10-20 people. In virtual events, often not even 1. Assemble changes this by creating 3D spaces where attendees can:
+
+- **Find & Connect**: Discover attendees you actually want to talk to through spatial interaction
+- **Bridge Virtual to Real**: Seamlessly move conversations to LinkedIn/WhatsApp with full context
+- **Learn Before Meeting**: Get AI-powered insights about other attendees before and after events
+- **Context-Aware Networking**: AI assistants help attendees find and connect with relevant people
 
 ## 🌟 Features
 
-- **Interactive 3D Environment**: Built with Three.js for immersive 3D experiences
-- **Multi-Lobby System**: Switch between different themed worlds (Hack-Nation, English Professor)
-- **Dynamic NPCs**: AI-powered characters with unique personalities per lobby
-- **VRM Avatar Support**: Load and animate VRM avatars using @pixiv/three-vrm
-- **Real-time Chat**: Streaming AI conversations with OpenRouter integration
-- **Portal Navigation**: Seamless transitions between different virtual environments
+### 🏢 Virtual Event Spaces
+- **3D Event Venues**: Immersive environments built with Three.js
+- **Digital Twin Attendees**: VRM avatars representing real event participants
+- **Spatial Audio & Chat**: Natural conversations based on proximity
+- **Event Organizer Dashboard**: Easy setup and management tools
 
-## 🎮 Available Worlds
+### 🤝 Smart Networking
+- **AI-Powered Introductions**: Context-aware suggestions for meaningful connections
+- **Real-World Integration**: Export conversations to LinkedIn, WhatsApp, email
+- **Attendee Discovery**: Learn about participants before, during, and after events
+- **Conversation Context**: AI maintains context about everyone in the room
 
-### 🖥️ Hack-Nation
-- AI hackathon and development community
-- Features JordanTheJet as YNGO metaverse guide
-- Links to hack-nation.ai and Discord community
+### 🌐 Web-First Accessibility
+- **No Downloads Required**: Runs entirely in web browsers
+- **Mobile Optimized**: Accessible on phones, tablets, and desktops
+- **Low Bandwidth Mode**: Adaptive quality for all connection speeds
+- **Universal Compatibility**: Works across all devices and platforms
 
-### 📚 Professor Englando's Classroom
-- Interactive English learning environment
-- AI-powered English teacher with personalized lessons
-- Grammar, vocabulary, and pronunciation practice
+### 👥 Attendee Experience
+- **Pre-Event Networking**: Connect with attendees before the event starts
+- **During Event Discovery**: Find and approach people naturally in 3D space
+- **Post-Event Follow-up**: Maintain connections with full conversation history
+- **Profile Integration**: Import LinkedIn/professional profiles for richer interactions
 
 ## 🛠️ Tech Stack
 
@@ -66,53 +80,85 @@ npm run dev
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## 🎯 Usage
+## 🎯 How It Works
 
-1. **Enter YNGO Hub**: Start in the main metaverse hub
-2. **Choose a World**: Select from available lobbies (Hack-Nation, English Professor)
-3. **Interact with NPCs**: Chat with AI-powered characters
-4. **Explore Weapons**: View and learn about 3D weapons
-5. **Navigate Worlds**: Use quick links to visit external communities
+### For Event Organizers
+1. **Create Event Space**: Set up your 3D venue with custom branding and layout
+2. **Import Attendees**: Upload attendee list with LinkedIn/professional profiles
+3. **Configure AI Assistants**: Set networking goals and conversation prompts
+4. **Launch Event**: Share web link - no app downloads required
+5. **Monitor Engagement**: Real-time analytics on connections and conversations
+
+### For Event Attendees
+1. **Join via Web Link**: Access the event instantly in your browser
+2. **Create Digital Twin**: Quick avatar setup representing your professional profile
+3. **Explore & Network**: Move through 3D space to discover and approach other attendees
+4. **AI-Enhanced Conversations**: Get context about people you're talking to
+5. **Export Connections**: Save conversations and connect on LinkedIn/WhatsApp
+6. **Post-Event Follow-up**: Continue relationships with full conversation history
 
 ## 🏗️ Project Structure
 
 ```
 ├── app/
 │   ├── components/
-│   │   ├── npc.tsx              # Main NPC component
-│   │   ├── chat_service.js      # AI chat functionality
-│   │   └── DynamicChatService.js # Multi-personality chat
+│   │   ├── world.tsx             # Main 3D scene and event space
+│   │   ├── npc.tsx               # Digital twin avatars and attendees
+│   │   ├── chat_service.js       # AI networking and conversation system
+│   │   └── event_management/     # Event organizer dashboard
 ├── lib/
-│   └── lobbyConfig.ts           # World configurations
+│   ├── eventConfig.ts            # Event space configurations
+│   ├── attendeeManager.ts        # Attendee data and profile management
+│   └── networkingAI.ts           # AI-powered networking suggestions
 ├── public/
-│   ├── context/                 # Metadata and descriptions
-│   └── models/                  # 3D models and VRM avatars
+│   ├── venues/                   # 3D event venue models
+│   ├── avatars/                  # VRM attendee avatars
+│   └── assets/                   # Event branding and media
 ```
 
-## 🤖 AI Integration
+## 🤖 AI-Powered Networking
 
-YNGO uses OpenRouter API for AI-powered conversations with different personality profiles:
-- **JordanTheJet**: YNGO metaverse guide and introducer
-- **Professor Englando**: English learning specialist
-- **Custom Personalities**: Extensible system for new characters
+Assemble uses advanced AI to enhance networking experiences:
 
-## 🎨 3D Assets
+### Context-Aware Conversations
+- **Profile Analysis**: AI understands attendee backgrounds and interests
+- **Introduction Suggestions**: Smart recommendations for meaningful connections
+- **Conversation Starters**: AI generates relevant talking points based on shared interests
+- **Real-time Insights**: Get context about people you're talking to during conversations
 
-- **Weapons**: Interactive 3D models with detailed metadata
-- **Avatars**: VRM-compatible character models
-- **Environments**: Custom 3D scenes for each lobby
+### Networking Intelligence
+- **Attendee Matching**: Algorithm suggests high-value connections
+- **Group Formation**: AI identifies and facilitates relevant group discussions
+- **Follow-up Optimization**: Smart suggestions for post-event relationship building
+- **Event Analytics**: Organizers get insights on networking patterns and engagement
+
+## 🎨 3D Event Assets
+
+### Venue Environments
+- **Conference Centers**: Professional meeting spaces with branding capabilities
+- **Expo Halls**: Large spaces for trade shows and exhibitions
+- **Networking Lounges**: Casual spaces designed for conversations
+- **Custom Venues**: Branded environments tailored to specific events
+
+### Digital Twin Avatars
+- **Professional Avatars**: Business-appropriate VRM models
+- **Customization Options**: Attendees can personalize their digital representation
+- **Accessibility Features**: Multiple avatar options for inclusive representation
+- **Animation Library**: Professional gestures and expressions for natural interaction
 
 ## 🔧 Development
 
 ### Key Components
-- `npc.tsx`: Handles NPC rendering, animation, and interactions
-- `chat_service.js`: Manages AI conversations and streaming
-- `lobbyConfig.ts`: Defines world settings and personalities
+- `world.tsx`: Manages 3D event venues and spatial interactions
+- `npc.tsx`: Handles attendee avatars, movement, and proximity-based features
+- `chat_service.js`: Powers AI networking and conversation management
+- `eventConfig.ts`: Defines event settings, venues, and networking parameters
 
-### Adding New Worlds
-1. Add lobby configuration to `lobbyConfig.ts`
-2. Create personality prompt in `DynamicChatService.js`
-3. Add world-specific assets and metadata
+### Creating New Event Types
+1. Add event configuration to `eventConfig.ts`
+2. Configure AI networking prompts for the event context
+3. Set up venue-specific 3D assets and layouts
+4. Define attendee interaction patterns and networking goals
 
 ## 📦 Dependencies
 
@@ -140,6 +186,37 @@ Make sure to set up environment variables in your Vercel dashboard.
 
 This project is part of the PlotTwist ecosystem.
 
+## 🚀 Use Cases
+
+### Corporate Events
+- **Company All-Hands**: Connect remote teams in immersive 3D spaces
+- **Product Launches**: Interactive showcases with attendee networking
+- **Board Meetings**: Professional environments with spatial audio
+
+### Conferences & Trade Shows
+- **Industry Conferences**: Multi-track events with networking between sessions
+- **Virtual Exhibitions**: 3D booths with natural attendee flow and interactions
+- **Academic Conferences**: Poster sessions and paper discussions in virtual spaces
+
+### Networking Events
+- **Professional Meetups**: Industry-specific networking with AI-powered introductions
+- **Startup Pitch Events**: Connect investors, entrepreneurs, and advisors
+- **Alumni Gatherings**: Reconnect with classmates in nostalgic virtual environments
+
+### Educational Events
+- **Virtual Classrooms**: Interactive learning environments with peer collaboration
+- **Workshop Series**: Hands-on training with breakout group functionality
+- **Graduation Ceremonies**: Celebrate achievements with family and friends virtually
+
+## 🌍 Global Impact
+
+Assemble democratizes access to high-quality networking opportunities:
+- **Geographic Barriers Removed**: Connect with anyone, anywhere
+- **Inclusive by Design**: Accessible to attendees with mobility limitations
+- **Cost-Effective**: Eliminate travel expenses while maintaining human connection
+- **Environmental Benefit**: Reduce carbon footprint of business travel
+- **Time Efficient**: Maximize networking ROI with AI-enhanced matching
+
 ---
 
-**Built with ❤️ for the metaverse community**
+**Transforming virtual events from passive to interactive - Built with ❤️ for meaningful human connection**
