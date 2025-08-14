@@ -18,7 +18,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: 'google/gemini-flash-1.5-8b',
         messages,
-        max_tokens: 5000,
+        max_tokens: 50000,
         stream: true
       })
     });

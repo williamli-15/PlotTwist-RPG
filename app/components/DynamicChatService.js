@@ -140,7 +140,7 @@ class DynamicChatService {
         this.addMessage('user', userMessage);
 
         try {
-            const response = await fetch('/api/chat', {
+            const response = await fetch('/api/chat-modal', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ class DynamicChatService {
      */
     async getDigitalTwinResponse(userMessage, onStream = () => {}) {
         try {
-            const response = await fetch('/api/chat', {
+            const response = await fetch('/api/chat-modal', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
