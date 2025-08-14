@@ -70,10 +70,6 @@ const ANIMATION_GREAT_SWORD_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-
 const ANIMATION_PISTOL_IDLE = 'https://vmja7qb50ap0jvma.public.blob.vercel-storage.com/demo/v1/models/animations/Pistol%20Idle-UNnPpwZlfzGEk7bWquH5YabWhRDHYp.fbx';
 
 const Scene = ({ currentLobby }) => {
-    // ADD THIS LOADING CHECK
-    if (!currentLobby) {
-        return <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">Loading World...</div>;
-    }
     const { 
         activeChatService,
         activeChatTarget,
@@ -2342,6 +2338,11 @@ const Scene = ({ currentLobby }) => {
     };
 
     // Modify the return statement to add the avatar selector UI
+    // Loading check after all hooks are defined
+    if (!currentLobby) {
+        return <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">Loading World...</div>;
+    }
+
     return (
         <div className="relative w-full h-full">
             <div ref={containerRef} className="w-full h-full" />

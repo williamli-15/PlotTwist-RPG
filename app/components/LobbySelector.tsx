@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useLobbyStore } from '@/lib/lobbyStore';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -10,8 +10,21 @@ const LobbySelector = () => {
     const { 
         availableLobbies, 
         profile,
-        joinLobby 
+        joinLobby,
+        hideLobbySelection
     } = useLobbyStore();
+
+    // Handle ESC key to close modal
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                hideLobbySelection();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [hideLobbySelection]);
 
     // Safety check - should never happen but satisfies TypeScript
     if (!profile) {
@@ -23,8 +36,19 @@ const LobbySelector = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-900 p-8">
-            <div className="max-w-6xl mx-auto">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+            <div className="bg-gray-900/80 backdrop-blur-sm rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700 relative">
+                {/* Close button */}
+                <button
+                    onClick={hideLobbySelection}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                
+                <div className="p-8">
                 {/* Header with Profile Status */}
                 <div className="text-center mb-12">
                     <h1 className="text-5xl font-bold text-white mb-4">
@@ -112,7 +136,7 @@ const LobbySelector = () => {
                                                 ? 'bg-green-600 hover:bg-green-700' 
                                                 : 'bg-blue-600 hover:bg-blue-700'
                                         }`}
-                                        onClick={() => joinLobby(lobby.lobbyId)}
+                                        onClick={async () => await joinLobby(lobby.lobbyId)}
                                         disabled={lobby.currentPlayers.length >= lobby.maxPlayers}
                                     >
                                         {lobby.currentPlayers.length >= lobby.maxPlayers 
@@ -137,6 +161,7 @@ const LobbySelector = () => {
                         Edit Profile Settings
                     </button>
                 </div> */}
+                </div>
             </div>
         </div>
     );

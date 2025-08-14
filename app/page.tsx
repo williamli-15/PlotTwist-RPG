@@ -22,7 +22,7 @@ export default function Home() {
       setIsLoading(false);
     };
     init();
-  }, []);
+  }, [initializeUser]);
 
   if (isLoading) {
     return (
@@ -41,11 +41,11 @@ export default function Home() {
     );
   }
 
-  // Show lobby selector after profile is created
-  if (showLobbySelector) {
-    return <LobbySelector />;
-  }
-
-  // In-game view
-  return <NPC currentLobby={currentLobby} />;
+  // In-game view with optional lobby selector overlay
+  return (
+    <>
+      <NPC currentLobby={currentLobby} />
+      {showLobbySelector && <LobbySelector />}
+    </>
+  );
 }

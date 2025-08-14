@@ -42,7 +42,7 @@ interface LobbyStore extends LobbyState {
     // Core actions
     initializeUser: () => void;
     setCurrentLobby: (lobby: Lobby | null) => void;
-    joinLobby: (lobbyId: string) => boolean;
+    joinLobby: (lobbyId: string) => Promise<boolean>;
     leaveLobby: () => void;
     showLobbySelection: () => void;
     hideLobbySelection: () => void;
@@ -429,7 +429,7 @@ export const useLobbyStore = create<LobbyStore>()(
             },
 
             // Join lobby (simplified - no chat service creation)
-            joinLobby: (lobbyId: string) => {
+            joinLobby: async (lobbyId: string) => {
                 const { currentUser, availableLobbies, profile } = get();
                 if (!currentUser) return false;
 
@@ -447,9 +447,9 @@ export const useLobbyStore = create<LobbyStore>()(
                     
                     // Handle digital twin features if profile exists
                     if (profile) {
-                        get().markOnline(lobbyId);
+                        await get().markOnline(lobbyId);
                         get().subscribeToLobby(lobbyId);
-                        get().loadDigitalTwins(lobbyId);
+                        await get().loadDigitalTwins(lobbyId);
                     }
                     
                     return true;
@@ -480,9 +480,9 @@ export const useLobbyStore = create<LobbyStore>()(
                 
                 // Handle digital twin features if profile exists
                 if (profile) {
-                    get().markOnline(lobbyId);
+                    await get().markOnline(lobbyId);
                     get().subscribeToLobby(lobbyId);
-                    get().loadDigitalTwins(lobbyId);
+                    await get().loadDigitalTwins(lobbyId);
                 }
                 
                 return true;
