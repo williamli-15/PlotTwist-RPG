@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLobbyStore } from '@/lib/lobbyStore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +17,7 @@ interface ProfileCreatorProps {
 }
 
 const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: ProfileCreatorProps) => {
-    const { createProfile, profile } = useLobbyStore();
+    const { createProfile, profile, loadProfile } = useLobbyStore();
     const [step, setStep] = useState(1);
     const [isCreating, setIsCreating] = useState(false);
 
@@ -28,6 +28,7 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
     const [interests, setInterests] = useState<string[]>(editingProfile?.interests || []);
     const [bio, setBio] = useState(editingProfile?.bio || '');
     const [preferredGreeting, setPreferredGreeting] = useState(editingProfile?.preferred_greeting || '');
+    const [isCustomPersonality, setIsCustomPersonality] = useState(false);
 
     const avatarOptions = [
         { 
@@ -71,6 +72,15 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
         "🏗️ Building", "📖 Stories", "🎬 Movies", "🏃 Sports"
     ];
 
+    // Initialize custom personality state when editing existing profiles
+    useEffect(() => {
+        if (editingProfile?.ai_personality_prompt) {
+            const isCurrentPersonalityCustom = !personalityTemplates.slice(0, -1)
+                .some(template => template.value === editingProfile.ai_personality_prompt);
+            setIsCustomPersonality(isCurrentPersonalityCustom);
+        }
+    }, [editingProfile]);
+
     const handleCreateProfile = async () => {
         if (!username.trim()) {
             alert('Please enter a username');
@@ -101,10 +111,15 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
             profileData.selected_avatar_model,
             profileData.ai_personality_prompt,
             profileData.bio,
-            profileData.interests
+            profileData.interests,
+            profileData.preferred_greeting
         );
 
         if (success) {
+            // If editing, reload the profile to get fresh data
+            if (isEditing) {
+                await loadProfile();
+            }
             onComplete();
         } else {
             alert(isEditing ? 'Failed to update profile. Please try again.' : 'Failed to create profile. Try a different username.');
@@ -247,9 +262,17 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
                                 {personalityTemplates.map((template) => (
                                     <button
                                         key={template.label}
-                                        onClick={() => setPersonality(template.value)}
+                                        onClick={() => {
+                                            if (template.label === 'Custom') {
+                                                setIsCustomPersonality(true);
+                                                setPersonality('');
+                                            } else {
+                                                setIsCustomPersonality(false);
+                                                setPersonality(template.value);
+                                            }
+                                        }}
                                         className={`w-full text-left p-2 rounded border ${
-                                            personality === template.value
+                                            (template.label === 'Custom' && isCustomPersonality) || personality === template.value
                                                 ? 'border-blue-500 bg-blue-500/20'
                                                 : 'border-gray-600 bg-gray-700'
                                         }`}
@@ -261,7 +284,7 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
                                     </button>
                                 ))}
                             </div>
-                            {personalityTemplates[5].value === personality && (
+                            {isCustomPersonality && (
                                 <Textarea
                                     placeholder="Describe your personality..."
                                     value={personality}

@@ -1681,15 +1681,24 @@ const Scene = ({ currentLobby }) => {
     // Add this useEffect to initialize joystick
     useEffect(() => {
         if (isMobile && !joystickRef.current) {
+            const joystickZone = document.getElementById('joystick-zone');
+
+            // Check if the joystick zone exists before creating the manager
+            if (!joystickZone) {
+                console.warn('Joystick zone not found, skipping joystick initialization');
+                return;
+            }
+
             const options = {
-                zone: document.getElementById('joystick-zone'),
+                zone: joystickZone,
                 mode: 'static',
                 position: { left: '15px', bottom: '15px' },
                 color: 'black',
                 size: 120,
             };
 
-            const manager = nipplejs.create(options);
+            try {
+                const manager = nipplejs.create(options);
             joystickRef.current = manager;
 
             manager.on('move', (evt, data) => {
@@ -1708,6 +1717,9 @@ const Scene = ({ currentLobby }) => {
                 keyStates.current.d = false;
                 keyStates.current.a = false;
             });
+            } catch (error) {
+                console.error('Error creating joystick:', error);
+            }
         }
 
         return () => {

@@ -70,11 +70,12 @@ interface LobbyStore extends LobbyState {
     
     // Digital twin actions
     createProfile: (
-        username: string, 
+        username: string,
         avatarModel: string,
         aiPersonalityPrompt?: string,
         bio?: string,
-        interests?: string[]
+        interests?: string[],
+        preferredGreeting?: string
     ) => Promise<boolean>;
     loadProfile: () => Promise<boolean>;
     updateAvatarState: (updates: Partial<AvatarState>) => Promise<void>;
@@ -216,32 +217,59 @@ export const useLobbyStore = create<LobbyStore>()(
 
             // Create new profile in Supabase
             createProfile: async (
-                username: string, 
+                username: string,
                 avatarModel: string,
                 aiPersonalityPrompt?: string,
                 bio?: string,
-                interests?: string[]
+                interests?: string[],
+                preferredGreeting?: string
             ) => {
                 try {
                     const userId = getOrCreateUserId();
                     
-                    const { data, error } = await supabase
+                    // First, try to get existing profile
+                    const { data: existingProfile } = await supabase
                         .from('profiles')
-                        .upsert({
-                            user_id: userId,
-                            username,
-                            selected_avatar_model: avatarModel,
-                            ai_personality_prompt: aiPersonalityPrompt || `A friendly metaverse resident named ${username}`,
-                            bio: bio || '',
-                            interests: interests || [],
-                            preferred_greeting: `Hey! I'm ${username}!`,
-                            last_seen: new Date().toISOString()
-                        })
-                        .select()
+                        .select('*')
+                        .eq('user_id', userId)
                         .single();
 
+                    const profileData = {
+                        user_id: userId,
+                        username,
+                        selected_avatar_model: avatarModel,
+                        ai_personality_prompt: aiPersonalityPrompt || `A friendly metaverse resident named ${username}`,
+                        bio: bio || '',
+                        interests: interests || [],
+                        preferred_greeting: preferredGreeting || `Hey! I'm ${username}!`,
+                        last_seen: new Date().toISOString()
+                    };
+
+                    let data, error;
+
+                    if (existingProfile) {
+                        // Update existing profile
+                        const updateResult = await supabase
+                            .from('profiles')
+                            .update(profileData)
+                            .eq('user_id', userId)
+                            .select()
+                            .single();
+                        data = updateResult.data;
+                        error = updateResult.error;
+                    } else {
+                        // Insert new profile
+                        const insertResult = await supabase
+                            .from('profiles')
+                            .insert(profileData)
+                            .select()
+                            .single();
+                        data = insertResult.data;
+                        error = insertResult.error;
+                    }
+
                     if (!error && data) {
-                        set({ 
+                        set({
                             profile: data,
                             currentUser: {
                                 ...get().currentUser!,
@@ -255,7 +283,10 @@ export const useLobbyStore = create<LobbyStore>()(
                         });
                         return true;
                     }
-                    console.error('Error creating profile:', error);
+                    console.error('Error creating/updating profile:', error);
+                    console.error('Profile data attempted:', profileData);
+                    console.error('Existing profile found:', !!existingProfile);
+                    console.error('Operation type:', existingProfile ? 'UPDATE' : 'INSERT');
                     return false;
                 } catch (error) {
                     console.error('Error creating profile:', error);
