@@ -10,18 +10,24 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 
-const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
+interface ProfileCreatorProps {
+    onComplete: () => void;
+    editingProfile?: any;
+    isEditing?: boolean;
+}
+
+const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: ProfileCreatorProps) => {
     const { createProfile, profile } = useLobbyStore();
     const [step, setStep] = useState(1);
     const [isCreating, setIsCreating] = useState(false);
-    
-    // Profile data
-    const [username, setUsername] = useState('');
-    const [selectedAvatar, setSelectedAvatar] = useState('/avatars/raiden.vrm');
-    const [personality, setPersonality] = useState('');
-    const [interests, setInterests] = useState<string[]>([]);
-    const [bio, setBio] = useState('');
-    const [preferredGreeting, setPreferredGreeting] = useState('');
+
+    // Profile data - initialize with existing data if editing
+    const [username, setUsername] = useState(editingProfile?.username || '');
+    const [selectedAvatar, setSelectedAvatar] = useState(editingProfile?.selected_avatar_model || '/avatars/raiden.vrm');
+    const [personality, setPersonality] = useState(editingProfile?.ai_personality_prompt || '');
+    const [interests, setInterests] = useState<string[]>(editingProfile?.interests || []);
+    const [bio, setBio] = useState(editingProfile?.bio || '');
+    const [preferredGreeting, setPreferredGreeting] = useState(editingProfile?.preferred_greeting || '');
 
     const avatarOptions = [
         { 
@@ -72,7 +78,7 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
         }
 
         setIsCreating(true);
-        
+
         // Build the full profile with personality
         const profileData = {
             username: username.trim(),
@@ -82,8 +88,8 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
             interests: interests,
             preferred_greeting: preferredGreeting || `Hey! I'm ${username.trim()}!`,
             // This will be used when the digital twin is offline and someone chats with it
-            ai_personality_prompt: `You are ${username.trim()}. 
-                Personality: ${personality || personalityTemplates[0].value}. 
+            ai_personality_prompt: `You are ${username.trim()}.
+                Personality: ${personality || personalityTemplates[0].value}.
                 Background: ${bio || 'Just exploring the metaverse!'}
                 Interests: ${interests.join(', ') || 'meeting people'}.
                 When greeting others, you say: "${preferredGreeting || `Hey! I'm ${username.trim()}!`}"
@@ -97,17 +103,17 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
             profileData.bio,
             profileData.interests
         );
-        
+
         if (success) {
             onComplete();
         } else {
-            alert('Failed to create profile. Try a different username.');
+            alert(isEditing ? 'Failed to update profile. Please try again.' : 'Failed to create profile. Try a different username.');
         }
         setIsCreating(false);
     };
 
-    // If profile exists, show welcome back
-    if (profile) {
+    // If profile exists and we're not editing, show welcome back
+    if (profile && !isEditing) {
         return (
             <Card className="w-full max-w-md mx-auto bg-gray-800 border-gray-600">
                 <CardContent className="p-6 text-center">
@@ -129,10 +135,13 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
         <Card className="w-full max-w-2xl mx-auto bg-gray-800 border-gray-600">
             <CardHeader>
                 <CardTitle className="text-2xl text-center text-white">
-                    Create Your Digital Twin
+                    {isEditing ? 'Edit Your Profile' : 'Create Your Digital Twin'}
                 </CardTitle>
                 <p className="text-center text-gray-300">
-                    Your avatar will persist in the metaverse even when you're offline!
+                    {isEditing
+                        ? 'Update your avatar and personality settings'
+                        : 'Your avatar will persist in the metaverse even when you\'re offline!'
+                    }
                 </p>
                 <div className="flex justify-center gap-2 mt-4">
                     <Badge variant={step === 1 ? "default" : "outline"}>1. Identity</Badge>
@@ -315,7 +324,10 @@ const ProfileCreator = ({ onComplete }: { onComplete: () => void }) => {
                                 disabled={isCreating}
                                 className="flex-1 bg-green-600 hover:bg-green-700"
                             >
-                                {isCreating ? 'Creating...' : 'Create Digital Twin'}
+                                {isCreating
+                                    ? (isEditing ? 'Updating...' : 'Creating...')
+                                    : (isEditing ? 'Update Profile' : 'Create Digital Twin')
+                                }
                             </Button>
                         </div>
                     </div>

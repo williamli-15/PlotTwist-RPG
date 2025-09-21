@@ -42,14 +42,30 @@ const Scene = () => {
   }, []);
 
   const handleKeyDown = (event) => {
-    if (['w', 'a', 's', 'd', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
+    // Don't capture movement keys if user is typing in an input/textarea
+    const activeElement = document.activeElement;
+    const isTyping = activeElement && (
+      activeElement.tagName === 'INPUT' ||
+      activeElement.tagName === 'TEXTAREA' ||
+      activeElement.contentEditable === 'true'
+    );
+
+    if (!isTyping && ['w', 'a', 's', 'd', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
       event.preventDefault();
       keyStates.current[event.key] = true;
     }
   };
 
   const handleKeyUp = (event) => {
-    if (['w', 'a', 's', 'd', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
+    // Don't capture movement keys if user is typing in an input/textarea
+    const activeElement = document.activeElement;
+    const isTyping = activeElement && (
+      activeElement.tagName === 'INPUT' ||
+      activeElement.tagName === 'TEXTAREA' ||
+      activeElement.contentEditable === 'true'
+    );
+
+    if (!isTyping && ['w', 'a', 's', 'd', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
       keyStates.current[event.key] = false;
     }
   };

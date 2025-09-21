@@ -1,7 +1,7 @@
 // lib/types.ts
 
 // Import Supabase types that we use
-export type { Profile, AvatarState } from './supabase';
+export type { Profile, AvatarState, CustomLobby } from './supabase';
 
 // Chat system types
 export interface Message {

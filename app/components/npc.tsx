@@ -9,7 +9,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { loadMixamoAnimation } from './loadMixamoAnimation.js';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import ModelViewer from './model-viewer';
 import ReactMarkdown from 'react-markdown';
 import ttsService from './edgeTTSService'; // Adjust path as needed
 import { useLobbyStore } from '@/lib/lobbyStore';
+import nipplejs from 'nipplejs';
 
 // Add this type near other types/interfaces
 type WeaponActionParams = {
@@ -414,7 +415,7 @@ const Scene = ({ currentLobby }) => {
                 })));
             }
         }).catch(error => {
-            console.error('Failed to initialize TTS:', error);
+            console.error('Failed to initialize TTS:', error?.message || error || 'TTS initialization failed');
         });
     }, []);
 
@@ -447,15 +448,75 @@ const Scene = ({ currentLobby }) => {
         };
     }, [currentLobby, isNearNPC, isChatting]); // <-- ADD currentLobby HERE
 
+    // Move createTextSprite function outside useEffect so it can be reused
+    const createTextSprite = (text) => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 512;
+        canvas.height = 128;
+
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.font = '48px Arial';
+
+        // Add a background with rounded corners for readability
+        const textMetrics = context.measureText(text);
+        const padding = 20;
+        const bgWidth = textMetrics.width + padding * 2;
+        const bgHeight = 64;
+
+        const bgX = (canvas.width - bgWidth) / 2;
+        const bgY = (canvas.height - bgHeight) / 2;
+
+        // Use a more contrasting background
+        context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        if (context.roundRect) {
+            context.roundRect(bgX, bgY, bgWidth, bgHeight, 16);
+            context.fill();
+        } else {
+            context.fillRect(bgX, bgY, bgWidth, bgHeight);
+        }
+
+        // Draw the main text
+        context.fillStyle = 'white';
+        context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+
+        const spriteMaterial = new THREE.SpriteMaterial({
+            map: texture,
+            transparent: true,
+            depthTest: false,
+            depthWrite: false,
+        });
+        const sprite = new THREE.Sprite(spriteMaterial);
+
+        sprite.scale.set(1 * 1.5, 0.25 * 1.5, 1);
+        sprite.position.y = 1.95;
+        sprite.renderOrder = 999;
+        sprite.visible = false;
+
+        return sprite;
+    };
+
     useEffect(() => {
         if (npcRef.current?.scene && currentLobby?.hostAvatar?.name) {
-            // Find the sprite in the NPC's children (only if the NPC has a name)
-            const nameSprite = npcRef.current.scene.children.find(
+            // Remove existing name sprite
+            const existingSprites = npcRef.current.scene.children.filter(
                 child => child instanceof THREE.Sprite
             );
-            if (nameSprite) {
-                nameSprite.visible = isNearNPC;
-            }
+            existingSprites.forEach(sprite => {
+                npcRef.current.scene.remove(sprite);
+                sprite.material.map?.dispose();
+                sprite.material.dispose();
+            });
+
+            // Create new name sprite with updated name
+            const nameSprite = createTextSprite(currentLobby.hostAvatar.name);
+            npcRef.current.scene.add(nameSprite);
+            nameSprite.visible = isNearNPC;
         }
     }, [isNearNPC, currentLobby?.hostAvatar?.name]);
 
@@ -468,7 +529,9 @@ const Scene = ({ currentLobby }) => {
         const checkMobile = () => {
             const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             setIsMobile(isMobileDevice);
-            setShowMobileWarning(isMobileDevice);
+            // Disabled mobile warning to enable mobile support
+            // setShowMobileWarning(isMobileDevice);
+            setShowMobileWarning(false);
         };
 
         checkMobile();
@@ -492,8 +555,16 @@ const Scene = ({ currentLobby }) => {
     const handleKeyDown = (event) => {
         console.log('Key pressed:', event.key);
 
-        // Ignore movement keys if transitioning or chatting
-        if ((isTransitioningRef.current || isChatting) && 
+        // Don't capture movement keys if user is typing in an input/textarea
+        const activeElement = document.activeElement;
+        const isTyping = activeElement && (
+            activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.contentEditable === 'true'
+        );
+
+        // Ignore movement keys if transitioning, chatting, or typing
+        if ((isTransitioningRef.current || isChatting || isTyping) &&
             ['w', 'a', 's', 'd', 'W', 'A', 'S', 'D', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
             return;
         }
@@ -507,7 +578,7 @@ const Scene = ({ currentLobby }) => {
         }
 
         // NEW: Add this block to handle the spacebar press
-        if (event.code === 'Space' && !isJumpingRef.current && !isChatting) {
+        if (event.code === 'Space' && !isJumpingRef.current && !isChatting && !isTyping) {
             event.preventDefault(); // Prevents the page from scrolling
             isJumpingRef.current = true;
             playAnimation(ANIMATION_JUMP);
@@ -530,10 +601,20 @@ const Scene = ({ currentLobby }) => {
 
     // Update handleKeyUp to handle arrow keys
     const handleKeyUp = (event) => {
-        if (['w', 'a', 's', 'd'].includes(event.key.toLowerCase())) {
-            keyStates.current[event.key.toLowerCase()] = false;
-        } else if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
-            keyStates.current[event.key] = false;
+        // Don't capture movement keys if user is typing in an input/textarea
+        const activeElement = document.activeElement;
+        const isTyping = activeElement && (
+            activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.contentEditable === 'true'
+        );
+
+        if (!isTyping) {
+            if (['w', 'a', 's', 'd'].includes(event.key.toLowerCase())) {
+                keyStates.current[event.key.toLowerCase()] = false;
+            } else if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
+                keyStates.current[event.key] = false;
+            }
         }
     };
 
@@ -832,7 +913,7 @@ const Scene = ({ currentLobby }) => {
             (audio as any)._errorHandler = errorHandler;
             
         } catch (error) {
-            console.error('TTS error:', error);
+            console.error('TTS error:', error?.message || error || 'Text-to-speech failed');
             isSpeakingRef.current = false;
             processNextInQueue();
         }
@@ -987,8 +1068,13 @@ const Scene = ({ currentLobby }) => {
                 return newMessages;
             });
 
-            // Speak the complete response
-            await speakNPCMessage(response.message);
+            // Speak the complete response (with error handling)
+            try {
+                await speakNPCMessage(response.message);
+            } catch (ttsError) {
+                console.warn('TTS failed, continuing without speech:', ttsError?.message || ttsError);
+                // Chat continues to work even if TTS fails
+            }
 
             if (response.animation && npcAnimationActionsRef.current[response.animation]) {
                 playNpcAnimation(response.animation);
@@ -1118,6 +1204,7 @@ const Scene = ({ currentLobby }) => {
     const sceneRef = useRef(null);
     const [selectedAvatar, setSelectedAvatar] = useState(PLAYER_VRM_URL);
     const [showSettings, setShowSettings] = useState(false);
+    const [showRoomInfo, setShowRoomInfo] = useState(false);
 
     const changeAvatar = async (avatarFile) => {
         if (!sceneRef.current || !avatarRef.current) return;
@@ -1269,54 +1356,6 @@ const Scene = ({ currentLobby }) => {
             (error) => console.error(error)
         );
 
-        // Add this function to create text sprite
-        function createTextSprite(text) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = 512;
-            canvas.height = 128;
-
-            if (context) {
-                context.imageSmoothingEnabled = false;
-                context.textBaseline = 'middle';
-
-                context.clearRect(0, 0, canvas.width, canvas.height);
-
-                context.font = 'Bold 42px Arial';
-                context.textAlign = 'center';
-
-                // Create outline by drawing the text multiple times with small offsets
-                context.fillStyle = 'black';
-                for (let i = -3; i <= 3; i++) {
-                    for (let j = -3; j <= 3; j++) {
-                        context.fillText(text, canvas.width / 2 + i, canvas.height / 2 + j);
-                    }
-                }
-
-                // Draw the main text
-                context.fillStyle = 'white';
-                context.fillText(text, canvas.width / 2, canvas.height / 2);
-            }
-
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.minFilter = THREE.LinearFilter;
-            texture.magFilter = THREE.LinearFilter;
-
-            const spriteMaterial = new THREE.SpriteMaterial({
-                map: texture,
-                transparent: true,
-                depthTest: false,
-                depthWrite: false,
-            });
-            const sprite = new THREE.Sprite(spriteMaterial);
-
-            sprite.scale.set(1 * 1.5, 0.25 * 1.5, 1);
-            sprite.position.y = 1.95;
-            sprite.renderOrder = 999;
-            sprite.visible = false;
-
-            return sprite;
-        }
 
         // TODO: don't show avatars until idle animation loaded (right now it flickers with t-pose)
 
@@ -1636,25 +1675,6 @@ const Scene = ({ currentLobby }) => {
         DESKTOP: 1.0
     };
 
-    /*
-    // Modify the mobile detection useEffect
-    useEffect(() => {
-        const checkMobile = () => {
-            const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            setIsMobile(isMobileDevice);
-
-            // Adjust rotate speed if controls exist
-            if (controlsRef.current) {
-                controlsRef.current.rotateSpeed = isMobileDevice ? ROTATE_SPEED.MOBILE : ROTATE_SPEED.DESKTOP;
-            }
-        };
-
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
     // Add this useEffect to initialize joystick
     useEffect(() => {
         if (isMobile && !joystickRef.current) {
@@ -1694,7 +1714,6 @@ const Scene = ({ currentLobby }) => {
             }
         };
     }, [isMobile]);
-    */
    
     // Add this helper function near the top of the Scene component
     const parseMessageTags = (message) => {
@@ -2364,17 +2383,18 @@ const Scene = ({ currentLobby }) => {
             {isMobile && (
                 <div
                     id="joystick-zone"
-                    className="fixed bottom-20 left-20 w-[150px] h-[150px] z-20"
+                    className="fixed bottom-4 left-4 w-[120px] h-[120px] z-20 pointer-events-auto"
+                    style={{ touchAction: 'none' }}
                 />
             )}
 
             {/* Add mobile interaction button */}
             {isMobile && isNearNPC && !isChatting && (
                 <Button
-                    className="fixed bottom-32 right-8 z-20 bg-black/75 text-white px-8 py-4 rounded-full"
+                    className="fixed bottom-4 right-4 z-20 bg-blue-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-full text-lg shadow-lg"
                     onClick={startUniversalChat}
                 >
-                    Talk
+                    💬 Talk
                 </Button>
             )}
 
@@ -2594,9 +2614,9 @@ const Scene = ({ currentLobby }) => {
             <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setShowSettings(!showSettings)}
+                onClick={() => setShowRoomInfo(!showRoomInfo)}
                 className="fixed top-4 right-4 w-10 h-10 rounded-full bg-black bg-opacity-75 text-white hover:bg-opacity-90 z-10"
-                title="Info & Controls"
+                title="Room Info & Code"
             >
                 <svg 
                     className="w-6 h-6 scale-150"
@@ -2612,6 +2632,102 @@ const Scene = ({ currentLobby }) => {
                     />
                 </svg>
             </Button>
+
+            {/* Room Info Modal */}
+            {showRoomInfo && currentLobby && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <Card className="bg-gray-900/95 backdrop-blur-sm border-gray-700 w-full max-w-md">
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <CardTitle className="text-xl text-white">
+                                    🏠 Room Information
+                                </CardTitle>
+                                <button
+                                    onClick={() => setShowRoomInfo(false)}
+                                    className="text-gray-400 hover:text-white"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </CardHeader>
+
+                        <CardContent className="space-y-4">
+                            {/* Room Name */}
+                            <div>
+                                <h3 className="text-sm font-medium text-gray-300 mb-1">Room Name</h3>
+                                <p className="text-white">{currentLobby.name || 'Unknown Room'}</p>
+                            </div>
+
+                            {/* Room Code */}
+                            <div>
+                                <h3 className="text-sm font-medium text-gray-300 mb-1">Room Code</h3>
+                                <div className="flex items-center gap-2">
+                                    <p className="text-white font-mono text-lg bg-gray-800 px-3 py-1 rounded">
+                                        {currentLobby.lobbyId || 'N/A'}
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(currentLobby.lobbyId || '');
+                                            alert('Room code copied to clipboard!');
+                                        }}
+                                        className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded"
+                                        title="Copy room code"
+                                    >
+                                        📋
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Room URL */}
+                            <div>
+                                <h3 className="text-sm font-medium text-gray-300 mb-1">Share URL</h3>
+                                <div className="flex items-center gap-2">
+                                    <p className="text-blue-300 text-sm bg-gray-800 px-3 py-2 rounded break-all">
+                                        {window.location.origin}/{currentLobby.lobbyId}
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            const url = `${window.location.origin}/${currentLobby.lobbyId}`;
+                                            navigator.clipboard.writeText(url);
+                                            alert('Room URL copied to clipboard!');
+                                        }}
+                                        className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded"
+                                        title="Copy room URL"
+                                    >
+                                        📋
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Room Description */}
+                            {currentLobby.description && (
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-300 mb-1">Description</h3>
+                                    <p className="text-gray-200 text-sm">{currentLobby.description}</p>
+                                </div>
+                            )}
+
+                            {/* Host Info */}
+                            {currentLobby.hostAvatar?.name && (
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-300 mb-1">Host</h3>
+                                    <p className="text-white">{currentLobby.hostAvatar.name}</p>
+                                </div>
+                            )}
+
+                            {/* Current Players */}
+                            <div>
+                                <h3 className="text-sm font-medium text-gray-300 mb-1">Players</h3>
+                                <p className="text-white">
+                                    {currentLobby.currentPlayers?.length || 0} / {currentLobby.maxPlayers || 'Unlimited'}
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
 
             {showWeaponDetails && selectedWeaponDetails && (
                 <Card

@@ -1,7 +1,7 @@
 // lib/lobbyStore.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { LobbyState, User, Lobby, Profile, AvatarState } from './types';
+import { LobbyState, User, Lobby, Profile, AvatarState, CustomLobby } from './types';
 import { getAvailableLobbies } from './lobbyConfig';
 import DynamicChatService from '@/app/components/DynamicChatService';
 import { supabase } from './supabase';
@@ -10,6 +10,16 @@ import { RealtimeChannel } from '@supabase/supabase-js';
 // Generate a unique user ID
 function generateUserId(): string {
     return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+// Generate a unique 6-character lobby code
+function generateLobbyCode(): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
 }
 
 // Get or create user ID from localStorage
@@ -74,6 +84,26 @@ interface LobbyStore extends LobbyState {
     loadProfileInfo: (profileId: string) => Promise<Profile | null>;
     markOnline: (lobbyId: string) => Promise<void>;
     markOffline: (lobbyId: string) => Promise<void>;
+
+    // Custom lobby management
+    createCustomLobby: (
+        name: string,
+        description: string,
+        theme: string,
+        maxPlayers: number,
+        isPublic: boolean,
+        tags?: string[],
+        hostData?: {
+            useMyProfile: boolean;
+            customHostName?: string;
+            customHostAvatar?: string;
+            additionalKnowledge?: string;
+        }
+    ) => Promise<string | null>;  // Returns lobby code or null if failed
+    loadCustomLobbies: (searchQuery?: string, offset?: number, limit?: number) => Promise<void>;
+    loadMyCustomLobbies: () => Promise<Lobby[]>;
+    joinCustomLobbyByCode: (lobbyCode: string) => Promise<boolean>;
+    deleteCustomLobby: (lobbyCode: string) => Promise<boolean>;
 }
 
 export const useLobbyStore = create<LobbyStore>()(
@@ -548,6 +578,262 @@ export const useLobbyStore = create<LobbyStore>()(
 
             refreshLobbies: () => {
                 set({ availableLobbies: getAvailableLobbies() });
+            },
+
+            // Create a custom lobby
+            createCustomLobby: async (
+                name: string,
+                description: string,
+                theme: string,
+                maxPlayers: number,
+                isPublic: boolean,
+                tags?: string[],
+                hostData?: {
+                    useMyProfile: boolean;
+                    customHostName?: string;
+                    customHostAvatar?: string;
+                    additionalKnowledge?: string;
+                }
+            ) => {
+                try {
+                    const { profile } = get();
+                    if (!profile) {
+                        console.error('No profile found');
+                        return null;
+                    }
+
+                    const lobbyCode = generateLobbyCode();
+
+                    console.log('Creating lobby with profile:', profile);
+
+                    const { data, error } = await supabase
+                        .from('custom_lobbies')
+                        .insert({
+                            lobby_code: lobbyCode,
+                            name,
+                            description,
+                            theme,
+                            max_players: maxPlayers,
+                            created_by: profile.id,
+                            is_public: isPublic,
+                            tags: tags || [],
+                            // Host configuration
+                            host_uses_creator_profile: hostData?.useMyProfile ?? true,
+                            custom_host_name: hostData?.customHostName || null,
+                            custom_host_avatar: hostData?.customHostAvatar || null,
+                            additional_host_knowledge: hostData?.additionalKnowledge || null
+                        })
+                        .select()
+                        .single();
+
+                    if (error) {
+                        console.error('Error creating custom lobby:', error);
+                        console.error('Profile being used:', profile);
+                        return null;
+                    }
+
+                    return lobbyCode;
+                } catch (error) {
+                    console.error('Error creating custom lobby:', error);
+                    return null;
+                }
+            },
+
+            // Load custom lobbies with search and pagination
+            loadCustomLobbies: async (searchQuery?: string, offset = 0, limit = 20) => {
+                try {
+                    let query = supabase
+                        .from('custom_lobbies')
+                        .select('*')
+                        .eq('is_public', true)
+                        .range(offset, offset + limit - 1)
+                        .order('created_at', { ascending: false });
+
+                    if (searchQuery) {
+                        query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+                    }
+
+                    const { data, error } = await query;
+
+                    if (!error && data) {
+                        // Convert custom lobbies to Lobby format and merge with static lobbies
+                        const customLobbies: Lobby[] = await Promise.all(
+                            data.map(async (customLobby) => {
+                                // Fetch creator profile by profile ID (created_by field)
+                                let creatorProfile = null;
+                                try {
+                                    const { data: profileData, error: profileError } = await supabase
+                                        .from('profiles')
+                                        .select('*')
+                                        .eq('id', customLobby.created_by)
+                                        .single();
+
+                                    if (!profileError && profileData) {
+                                        creatorProfile = profileData;
+                                    }
+                                } catch (err) {
+                                    console.error('Error fetching creator profile:', err);
+                                }
+
+                                const creatorName = creatorProfile?.username || 'Unknown Host';
+
+                                return {
+                                    lobbyId: customLobby.lobby_code,
+                                    name: customLobby.name,
+                                    description: customLobby.description,
+                                    theme: customLobby.theme,
+                                    hostAvatar: {
+                                        name: creatorName,
+                                        model: creatorProfile?.selected_avatar_model || '/avatars/raiden.vrm',
+                                        personality: `You are ${creatorName}, the host of ${customLobby.name}. ${customLobby.description}`,
+                                        history: []
+                                    },
+                                    maxPlayers: customLobby.max_players,
+                                    currentPlayers: [], // TODO: load actual players
+                                    backgroundColor: customLobby.background_color || '#1a1a2e',
+                                    environmentImage: customLobby.environment_image || 'neutral'
+                                };
+                            })
+                        );
+
+                        if (offset === 0) {
+                            // First load - combine with static lobbies
+                            const staticLobbies = getAvailableLobbies();
+                            set({ availableLobbies: [...staticLobbies, ...customLobbies] });
+                        } else {
+                            // Pagination - append to existing
+                            const current = get().availableLobbies;
+                            set({ availableLobbies: [...current, ...customLobbies] });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading custom lobbies:', error);
+                }
+            },
+
+            // Join custom lobby by code
+            joinCustomLobbyByCode: async (lobbyCode: string) => {
+                try {
+                    console.log('Searching for lobby with code:', lobbyCode.toUpperCase());
+                    const { data, error } = await supabase
+                        .from('custom_lobbies')
+                        .select('*')
+                        .eq('lobby_code', lobbyCode.toUpperCase())
+                        .single();
+
+                    console.log('Database query result:', { data, error });
+
+                    if (error || !data) {
+                        console.log('No lobby found with code:', lobbyCode.toUpperCase());
+                        return false;
+                    }
+
+                    // Fetch creator profile by profile ID
+                    let creatorProfile = null;
+                    try {
+                        const { data: profileData, error: profileError } = await supabase
+                            .from('profiles')
+                            .select('*')
+                            .eq('id', data.created_by)
+                            .single();
+
+                        if (!profileError && profileData) {
+                            creatorProfile = profileData;
+                        }
+                    } catch (err) {
+                        console.error('Error fetching creator profile:', err);
+                    }
+
+                    const creatorName = creatorProfile?.username || 'Unknown Host';
+
+                    // Create Lobby object from CustomLobby
+                    const lobby: Lobby = {
+                        lobbyId: data.lobby_code,
+                        name: data.name,
+                        description: data.description,
+                        theme: data.theme,
+                        hostAvatar: {
+                            name: creatorName,
+                            model: creatorProfile?.selected_avatar_model || '/avatars/raiden.vrm',
+                            personality: `You are ${creatorName}, the host of ${data.name}. ${data.description}`,
+                            history: []
+                        },
+                        maxPlayers: data.max_players,
+                        currentPlayers: [],
+                        backgroundColor: data.background_color || '#1a1a2e',
+                        environmentImage: data.environment_image || 'neutral'
+                    };
+
+                    // Add this lobby to available lobbies so it can be found
+                    const currentLobbies = get().availableLobbies;
+                    const updatedLobbies = currentLobbies.filter(l => l.lobbyId !== lobby.lobbyId);
+                    updatedLobbies.push(lobby);
+                    set({ availableLobbies: updatedLobbies });
+
+                    return await get().joinLobby(lobby.lobbyId);
+                } catch (error) {
+                    console.error('Error joining custom lobby by code:', error);
+                    return false;
+                }
+            },
+
+            // Load user's own custom lobbies
+            loadMyCustomLobbies: async () => {
+                try {
+                    const { profile } = get();
+                    if (!profile) return [];
+
+                    const { data, error } = await supabase
+                        .from('custom_lobbies')
+                        .select('*')
+                        .eq('created_by', profile.id)
+                        .order('created_at', { ascending: false });
+
+                    if (!error && data) {
+                        // Convert to Lobby format
+                        const myLobbies: Lobby[] = data.map(customLobby => ({
+                            lobbyId: customLobby.lobby_code,
+                            name: customLobby.name,
+                            description: customLobby.description,
+                            theme: customLobby.theme,
+                            hostAvatar: {
+                                name: profile.username,
+                                model: profile.selected_avatar_model || '/avatars/raiden.vrm',
+                                personality: `You are ${profile.username}, the host of ${customLobby.name}. ${customLobby.description}`,
+                                history: []
+                            },
+                            maxPlayers: customLobby.max_players,
+                            currentPlayers: [],
+                            backgroundColor: customLobby.background_color || '#1a1a2e',
+                            environmentImage: customLobby.environment_image || 'neutral'
+                        }));
+
+                        return myLobbies;
+                    }
+                    return [];
+                } catch (error) {
+                    console.error('Error loading my custom lobbies:', error);
+                    return [];
+                }
+            },
+
+            // Delete custom lobby (only by creator)
+            deleteCustomLobby: async (lobbyCode: string) => {
+                try {
+                    const { profile } = get();
+                    if (!profile) return false;
+
+                    const { error } = await supabase
+                        .from('custom_lobbies')
+                        .delete()
+                        .eq('lobby_code', lobbyCode.toUpperCase())
+                        .eq('created_by', profile.id);
+
+                    return !error;
+                } catch (error) {
+                    console.error('Error deleting custom lobby:', error);
+                    return false;
+                }
             }
         }),
         {

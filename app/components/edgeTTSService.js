@@ -61,7 +61,7 @@ class EdgeTTSService {
             this.isInitialized = true;
             this._debug('Initialized with', this.languageList.length, 'languages');
         } catch (error) {
-            console.error('Failed to initialize TTS service:', error);
+            console.error('Failed to initialize TTS service:', error?.message || error || 'Unknown TTS initialization error');
             throw error;
         }
     }
@@ -169,11 +169,26 @@ class EdgeTTSService {
      */
     async generateAudio(text, options = {}) {
         if (!this.isInitialized) {
-            await this.initialize();
+            try {
+                await this.initialize();
+            } catch (initError) {
+                console.warn('TTS initialization failed, cannot generate audio');
+                throw new Error('TTS service unavailable');
+            }
+        }
+
+        // Validate input
+        if (!text || text.trim().length === 0) {
+            throw new Error('No text provided for speech synthesis');
+        }
+
+        if (text.length > 1000) {
+            console.warn('Text too long for TTS, truncating...');
+            text = text.substring(0, 997) + '...';
         }
 
         const config = { ...this.defaultConfig, ...options };
-        
+
         this._debug('Generating audio for text:', text);
         this._debug('With options:', config);
         
@@ -246,14 +261,14 @@ class EdgeTTSService {
             });
 
             ws.addEventListener('error', (err) => {
-                console.error('WebSocket error:', err);
+                console.error('WebSocket error:', err?.message || err || 'Unknown WebSocket error');
                 reject(err);
             });
 
             ws.addEventListener('close', (event) => {
                 this._debug('WebSocket closed with code:', event.code);
                 if (event.code != 1000) {
-                    console.error('WebSocket closed with error:', event);
+                    console.error('WebSocket closed with error:', event?.reason || event?.code || 'Connection closed unexpectedly');
                     reject(new Error(`WebSocket closed with code: ${event.code}, reason: ${event.reason}`));
                     return;
                 }

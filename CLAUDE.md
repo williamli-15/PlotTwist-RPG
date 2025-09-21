@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Next.js-based 3D interactive RPG/merchant application featuring VRM avatars, Three.js 3D scenes, and AI-powered chat interactions. The project creates an immersive virtual environment where users can interact with NPCs, equip weapons, and explore a 3D world.
+This is YNGO (You Never Go Offline) - a Next.js-based 3D interactive metaverse application featuring VRM avatars, Three.js 3D scenes, and AI-powered chat interactions. The project creates an immersive virtual environment where users can create custom rooms, interact with NPCs and other users' digital twins, equip weapons, and explore a 3D social world.
 
 ## Common Development Commands
 

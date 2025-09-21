@@ -41,3 +41,24 @@ export interface AvatarState {
   last_activity: string
   ai_behavior: 'idle' | 'wander' | 'patrol' | 'talking'
 }
+
+export interface CustomLobby {
+  id: string
+  lobby_code: string  // 6-character alphanumeric
+  name: string
+  description: string
+  theme: string
+  background_color?: string
+  environment_image?: string
+  max_players: number
+  created_by: string  // profile_id of creator
+  created_at: string
+  updated_at: string
+  is_public: boolean
+  tags?: string[]
+  // Host configuration
+  host_uses_creator_profile: boolean  // true = use creator's profile, false = use custom host
+  custom_host_name?: string
+  custom_host_avatar?: string
+  additional_host_knowledge?: string
+}
