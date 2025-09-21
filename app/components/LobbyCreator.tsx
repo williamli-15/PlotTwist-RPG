@@ -32,7 +32,29 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
     });
 
     // Google search state
-    const [googleSearch, setGoogleSearch] = useState({
+    const [googleSearch, setGoogleSearch] = useState<{
+        query: string;
+        isSearching: boolean;
+        results: Array<{
+            title: string;
+            link: string;
+            snippet: string;
+            source: string;
+        }>;
+        showResults: boolean;
+        knowledgeGraph: {
+            title?: string;
+            type?: string;
+            description?: string;
+            source?: string;
+        } | null;
+        answerBox: {
+            type?: string;
+            title?: string;
+            snippet?: string;
+            source?: string;
+        } | null;
+    }>({
         query: '',
         isSearching: false,
         results: [],
@@ -106,9 +128,9 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
             if (response.ok && data.success) {
                 setGoogleSearch(prev => ({
                     ...prev,
-                    results: data.results,
-                    knowledgeGraph: data.knowledgeGraph,
-                    answerBox: data.answerBox,
+                    results: data.results || [],
+                    knowledgeGraph: data.knowledgeGraph || null,
+                    answerBox: data.answerBox || null,
                     showResults: true,
                     isSearching: false
                 }));
@@ -130,9 +152,9 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
         // Add knowledge graph info if available
         if (googleSearch.knowledgeGraph) {
             const kg = googleSearch.knowledgeGraph;
-            knowledgeText += `${kg.title}${kg.type ? ` (${kg.type})` : ''}:\n`;
+            knowledgeText += `${kg.title || 'Unknown'}${kg.type ? ` (${kg.type})` : ''}:\n`;
             if (kg.description) knowledgeText += `${kg.description}\n`;
-            knowledgeText += `Source: ${kg.source}\n\n`;
+            if (kg.source) knowledgeText += `Source: ${kg.source}\n\n`;
         }
 
         // Add answer box if available
