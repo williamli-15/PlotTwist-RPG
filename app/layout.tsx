@@ -17,7 +17,13 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "YNGO - You Never Go Offline",
   description: "A 3D interactive metaverse where your digital twin never goes offline",
-  viewport: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+  maximumScale: 1.0,
+  userScalable: false,
 };
 
 export default function RootLayout({

@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import NPC from "./components/npc";
+import dynamic from 'next/dynamic';
 import LobbySelector from "./components/LobbySelector";
 import ProfileCreator from "./components/ProfileCreator";
 import { useLobbyStore } from "@/lib/lobbyStore";
+
+// Dynamically import NPC component with no SSR to avoid "window is not defined" errors
+const NPC = dynamic(() => import("./components/npc"), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="text-white">Loading 3D environment...</div>
+    </div>
+  )
+});
 
 export default function Home() {
   const { 

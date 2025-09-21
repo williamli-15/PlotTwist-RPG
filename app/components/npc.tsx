@@ -527,11 +527,14 @@ const Scene = ({ currentLobby }) => {
     // Update the mobile detection useEffect
     useEffect(() => {
         const checkMobile = () => {
-            const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            setIsMobile(isMobileDevice);
-            // Disabled mobile warning to enable mobile support
-            // setShowMobileWarning(isMobileDevice);
-            setShowMobileWarning(false);
+            // Check if we're in the browser before accessing navigator
+            if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+                const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                setIsMobile(isMobileDevice);
+                // Disabled mobile warning to enable mobile support
+                // setShowMobileWarning(isMobileDevice);
+                setShowMobileWarning(false);
+            }
         };
 
         checkMobile();
@@ -2237,6 +2240,9 @@ const Scene = ({ currentLobby }) => {
 
     // Add this near other utility functions
     const isMobileDevice = () => {
+        if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+            return false;
+        }
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     };
 
