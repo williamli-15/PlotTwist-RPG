@@ -31,6 +31,16 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
         additionalKnowledge: ''
     });
 
+    // Google search state
+    const [googleSearch, setGoogleSearch] = useState({
+        query: '',
+        isSearching: false,
+        results: [],
+        showResults: false,
+        knowledgeGraph: null,
+        answerBox: null
+    });
+
 
     const themes = [
         { value: 'general', label: '🌐 General Chat' },
@@ -70,6 +80,92 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
         }
     ];
 
+    // Google search function
+    const handleGoogleSearch = async () => {
+        if (!googleSearch.query.trim()) {
+            alert('Please enter a search query');
+            return;
+        }
+
+        setGoogleSearch(prev => ({ ...prev, isSearching: true }));
+
+        try {
+            const response = await fetch('/api/google-search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: googleSearch.query.trim(),
+                    num: 8
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                setGoogleSearch(prev => ({
+                    ...prev,
+                    results: data.results,
+                    knowledgeGraph: data.knowledgeGraph,
+                    answerBox: data.answerBox,
+                    showResults: true,
+                    isSearching: false
+                }));
+            } else {
+                alert(`Search failed: ${data.error || 'Unknown error'}`);
+                setGoogleSearch(prev => ({ ...prev, isSearching: false }));
+            }
+        } catch (error) {
+            console.error('Google search error:', error);
+            alert('Search failed. Please try again.');
+            setGoogleSearch(prev => ({ ...prev, isSearching: false }));
+        }
+    };
+
+    // Function to add search results to knowledge
+    const addSearchResultsToKnowledge = () => {
+        let knowledgeText = `Search Results for "${googleSearch.query}":\n\n`;
+
+        // Add knowledge graph info if available
+        if (googleSearch.knowledgeGraph) {
+            const kg = googleSearch.knowledgeGraph;
+            knowledgeText += `${kg.title}${kg.type ? ` (${kg.type})` : ''}:\n`;
+            if (kg.description) knowledgeText += `${kg.description}\n`;
+            knowledgeText += `Source: ${kg.source}\n\n`;
+        }
+
+        // Add answer box if available
+        if (googleSearch.answerBox) {
+            const ab = googleSearch.answerBox;
+            knowledgeText += `Quick Answer:\n`;
+            if (ab.title) knowledgeText += `${ab.title}\n`;
+            if (ab.snippet) knowledgeText += `${ab.snippet}\n`;
+            if (ab.source) knowledgeText += `Source: ${ab.source}\n\n`;
+        }
+
+        // Add search results
+        if (googleSearch.results.length > 0) {
+            knowledgeText += `Additional Information:\n`;
+            googleSearch.results.forEach((result, index) => {
+                knowledgeText += `${index + 1}. ${result.title}\n`;
+                if (result.snippet) knowledgeText += `   ${result.snippet}\n`;
+                knowledgeText += `   Source: ${result.source}\n\n`;
+            });
+        }
+
+        knowledgeText += `Note: This information was gathered from Google search and can be used to provide context about "${googleSearch.query}".`;
+
+        setHostData(prev => ({
+            ...prev,
+            additionalKnowledge: prev.additionalKnowledge
+                ? prev.additionalKnowledge + '\n\n' + knowledgeText
+                : knowledgeText
+        }));
+
+        setGoogleSearch(prev => ({ ...prev, showResults: false, query: '' }));
+        alert('Search results added to host knowledge!');
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -275,9 +371,138 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
 
                             {/* Additional Knowledge */}
                             <div className="mt-4">
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Additional Host Knowledge (Optional)
-                                </label>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-sm font-medium text-gray-300">
+                                        Additional Host Knowledge (Optional)
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setGoogleSearch(prev => ({ ...prev, showResults: !prev.showResults }))}
+                                        className="text-blue-400 hover:text-blue-300 text-sm"
+                                    >
+                                        🔍 Search Google
+                                    </button>
+                                </div>
+
+                                {/* Google Search Panel */}
+                                {googleSearch.showResults && (
+                                    <div className="mb-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                                        <h4 className="text-white font-medium mb-3">Google Knowledge Search</h4>
+
+                                        <div className="flex gap-3 mb-3">
+                                            <Input
+                                                type="text"
+                                                placeholder="Search for information (e.g., 'artificial intelligence', 'React programming')"
+                                                value={googleSearch.query}
+                                                onChange={(e) => setGoogleSearch(prev => ({ ...prev, query: e.target.value }))}
+                                                className="bg-gray-800 border-gray-600 text-white flex-1"
+                                            />
+                                            <Button
+                                                type="button"
+                                                onClick={handleGoogleSearch}
+                                                disabled={googleSearch.isSearching || !googleSearch.query.trim()}
+                                                className="bg-blue-600 hover:bg-blue-700"
+                                            >
+                                                {googleSearch.isSearching ? '🔍 Searching...' : 'Search'}
+                                            </Button>
+                                        </div>
+
+                                        {/* Search Results */}
+                                        {(googleSearch.results.length > 0 || googleSearch.knowledgeGraph || googleSearch.answerBox) && (
+                                            <div className="space-y-3 max-h-60 overflow-y-auto">
+                                                <div className="flex items-center justify-between">
+                                                    <p className="text-sm text-gray-300">
+                                                        Search results for "{googleSearch.query}":
+                                                    </p>
+                                                    <Button
+                                                        type="button"
+                                                        size="sm"
+                                                        onClick={addSearchResultsToKnowledge}
+                                                        className="bg-green-600 hover:bg-green-700 text-xs"
+                                                    >
+                                                        Add All to Knowledge
+                                                    </Button>
+                                                </div>
+
+                                                {/* Knowledge Graph */}
+                                                {googleSearch.knowledgeGraph && (
+                                                    <div className="p-3 bg-blue-900/20 border border-blue-700 rounded">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <span className="text-blue-300 text-xs font-medium">KNOWLEDGE GRAPH</span>
+                                                        </div>
+                                                        <h5 className="text-white font-medium text-sm">
+                                                            {googleSearch.knowledgeGraph.title}
+                                                            {googleSearch.knowledgeGraph.type && (
+                                                                <span className="text-gray-400 text-xs ml-2">({googleSearch.knowledgeGraph.type})</span>
+                                                            )}
+                                                        </h5>
+                                                        {googleSearch.knowledgeGraph.description && (
+                                                            <p className="text-gray-300 text-xs mt-1">{googleSearch.knowledgeGraph.description}</p>
+                                                        )}
+                                                        <p className="text-blue-400 text-xs mt-1">Source: {googleSearch.knowledgeGraph.source}</p>
+                                                    </div>
+                                                )}
+
+                                                {/* Answer Box */}
+                                                {googleSearch.answerBox && (
+                                                    <div className="p-3 bg-green-900/20 border border-green-700 rounded">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <span className="text-green-300 text-xs font-medium">QUICK ANSWER</span>
+                                                        </div>
+                                                        {googleSearch.answerBox.title && (
+                                                            <h5 className="text-white font-medium text-sm">{googleSearch.answerBox.title}</h5>
+                                                        )}
+                                                        {googleSearch.answerBox.snippet && (
+                                                            <p className="text-gray-300 text-xs mt-1">{googleSearch.answerBox.snippet}</p>
+                                                        )}
+                                                        {googleSearch.answerBox.source && (
+                                                            <p className="text-green-400 text-xs mt-1">Source: {googleSearch.answerBox.source}</p>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {/* Organic Results */}
+                                                {googleSearch.results.map((result, index) => (
+                                                    <div key={index} className="p-3 bg-gray-800 rounded border border-gray-600">
+                                                        <h5 className="text-white font-medium text-sm">{result.title}</h5>
+                                                        <p className="text-gray-400 text-xs mt-1 line-clamp-2">{result.snippet}</p>
+                                                        <div className="flex justify-between items-center mt-2">
+                                                            <a
+                                                                href={result.link}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-blue-400 hover:text-blue-300 text-xs"
+                                                            >
+                                                                {result.source} →
+                                                            </a>
+                                                            <Button
+                                                                type="button"
+                                                                size="sm"
+                                                                onClick={() => {
+                                                                    const resultText = `${result.title}\n${result.snippet}\nSource: ${result.source}`;
+                                                                    setHostData(prev => ({
+                                                                        ...prev,
+                                                                        additionalKnowledge: prev.additionalKnowledge
+                                                                            ? prev.additionalKnowledge + '\n\n' + resultText
+                                                                            : resultText
+                                                                    }));
+                                                                    alert('Result added to knowledge!');
+                                                                }}
+                                                                className="bg-green-600 hover:bg-green-700 text-xs"
+                                                            >
+                                                                Add This
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {googleSearch.results.length === 0 && !googleSearch.knowledgeGraph && !googleSearch.answerBox && !googleSearch.isSearching && googleSearch.query && (
+                                            <p className="text-gray-400 text-sm">No search results found. Try different search terms.</p>
+                                        )}
+                                    </div>
+                                )}
 
                                 <textarea
                                     value={hostData.additionalKnowledge}
