@@ -11,6 +11,32 @@ import LobbyCreator from './LobbyCreator';
 import ProfileCreator from './ProfileCreator';
 
 const LobbySelector = () => {
+    // Custom scrollbar styles
+    const scrollbarStyles = `
+        .scrollbar-visible {
+            overflow-y: scroll !important;
+        }
+        .scrollbar-visible::-webkit-scrollbar {
+            width: 12px;
+            background: #1F2937;
+        }
+        .scrollbar-visible::-webkit-scrollbar-track {
+            background: #1F2937;
+            border-radius: 6px;
+            border: 1px solid #374151;
+        }
+        .scrollbar-visible::-webkit-scrollbar-thumb {
+            background: #6B7280;
+            border-radius: 6px;
+            border: 1px solid #4B5563;
+        }
+        .scrollbar-visible::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
+        .scrollbar-visible::-webkit-scrollbar-corner {
+            background: #1F2937;
+        }
+    `;
     const {
         availableLobbies,
         profile,
@@ -31,6 +57,7 @@ const LobbySelector = () => {
     const [activeTab, setActiveTab] = useState<'all' | 'my-rooms'>('all');
     const [myRooms, setMyRooms] = useState<Lobby[]>([]);
     const [showProfileEditor, setShowProfileEditor] = useState(false);
+    const [lobbyOccupancy, setLobbyOccupancy] = useState<Map<string, {online: number, twins: number}>>(new Map());
 
     // Load lobbies on mount and tab change
     useEffect(() => {
@@ -41,9 +68,68 @@ const LobbySelector = () => {
         }
     }, [loadCustomLobbies, activeTab]);
 
+    // Update occupancy data when lobbies change
+    useEffect(() => {
+        const currentLobbies = getCurrentLobbies();
+        if (currentLobbies.length > 0) {
+            const lobbyIds = currentLobbies.map(lobby => lobby.lobbyId);
+            fetchLobbyOccupancy(lobbyIds);
+
+            // Set up periodic updates every 10 seconds
+            const interval = setInterval(() => {
+                fetchLobbyOccupancy(lobbyIds);
+            }, 10000);
+
+            return () => clearInterval(interval);
+        }
+    }, [availableLobbies, myRooms, activeTab]);
+
     const loadMyRooms = async () => {
         const rooms = await loadMyCustomLobbies();
         setMyRooms(rooms);
+
+        // Also add these rooms to availableLobbies so joinLobby can find them
+        const currentLobbies = availableLobbies.filter(l => !rooms.some(r => r.lobbyId === l.lobbyId));
+        const updatedLobbies = [...currentLobbies, ...rooms];
+        // We need to manually update the store
+        const { setCurrentLobby } = useLobbyStore.getState();
+        useLobbyStore.setState({ availableLobbies: updatedLobbies });
+    };
+
+    // Fetch real-time lobby occupancy data
+    const fetchLobbyOccupancy = async (lobbyIds: string[]) => {
+        try {
+            const { supabase } = await import('@/lib/supabase');
+
+            const { data, error } = await supabase
+                .from('avatar_states')
+                .select('lobby_id, is_online')
+                .in('lobby_id', lobbyIds);
+
+            if (!error && data) {
+                const occupancyMap = new Map<string, {online: number, twins: number}>();
+
+                // Initialize all lobbies with 0 counts
+                lobbyIds.forEach(id => {
+                    occupancyMap.set(id, { online: 0, twins: 0 });
+                });
+
+                // Count online users and digital twins
+                data.forEach(avatar => {
+                    const current = occupancyMap.get(avatar.lobby_id) || { online: 0, twins: 0 };
+                    if (avatar.is_online) {
+                        current.online++;
+                    } else {
+                        current.twins++;
+                    }
+                    occupancyMap.set(avatar.lobby_id, current);
+                });
+
+                setLobbyOccupancy(occupancyMap);
+            }
+        } catch (error) {
+            console.error('Error fetching lobby occupancy:', error);
+        }
     };
 
     // Handle ESC key to close modal
@@ -142,8 +228,9 @@ const LobbySelector = () => {
 
     return (
         <>
+            <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
             <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-                <div className="bg-gray-900/80 backdrop-blur-sm rounded-xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-gray-700 relative">
+                <div className="bg-gray-900/80 backdrop-blur-sm rounded-xl max-w-5xl w-full h-[90vh] max-h-[90vh] overflow-hidden border border-gray-700 relative flex flex-col">
                     {/* Close button */}
                     <button
                         onClick={hideLobbySelection}
@@ -154,7 +241,7 @@ const LobbySelector = () => {
                         </svg>
                     </button>
 
-                    <div className="p-8 h-full flex flex-col">
+                    <div className="p-8 flex-1 flex flex-col">
                         {/* Header with Profile Status */}
                         <div className="text-center mb-8">
                             <h1 className="text-4xl font-bold text-white mb-4">
@@ -253,7 +340,7 @@ const LobbySelector = () => {
                                         : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                                 }`}
                             >
-                                🏠 My Rooms ({myRooms.length})
+                                🏠 My Rooms
                             </button>
 
                             {/* Refresh Button */}
@@ -278,7 +365,14 @@ const LobbySelector = () => {
                         {/* Room List */}
                         <div
                             ref={scrollRef}
-                            className="flex-1 overflow-y-auto"
+                            className="scrollbar-visible"
+                            style={{
+                                scrollbarWidth: 'thin',
+                                scrollbarColor: '#6B7280 #1F2937',
+                                overflowY: 'scroll',
+                                height: '400px',
+                                maxHeight: '400px'
+                            }}
                             onScroll={(e) => {
                                 const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
                                 if (scrollHeight - scrollTop === clientHeight && hasMore && !isLoading) {
@@ -288,27 +382,67 @@ const LobbySelector = () => {
                         >
                             <div className="grid md:grid-cols-2 gap-6 pr-2">
                                 {getCurrentLobbies().map((lobby) => (
-                        <Card 
-                            key={lobby.lobbyId} 
-                            className="bg-gray-800 border-gray-700 hover:border-blue-500 transition-all"
+                        <Card
+                            key={lobby.lobbyId}
+                            className={`bg-gray-800 transition-all ${
+                                lobby.isPublic === false
+                                    ? 'border-amber-600/50 hover:border-amber-500'
+                                    : 'border-gray-700 hover:border-blue-500'
+                            }`}
                         >
                             <CardHeader>
                                 <div className="flex justify-between items-start">
-                                    <div>
-                                        <CardTitle className={`text-2xl ${
-                                            lobby.lobbyId === 'hack-nation' 
-                                                ? 'text-green-400' 
-                                                : 'text-blue-400'
-                                        }`}>
-                                            {lobby.name}
-                                        </CardTitle>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <CardTitle className={`text-2xl ${
+                                                lobby.lobbyId === 'hack-nation'
+                                                    ? 'text-green-400'
+                                                    : lobby.isPublic === false
+                                                        ? 'text-amber-400'
+                                                        : 'text-blue-400'
+                                            }`}>
+                                                {lobby.name}
+                                            </CardTitle>
+                                            {lobby.isPublic === false && (
+                                                <Badge variant="outline" className="border-amber-600 text-amber-400">
+                                                    🔒 Private
+                                                </Badge>
+                                            )}
+                                        </div>
                                         <CardDescription className="text-gray-300 mt-2">
                                             {lobby.description}
                                         </CardDescription>
                                     </div>
-                                    <Badge variant="secondary">
-                                        {lobby.currentPlayers.length}/{lobby.maxPlayers}
-                                    </Badge>
+                                    <div className="flex flex-col gap-1 items-end">
+                                        {(() => {
+                                            const occupancy = lobbyOccupancy.get(lobby.lobbyId);
+                                            const online = occupancy?.online || 0;
+                                            const twins = occupancy?.twins || 0;
+                                            const total = online + twins;
+
+                                            return (
+                                                <div className="flex flex-col gap-1 items-end">
+                                                    <Badge variant="secondary" className="text-xs">
+                                                        👥 {total}/{lobby.maxPlayers}
+                                                    </Badge>
+                                                    {total > 0 && (
+                                                        <div className="flex gap-1">
+                                                            {online > 0 && (
+                                                                <Badge variant="outline" className="text-xs border-green-500 text-green-400">
+                                                                    🟢 {online}
+                                                                </Badge>
+                                                            )}
+                                                            {twins > 0 && (
+                                                                <Badge variant="outline" className="text-xs border-blue-500 text-blue-400">
+                                                                    📖 {twins}
+                                                                </Badge>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })()}
+                                    </div>
                                 </div>
                             </CardHeader>
                             
@@ -351,14 +485,23 @@ const LobbySelector = () => {
                                             className={`flex-1 ${
                                                 lobby.lobbyId === 'hack-nation'
                                                     ? 'bg-green-600 hover:bg-green-700'
-                                                    : 'bg-blue-600 hover:bg-blue-700'
+                                                    : lobby.isPublic === false
+                                                        ? 'bg-amber-600 hover:bg-amber-700'
+                                                        : 'bg-blue-600 hover:bg-blue-700'
                                             }`}
                                             onClick={async () => await joinLobby(lobby.lobbyId)}
-                                            disabled={lobby.currentPlayers.length >= lobby.maxPlayers}
+                                            disabled={
+                                                lobby.currentPlayers.length >= lobby.maxPlayers ||
+                                                (lobby.isPublic === false && activeTab !== 'my-rooms' && lobby.createdBy !== profile?.id)
+                                            }
                                         >
                                             {lobby.currentPlayers.length >= lobby.maxPlayers
                                                 ? 'Lobby Full'
-                                                : 'Enter World →'}
+                                                : lobby.isPublic === false && activeTab !== 'my-rooms' && lobby.createdBy !== profile?.id
+                                                    ? '🔒 Private Room'
+                                                    : lobby.isPublic === false
+                                                        ? 'Enter Private Room →'
+                                                        : 'Enter World →'}
                                         </Button>
 
                                         {/* Management Controls for My Rooms */}

@@ -227,7 +227,7 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <Card className="bg-gray-900/95 backdrop-blur-sm border-gray-700 w-full max-w-2xl">
+            <Card className="bg-gray-900/95 backdrop-blur-sm border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <CardTitle className="text-2xl text-white">
@@ -244,7 +244,7 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
                     </div>
                 </CardHeader>
 
-                <CardContent>
+                <CardContent className="flex-1 overflow-y-auto">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Room Name */}
                         <div>

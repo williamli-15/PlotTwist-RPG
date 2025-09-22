@@ -27,7 +27,7 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
     const [personality, setPersonality] = useState(editingProfile?.ai_personality_prompt || '');
     const [interests, setInterests] = useState<string[]>(editingProfile?.interests || []);
     const [bio, setBio] = useState(editingProfile?.bio || '');
-    const [preferredGreeting, setPreferredGreeting] = useState(editingProfile?.preferred_greeting || '');
+    // const [preferredGreeting, setPreferredGreeting] = useState(editingProfile?.preferred_greeting || ''); // REMOVED
     const [isCustomPersonality, setIsCustomPersonality] = useState(false);
 
     const avatarOptions = [
@@ -96,13 +96,11 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
             personality: personality || personalityTemplates[0].value,
             bio: bio.trim(),
             interests: interests,
-            preferred_greeting: preferredGreeting || `Hey! I'm ${username.trim()}!`,
             // This will be used when the digital twin is offline and someone chats with it
             ai_personality_prompt: `You are ${username.trim()}.
                 Personality: ${personality || personalityTemplates[0].value}.
                 Background: ${bio || 'Just exploring the metaverse!'}
                 Interests: ${interests.join(', ') || 'meeting people'}.
-                When greeting others, you say: "${preferredGreeting || `Hey! I'm ${username.trim()}!`}"
                 Keep responses friendly and brief, staying true to this personality.`
         };
 
@@ -111,8 +109,7 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
             profileData.selected_avatar_model,
             profileData.ai_personality_prompt,
             profileData.bio,
-            profileData.interests,
-            profileData.preferred_greeting
+            profileData.interests
         );
 
         if (success) {
@@ -147,8 +144,8 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
     }
 
     return (
-        <Card className="w-full max-w-2xl mx-auto bg-gray-800 border-gray-600">
-            <CardHeader>
+        <Card className="w-full max-w-2xl mx-auto bg-gray-800 border-gray-600 max-h-[90vh] overflow-hidden flex flex-col">
+            <CardHeader className="flex-shrink-0">
                 <CardTitle className="text-2xl text-center text-white">
                     {isEditing ? 'Edit Your Profile' : 'Create Your Digital Twin'}
                 </CardTitle>
@@ -164,7 +161,7 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
                     <Badge variant={step === 3 ? "default" : "outline"}>3. Personality</Badge>
                 </div>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-6 flex-1 overflow-y-auto">
                 {/* Step 1: Username */}
                 {step === 1 && (
                     <div className="space-y-6">
@@ -183,20 +180,7 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
                             </p>
                         </div>
 
-                        <div>
-                            <label className="text-white mb-2 block">Your Greeting (optional)</label>
-                            <Input
-                                type="text"
-                                placeholder={`Hey! I'm ${username || 'your name'}!`}
-                                value={preferredGreeting}
-                                onChange={(e) => setPreferredGreeting(e.target.value)}
-                                className="bg-gray-700 border-gray-600 text-white"
-                                maxLength={100}
-                            />
-                            <p className="text-xs text-gray-400 mt-1">
-                                What your digital twin says when meeting someone
-                            </p>
-                        </div>
+                        {/* Greeting field removed */}
 
                         <Button
                             onClick={() => username.trim() && setStep(2)}

@@ -18,7 +18,7 @@ import DynamicChatService from './DynamicChatService';
 import summaryMetadata from '@/public/context/summary_metadata_with_vercel_urls.json';
 import ModelViewer from './model-viewer';
 import ReactMarkdown from 'react-markdown';
-import ttsService from './edgeTTSService'; // Adjust path as needed
+// import ttsService from './edgeTTSService'; // Removed TTS to fix WebSocket errors
 import { useLobbyStore } from '@/lib/lobbyStore';
 import nipplejs from 'nipplejs';
 
@@ -399,25 +399,25 @@ const Scene = ({ currentLobby }) => {
 
     // const weapons = [];
 
-    // Initialize TTS
-    useEffect(() => {
-        // Debug mode - set to true only when troubleshooting
-        const DEBUG_MODE = false;
-        ttsService.setDebugMode(DEBUG_MODE);
-        
-        ttsService.initialize().then(() => {
-            if (DEBUG_MODE) {
-                console.log('TTS service initialized');
-                const voices = ttsService.getVoicesForLanguage('en-US');
-                console.log('Available en-US voices:', voices.map(v => ({
-                    name: v.ShortName,
-                    gender: v.Gender
-                })));
-            }
-        }).catch(error => {
-            console.error('Failed to initialize TTS:', error?.message || error || 'TTS initialization failed');
-        });
-    }, []);
+    // Initialize TTS - REMOVED TO FIX WEBSOCKET ERRORS
+    // useEffect(() => {
+    //     // Debug mode - set to true only when troubleshooting
+    //     const DEBUG_MODE = false;
+    //     ttsService.setDebugMode(DEBUG_MODE);
+    //
+    //     ttsService.initialize().then(() => {
+    //         if (DEBUG_MODE) {
+    //             console.log('TTS service initialized');
+    //             const voices = ttsService.getVoicesForLanguage('en-US');
+    //             console.log('Available en-US voices:', voices.map(v => ({
+    //                 name: v.ShortName,
+    //                 gender: v.Gender
+    //             })));
+    //         }
+    //     }).catch(error => {
+    //         console.error('Failed to initialize TTS:', error?.message || error || 'TTS initialization failed');
+    //     });
+    // }, []);
 
     useEffect(() => {
         equippedWeaponRef.current = equippedWeapon;
@@ -779,8 +779,8 @@ const Scene = ({ currentLobby }) => {
         }, 100);
     };
     const endChat = () => {
-        // Stop any playing audio
-        stopAllTTS();
+        // Stop any playing audio - REMOVED TTS
+        // stopAllTTS();
 
         // Use store to end chat
         endChatStore();  // ADD THIS
@@ -815,58 +815,23 @@ const Scene = ({ currentLobby }) => {
     };
 
     /**
-     * Clean text for TTS - Remove special characters that could break SSML
+     * Clean text for TTS - DISABLED TO FIX WEBSOCKET ERRORS
      */
     const cleanTextForTTS = (text: string): string => {
-        const isDebug = false; // Set to true when debugging text issues
-        
-        // Log original text only in debug mode
-        if (isDebug) console.log('Original text:', text);
-        
-        // Step by step cleaning
-        let cleaned = text;
-        
-        // 1. Remove action markers (text between asterisks)
-        cleaned = cleaned.replace(/\*[^*]*\*/g, '');
-        if (isDebug) console.log('After removing actions:', cleaned);
-        
-        // 2. Remove markdown links [text](url)
-        cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-        
-        // 3. Remove HTML tags
-        cleaned = cleaned.replace(/<[^>]*>/g, '');
-        
-        // 4. Escape XML special characters for SSML
-        cleaned = cleaned
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&apos;');
-        
-        // 5. Remove markdown formatting
-        cleaned = cleaned
-            .replace(/#{1,6}\s/g, '') // Headers
-            .replace(/\*\*/g, '') // Bold
-            .replace(/__/g, '') // Bold
-            .replace(/\*/g, '') // Italic
-            .replace(/_/g, '') // Italic
-            .replace(/~~~/g, '') // Strikethrough
-            .replace(/~~/g, '') // Strikethrough
-            .replace(/`{3}[\s\S]*?`{3}/g, '') // Code blocks
-            .replace(/`/g, ''); // Inline code
-        
-        // 6. Remove extra whitespace
-        cleaned = cleaned.replace(/\s+/g, ' ').trim();
-        
-        if (isDebug) console.log('Final cleaned text:', cleaned);
-        return cleaned;
+        // TTS functionality removed to fix WebSocket errors
+        return text;
     };
 
     /**
      * Queue-based TTS to prevent overlapping speech
      */
     const processNextInQueue = async () => {
+        // TTS functionality removed to fix WebSocket errors
+        return;
+    };
+
+    // Original function (disabled):
+    const processNextInQueue_DISABLED = async () => {
         if (isSpeakingRef.current || ttsQueueRef.current.length === 0) {
             return;
         }
@@ -923,9 +888,15 @@ const Scene = ({ currentLobby }) => {
     };
 
     /**
-     * Main function to speak NPC messages
+     * Main function to speak NPC messages - DISABLED TO FIX WEBSOCKET ERRORS
      */
     const speakNPCMessage = async (message: string) => {
+        // TTS functionality removed to fix WebSocket errors
+        return;
+    };
+
+    // Original function (disabled):
+    const speakNPCMessage_DISABLED = async (message: string) => {
         const isDebug = false; // Set to true when debugging
         
         if (isDebug) {
@@ -970,47 +941,11 @@ const Scene = ({ currentLobby }) => {
     };
 
     /**
-     * Stop all TTS playback
+     * Stop all TTS playback - DISABLED TO FIX WEBSOCKET ERRORS
      */
     const stopAllTTS = () => {
-        // console.log('Stopping all TTS'); // Comment out for production
-        
-        // Clear the queue
-        ttsQueueRef.current = [];
-        
-        // Stop current audio
-        if (currentAudioRef.current) {
-            try {
-                const audio = currentAudioRef.current as any;
-                
-                // Remove event listeners using stored handlers
-                if (audio._endedHandler) {
-                    audio.removeEventListener('ended', audio._endedHandler);
-                }
-                if (audio._errorHandler) {
-                    audio.removeEventListener('error', audio._errorHandler);
-                }
-                
-                // Now stop the audio
-                if (!audio.paused) {
-                    audio.pause();
-                }
-                audio.currentTime = 0;
-                
-                // Clean up the blob URL if it exists
-                const src = audio.src;
-                if (src && src.startsWith('blob:')) {
-                    URL.revokeObjectURL(src);
-                }
-                
-            } catch (e) {
-                // Silently ignore errors when stopping audio
-            } finally {
-                currentAudioRef.current = null;
-            }
-        }
-        
-        isSpeakingRef.current = false;
+        // TTS functionality removed to fix WebSocket errors
+        // console.log('TTS disabled');
     };
 
     // Update your chat submit handler
@@ -1071,13 +1006,13 @@ const Scene = ({ currentLobby }) => {
                 return newMessages;
             });
 
-            // Speak the complete response (with error handling)
-            try {
-                await speakNPCMessage(response.message);
-            } catch (ttsError) {
-                console.warn('TTS failed, continuing without speech:', ttsError?.message || ttsError);
-                // Chat continues to work even if TTS fails
-            }
+            // Speak the complete response (with error handling) - REMOVED TTS
+            // try {
+            //     await speakNPCMessage(response.message);
+            // } catch (ttsError) {
+            //     console.warn('TTS failed, continuing without speech:', ttsError?.message || ttsError);
+            //     // Chat continues to work even if TTS fails
+            // }
 
             if (response.animation && npcAnimationActionsRef.current[response.animation]) {
                 playNpcAnimation(response.animation);

@@ -74,8 +74,7 @@ interface LobbyStore extends LobbyState {
         avatarModel: string,
         aiPersonalityPrompt?: string,
         bio?: string,
-        interests?: string[],
-        preferredGreeting?: string
+        interests?: string[]
     ) => Promise<boolean>;
     loadProfile: () => Promise<boolean>;
     updateAvatarState: (updates: Partial<AvatarState>) => Promise<void>;
@@ -221,8 +220,7 @@ export const useLobbyStore = create<LobbyStore>()(
                 avatarModel: string,
                 aiPersonalityPrompt?: string,
                 bio?: string,
-                interests?: string[],
-                preferredGreeting?: string
+                interests?: string[]
             ) => {
                 try {
                     const userId = getOrCreateUserId();
@@ -241,7 +239,6 @@ export const useLobbyStore = create<LobbyStore>()(
                         ai_personality_prompt: aiPersonalityPrompt || `A friendly metaverse resident named ${username}`,
                         bio: bio || '',
                         interests: interests || [],
-                        preferred_greeting: preferredGreeting || `Hey! I'm ${username}!`,
                         last_seen: new Date().toISOString()
                     };
 
@@ -713,6 +710,8 @@ export const useLobbyStore = create<LobbyStore>()(
                                     name: customLobby.name,
                                     description: customLobby.description,
                                     theme: customLobby.theme,
+                                    isPublic: customLobby.is_public,
+                                    createdBy: customLobby.created_by,
                                     hostAvatar: {
                                         name: creatorName,
                                         model: creatorProfile?.selected_avatar_model || '/avatars/raiden.vrm',
@@ -783,6 +782,8 @@ export const useLobbyStore = create<LobbyStore>()(
                         name: data.name,
                         description: data.description,
                         theme: data.theme,
+                        isPublic: data.is_public,
+                        createdBy: data.created_by,
                         hostAvatar: {
                             name: creatorName,
                             model: creatorProfile?.selected_avatar_model || '/avatars/raiden.vrm',
@@ -827,6 +828,8 @@ export const useLobbyStore = create<LobbyStore>()(
                             name: customLobby.name,
                             description: customLobby.description,
                             theme: customLobby.theme,
+                            isPublic: customLobby.is_public,
+                            createdBy: customLobby.created_by,
                             hostAvatar: {
                                 name: profile.username,
                                 model: profile.selected_avatar_model || '/avatars/raiden.vrm',

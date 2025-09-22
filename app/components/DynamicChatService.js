@@ -59,13 +59,13 @@ class DynamicChatService {
             - Your behavior: ${avatarState.ai_behavior} (wandering/idle)
             - Background: ${profile.bio || 'Just exploring the metaverse'}
             - Interests: ${profile.interests?.join(', ') || 'meeting people'}
-            - Greeting: ${profile.preferred_greeting || `Hey! I'm ${profile.username}!`}
-            
+
             Important:
             - You are an AI representation while the real ${profile.username} is offline
             - Keep responses short (1-3 sentences) and true to their personality
             - If asked, mention that the real ${profile.username} is currently offline
             - Be friendly but don't pretend to be the real person
+            - Generate natural, contextual greetings based on the situation (time, who you're talking to, etc.)
             - You can share their interests and have conversations based on their personality and Bio
             - You can also refer to other players in the lobby by their usernames and talk about their interests saying I heard that user is interested in [interest] or I heard that user likes [interest]`;
             ;
@@ -76,12 +76,43 @@ class DynamicChatService {
      */
     async buildLobbyPersonality() {
         const hostAvatar = this.config.hostAvatar;
-        let prompt = hostAvatar.personality || `You are the lobby host here, ${hostAvatar.name}. 
-            You are friendly and welcoming to all players. 
-            Your role is to help new players get started and answer any questions they have about the event. 
-            You can also share interesting facts about the event world and its history. 
+        let prompt = hostAvatar.personality || `You are the lobby host here, ${hostAvatar.name}.
+            You are friendly and welcoming to all players.
+            Your role is to help new players get started and answer any questions they have about the event.
+            You can also share interesting facts about the event world and its history.
             Always be polite and encouraging, and try to make everyone feel at home in the lobby.`;
-        
+
+        // Get full lobby data from database, including host knowledge
+        const lobbyData = await this.getFullLobbyData();
+        if (lobbyData) {
+            // Add host's additional knowledge if available
+            if (lobbyData.additional_host_knowledge) {
+                prompt += `\n\nAdditional Host Knowledge:\n${lobbyData.additional_host_knowledge}\n`;
+                prompt += `\nYou have extensive knowledge about the topics above and can discuss them in detail. Use this information to provide helpful, informative responses when relevant to the conversation.`;
+            }
+
+            // Add custom host personality if available
+            if (lobbyData.custom_host_name && !lobbyData.use_my_profile) {
+                prompt = prompt.replace(hostAvatar.name, lobbyData.custom_host_name);
+            }
+
+            // If using profile as host, get profile personality
+            if (lobbyData.use_my_profile && lobbyData.host_profile_id) {
+                const hostProfile = await this.getHostProfile(lobbyData.host_profile_id);
+                if (hostProfile) {
+                    prompt = `You are ${hostProfile.username}, the host of this room.
+                        ${hostProfile.ai_personality_prompt || `You are friendly and welcoming to all players.`}
+
+                        Your Background: ${hostProfile.bio || 'Just exploring the metaverse'}
+                        Your Interests: ${hostProfile.interests?.join(', ') || 'meeting people'}
+
+                        ${lobbyData.additional_host_knowledge ? `\nAdditional Room Knowledge:\n${lobbyData.additional_host_knowledge}\n` : ''}
+
+                        You can discuss your background, interests, and any room-specific knowledge you have. Keep responses engaging and true to your personality.`;
+                }
+            }
+        }
+
         // Get attendee context for this lobby
         const attendees = await this.getLobbyAttendees();
         if (attendees.length > 0) {
@@ -91,7 +122,7 @@ class DynamicChatService {
             });
             prompt += `\nYou can reference these attendees in conversations, mention their interests, and help connect people with similar backgrounds.`;
         }
-        
+
         return prompt;
     }
 
@@ -268,8 +299,16 @@ class DynamicChatService {
 
         } catch (error) {
             console.error('Error getting digital twin response:', error);
-            const fallbackGreeting = this.config?.profile?.preferred_greeting || 
-                                    `Hey! I'm ${this.config?.profile?.username}'s digital twin!`;
+
+            // Generate a more dynamic fallback greeting
+            const greetings = [
+                `Hi there! I'm ${this.config?.profile?.username}'s digital twin.`,
+                `Hello! ${this.config?.profile?.username} isn't here right now, but I'm their digital twin.`,
+                `Hey! I represent ${this.config?.profile?.username} while they're offline.`,
+                `Greetings! I'm the digital version of ${this.config?.profile?.username}.`
+            ];
+            const fallbackGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+
             return {
                 message: fallbackGreeting,
                 emotion: "confused",
@@ -277,6 +316,73 @@ class DynamicChatService {
                 isDigitalTwin: true,
                 originalUser: this.config?.profile?.username
             };
+        }
+    }
+
+    /**
+     * Get full lobby data from database, including host knowledge
+     */
+    async getFullLobbyData() {
+        try {
+            if (!this.config?.lobbyId) return null;
+
+            // Import supabase client
+            const { supabase } = await import('@/lib/supabase');
+
+            // For custom lobbies, lobbyId is actually the lobby_code, not the database id
+            // Try querying by lobby_code first (for custom lobbies)
+            let { data: lobbyData, error } = await supabase
+                .from('custom_lobbies')
+                .select('*')
+                .eq('lobby_code', this.config.lobbyId)
+                .single();
+
+            // If not found by lobby_code, try by id (fallback for older implementations)
+            if (error && error.code === 'PGRST116') {
+                ({ data: lobbyData, error } = await supabase
+                    .from('custom_lobbies')
+                    .select('*')
+                    .eq('id', this.config.lobbyId)
+                    .single());
+            }
+
+            if (error) {
+                console.error('Error fetching lobby data:', error);
+                return null;
+            }
+
+            return lobbyData;
+        } catch (error) {
+            console.error('Error getting full lobby data:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Get host profile data if using profile as host
+     */
+    async getHostProfile(profileId) {
+        try {
+            if (!profileId) return null;
+
+            // Import supabase client
+            const { supabase } = await import('@/lib/supabase');
+
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', profileId)
+                .single();
+
+            if (error) {
+                console.error('Error fetching host profile:', error);
+                return null;
+            }
+
+            return profile;
+        } catch (error) {
+            console.error('Error getting host profile:', error);
+            return null;
         }
     }
 

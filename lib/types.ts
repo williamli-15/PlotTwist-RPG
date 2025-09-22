@@ -61,6 +61,8 @@ export interface Lobby {
     backgroundScene?: string;
     backgroundColor?: string;
     environmentImage?: string;
+    isPublic?: boolean;      // Whether the lobby is public or private
+    createdBy?: string;      // Profile ID of the creator
 }
 
 // Base lobby state (what components need to know about)
