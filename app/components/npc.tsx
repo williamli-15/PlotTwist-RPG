@@ -108,6 +108,12 @@ const Scene = ({ currentLobby }) => {
     const [chatMessages, setChatMessages] = useState([]);
     const [currentMessage, setCurrentMessage] = useState('');
     const [showMobileWarning, setShowMobileWarning] = useState(false);
+
+    // Resizable chat state
+    const [chatDimensions, setChatDimensions] = useState({ width: 1000, height: 475 }); // 475px = 375px content + 100px header/padding
+    const [isResizingChat, setIsResizingChat] = useState(false);
+    const [chatResizeHandle, setChatResizeHandle] = useState<string>('');
+    const chatRef = useRef<HTMLDivElement>(null);
     // 2. ADD THESE REFS inside the Scene component (near other refs):
     const otherAvatarsRef = useRef(new Map()); // Store other users' VRM instances
     const positionUpdateInterval = useRef(0);   // For syncing position to database
@@ -448,6 +454,14 @@ const Scene = ({ currentLobby }) => {
         };
     }, [currentLobby, isNearNPC, isChatting]); // <-- ADD currentLobby HERE
 
+    // Handle room switching - restore position when lobby changes but avatar already exists
+    useEffect(() => {
+        if (currentLobby && avatarRef.current && rendererRef.current) {
+            console.log('Room switched, restoring position for new room:', currentLobby.lobbyId);
+            restoreAvatarPosition();
+        }
+    }, [currentLobby?.lobbyId]); // Only trigger when the actual lobby ID changes
+
     // Move createTextSprite function outside useEffect so it can be reused
     const createTextSprite = (text) => {
         const canvas = document.createElement('canvas');
@@ -542,6 +556,52 @@ const Scene = ({ currentLobby }) => {
 
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    // Chat resize useEffect
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!isResizingChat || !chatRef.current) return;
+
+            const rect = chatRef.current.getBoundingClientRect();
+            let newWidth = chatDimensions.width;
+            let newHeight = chatDimensions.height;
+
+            // Calculate new dimensions based on resize handle
+            if (chatResizeHandle.includes('right')) {
+                newWidth = Math.max(400, e.clientX - rect.left); // Min width 400px
+            }
+            if (chatResizeHandle.includes('left')) {
+                newWidth = Math.max(400, rect.right - e.clientX);
+            }
+            if (chatResizeHandle.includes('bottom')) {
+                newHeight = Math.max(300, e.clientY - rect.top); // Min height 300px
+            }
+            if (chatResizeHandle.includes('top')) {
+                newHeight = Math.max(300, rect.bottom - e.clientY);
+            }
+
+            // Limit maximum size
+            newWidth = Math.min(1200, newWidth);
+            newHeight = Math.min(800, newHeight);
+
+            setChatDimensions({ width: newWidth, height: newHeight });
+        };
+
+        const handleMouseUp = () => {
+            setIsResizingChat(false);
+            setChatResizeHandle('');
+        };
+
+        if (isResizingChat) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        }
+
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isResizingChat, chatResizeHandle, chatDimensions]);
 
     /*
     useEffect(() => {
@@ -811,6 +871,69 @@ const Scene = ({ currentLobby }) => {
                 behavior: 'smooth'
             };
             container.scrollTo(scrollOptions);
+        }
+    };
+
+    // Chat resize handlers
+    const handleChatMouseDown = (e: React.MouseEvent, handle: string) => {
+        e.preventDefault();
+        setIsResizingChat(true);
+        setChatResizeHandle(handle);
+    };
+
+    // Load saved avatar position from database
+    const loadSavedAvatarPosition = async () => {
+        try {
+            const { profile, currentLobby } = useLobbyStore.getState();
+            if (!profile || !currentLobby) return null;
+
+            const { supabase } = await import('@/lib/supabase');
+
+            const { data, error } = await supabase
+                .from('avatar_states')
+                .select('position, rotation')
+                .eq('profile_id', profile.id)
+                .eq('lobby_id', currentLobby.lobbyId)
+                .single();
+
+            if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+                console.error('Error loading saved position:', error);
+                return null;
+            }
+
+            return data;
+        } catch (error) {
+            console.error('Error loading saved avatar position:', error);
+            return null;
+        }
+    };
+
+    // Restore position for existing avatar when switching rooms
+    const restoreAvatarPosition = async () => {
+        if (!avatarRef.current) return;
+
+        console.log('Restoring position for room switch...');
+        const savedState = await loadSavedAvatarPosition();
+
+        if (savedState?.position) {
+            console.log('Restoring saved position for new room:', savedState.position);
+            avatarRef.current.scene.position.set(
+                savedState.position.x,
+                savedState.position.y,
+                savedState.position.z
+            );
+            if (savedState.rotation) {
+                avatarRef.current.scene.rotation.set(
+                    savedState.rotation.x,
+                    savedState.rotation.y,
+                    savedState.rotation.z
+                );
+            }
+        } else {
+            console.log('No saved position for new room, using default spawn location');
+            // Default spawn position for new room
+            avatarRef.current.scene.position.set(0, 0, 0);
+            avatarRef.current.scene.rotation.set(0, 0, 0);
         }
     };
 
@@ -1288,6 +1411,29 @@ const Scene = ({ currentLobby }) => {
                 });
 
                 VRMUtils.rotateVRM0(vrm);
+
+                // Load and apply saved position, or use default
+                const savedState = await loadSavedAvatarPosition();
+                if (savedState?.position) {
+                    console.log('Restoring saved position:', savedState.position);
+                    vrm.scene.position.set(
+                        savedState.position.x,
+                        savedState.position.y,
+                        savedState.position.z
+                    );
+                    if (savedState.rotation) {
+                        vrm.scene.rotation.set(
+                            savedState.rotation.x,
+                            savedState.rotation.y,
+                            savedState.rotation.z
+                        );
+                    }
+                } else {
+                    console.log('No saved position found, using default spawn location');
+                    // Default spawn position (you can adjust these coordinates as needed)
+                    vrm.scene.position.set(0, 0, 0);
+                }
+
                 await initializeAnimations(vrm, false);
             },
             (progress) => console.log('Loading player model...', 100.0 * (progress.loaded / progress.total), '%'),
@@ -2341,15 +2487,6 @@ const Scene = ({ currentLobby }) => {
                 />
             )}
 
-            {/* Add mobile interaction button */}
-            {isMobile && isNearNPC && !isChatting && (
-                <Button
-                    className="fixed bottom-4 right-4 z-20 bg-blue-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-full text-lg shadow-lg"
-                    onClick={startUniversalChat}
-                >
-                    💬 Talk
-                </Button>
-            )}
 
             {/* Interaction Prompt */}
             {isNearNPC && !isChatting && (
@@ -2360,7 +2497,18 @@ const Scene = ({ currentLobby }) => {
 
             {/* Modified Chat Interface */}
             {isChatting && (
-                <Card className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[1000px] bg-white/50 backdrop-blur-sm z-10">
+                <Card
+                    ref={chatRef}
+                    className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/50 backdrop-blur-sm z-10 select-none"
+                    style={{
+                        width: `${chatDimensions.width}px`,
+                        height: `${chatDimensions.height}px`,
+                        minWidth: '400px',
+                        minHeight: '300px',
+                        maxWidth: '1200px',
+                        maxHeight: '800px'
+                    }}
+                >
                     <CardContent className="p-4">
                         <div className="flex justify-between items-center mb-3">
                             <span className="text-sm text-gray-700">
@@ -2380,7 +2528,7 @@ const Scene = ({ currentLobby }) => {
                         </div>
 
                         {/* Two-column layout */}
-                        <div className="flex gap-4 h-[375px]">
+                        <div className="flex gap-4" style={{ height: `${chatDimensions.height - 100}px` }}>
                             {/* Chat column */}
                             <div className="flex-1 flex flex-col">
                                 <div
@@ -2550,6 +2698,48 @@ const Scene = ({ currentLobby }) => {
                             </div> */}
                         </div>
                     </CardContent>
+
+                    {/* Resize Handles */}
+                    {/* Right edge */}
+                    <div
+                        className="absolute top-0 right-0 w-1 h-full cursor-ew-resize hover:bg-blue-500/30 transition-colors"
+                        onMouseDown={(e) => handleChatMouseDown(e, 'right')}
+                    />
+                    {/* Bottom edge */}
+                    <div
+                        className="absolute bottom-0 left-0 w-full h-1 cursor-ns-resize hover:bg-blue-500/30 transition-colors"
+                        onMouseDown={(e) => handleChatMouseDown(e, 'bottom')}
+                    />
+                    {/* Bottom-right corner */}
+                    <div
+                        className="absolute bottom-0 right-0 w-3 h-3 cursor-nw-resize hover:bg-blue-500/50 transition-colors"
+                        onMouseDown={(e) => handleChatMouseDown(e, 'bottom-right')}
+                    />
+                    {/* Top edge */}
+                    <div
+                        className="absolute top-0 left-0 w-full h-1 cursor-ns-resize hover:bg-blue-500/30 transition-colors"
+                        onMouseDown={(e) => handleChatMouseDown(e, 'top')}
+                    />
+                    {/* Left edge */}
+                    <div
+                        className="absolute top-0 left-0 w-1 h-full cursor-ew-resize hover:bg-blue-500/30 transition-colors"
+                        onMouseDown={(e) => handleChatMouseDown(e, 'left')}
+                    />
+                    {/* Top-right corner */}
+                    <div
+                        className="absolute top-0 right-0 w-3 h-3 cursor-ne-resize hover:bg-blue-500/50 transition-colors"
+                        onMouseDown={(e) => handleChatMouseDown(e, 'top-right')}
+                    />
+                    {/* Top-left corner */}
+                    <div
+                        className="absolute top-0 left-0 w-3 h-3 cursor-nw-resize hover:bg-blue-500/50 transition-colors"
+                        onMouseDown={(e) => handleChatMouseDown(e, 'top-left')}
+                    />
+                    {/* Bottom-left corner */}
+                    <div
+                        className="absolute bottom-0 left-0 w-3 h-3 cursor-ne-resize hover:bg-blue-500/50 transition-colors"
+                        onMouseDown={(e) => handleChatMouseDown(e, 'bottom-left')}
+                    />
                 </Card>
             )}
 

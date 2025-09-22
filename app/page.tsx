@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import LobbySelector from "./components/LobbySelector";
 import ProfileCreator from "./components/ProfileCreator";
+import RoomChat from "./components/RoomChat";
 import { useLobbyStore } from "@/lib/lobbyStore";
 
 // Dynamically import NPC component with no SSR to avoid "window is not defined" errors
@@ -55,6 +56,7 @@ export default function Home() {
   return (
     <>
       <NPC currentLobby={currentLobby} />
+      {currentLobby && <RoomChat lobbyId={currentLobby.lobbyId} />}
       {showLobbySelector && <LobbySelector />}
     </>
   );

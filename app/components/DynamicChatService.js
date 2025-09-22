@@ -431,13 +431,17 @@ class DynamicChatService {
     }
 
     /**
-     * Log digital twin interaction to Supabase
+     * Log digital twin interaction to Supabase (disabled for now to avoid errors)
      */
     async logDigitalTwinInteraction(userMessage, twinResponse) {
+        // Temporarily disabled to avoid database errors
+        // TODO: Create digital_twin_chats table or fix the schema
+        return;
+
         try {
             // Import supabase client
             const { supabase } = await import('@/lib/supabase');
-            
+
             await supabase
                 .from('digital_twin_chats')
                 .insert({
