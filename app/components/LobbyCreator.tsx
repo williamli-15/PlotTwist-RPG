@@ -49,8 +49,8 @@ const LobbyCreator = ({ onClose, onSuccess, editingLobby }: LobbyCreatorProps) =
             // For editing mode, we'll use the current host setup
             setHostData({
                 useMyProfile: true, // Default to using profile
-                customHostName: editingLobby.hostAvatar.name,
-                customHostAvatar: editingLobby.hostAvatar.model,
+                customHostName: editingLobby.hostAvatar?.name || '',
+                customHostAvatar: editingLobby.hostAvatar?.model || '/avatars/raiden.vrm',
                 additionalKnowledge: editingLobby.additionalKnowledge || ''
             });
         }
