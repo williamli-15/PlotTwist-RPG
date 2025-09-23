@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLobbyStore } from '@/lib/lobbyStore';
+import { Lobby } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,10 +10,11 @@ import { Input } from '@/components/ui/input';
 interface LobbyCreatorProps {
     onClose: () => void;
     onSuccess: (lobbyCode: string) => void;
+    editingLobby?: Lobby;  // Optional lobby to edit
 }
 
-const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
-    const { createCustomLobby, profile } = useLobbyStore();
+const LobbyCreator = ({ onClose, onSuccess, editingLobby }: LobbyCreatorProps) => {
+    const { createCustomLobby, updateCustomLobby, profile } = useLobbyStore();
     const [isCreating, setIsCreating] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -30,6 +32,29 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
         customHostAvatar: '/avatars/raiden.vrm',
         additionalKnowledge: ''
     });
+
+    // Initialize form data when editing
+    useEffect(() => {
+        if (editingLobby) {
+            // Extract lobby data from the editing lobby
+            setFormData({
+                name: editingLobby.name,
+                description: editingLobby.description,
+                theme: editingLobby.theme,
+                maxPlayers: editingLobby.maxPlayers,
+                isPublic: editingLobby.isPublic,
+                tags: [] // TODO: extract tags if stored
+            });
+
+            // For editing mode, we'll use the current host setup
+            setHostData({
+                useMyProfile: true, // Default to using profile
+                customHostName: editingLobby.hostAvatar.name,
+                customHostAvatar: editingLobby.hostAvatar.model,
+                additionalKnowledge: editingLobby.additionalKnowledge || ''
+            });
+        }
+    }, [editingLobby]);
 
     // Google search state
     const [googleSearch, setGoogleSearch] = useState<{
@@ -198,28 +223,49 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
             return;
         }
 
-        console.log('Creating lobby with profile:', profile);
+        console.log(editingLobby ? 'Updating lobby' : 'Creating lobby', 'with profile:', profile);
 
         setIsCreating(true);
         try {
-            const lobbyCode = await createCustomLobby(
-                formData.name.trim(),
-                formData.description.trim(),
-                formData.theme,
-                formData.maxPlayers,
-                formData.isPublic,
-                formData.tags,
-                hostData
-            );
+            if (editingLobby) {
+                // Update existing lobby
+                const success = await updateCustomLobby(
+                    editingLobby.lobbyId, // Use existing lobby code
+                    formData.name.trim(),
+                    formData.description.trim(),
+                    formData.theme,
+                    formData.maxPlayers,
+                    formData.isPublic,
+                    formData.tags,
+                    hostData
+                );
 
-            if (lobbyCode) {
-                onSuccess(lobbyCode);
+                if (success) {
+                    onSuccess(editingLobby.lobbyId); // Return same lobby code
+                } else {
+                    alert('Failed to update room. Please try again.');
+                }
             } else {
-                alert('Failed to create room. Please try again.');
+                // Create new lobby
+                const lobbyCode = await createCustomLobby(
+                    formData.name.trim(),
+                    formData.description.trim(),
+                    formData.theme,
+                    formData.maxPlayers,
+                    formData.isPublic,
+                    formData.tags,
+                    hostData
+                );
+
+                if (lobbyCode) {
+                    onSuccess(lobbyCode);
+                } else {
+                    alert('Failed to create room. Please try again.');
+                }
             }
         } catch (error) {
-            console.error('Error creating lobby:', error);
-            alert('Failed to create room. Please try again.');
+            console.error('Error with lobby:', error);
+            alert(editingLobby ? 'Failed to update room. Please try again.' : 'Failed to create room. Please try again.');
         } finally {
             setIsCreating(false);
         }
@@ -231,7 +277,7 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <CardTitle className="text-2xl text-white">
-                            🏗️ Create Your Room
+                            {editingLobby ? '✏️ Edit Your Room' : '🏗️ Create Your Room'}
                         </CardTitle>
                         <button
                             onClick={onClose}
@@ -563,7 +609,7 @@ const LobbyCreator = ({ onClose, onSuccess }: LobbyCreatorProps) => {
                                 }
                                 className="flex-1 bg-blue-600 hover:bg-blue-700"
                             >
-                                {isCreating ? 'Creating...' : 'Create Room'}
+                                {isCreating ? (editingLobby ? 'Updating...' : 'Creating...') : (editingLobby ? 'Update Room' : 'Create Room')}
                             </Button>
                         </div>
                     </form>

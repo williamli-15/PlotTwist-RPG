@@ -49,6 +49,7 @@ const LobbySelector = () => {
     } = useLobbyStore();
 
     const [showCreator, setShowCreator] = useState(false);
+    const [editingLobby, setEditingLobby] = useState<Lobby | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [joinCode, setJoinCode] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -183,18 +184,29 @@ const LobbySelector = () => {
         }
     };
 
-    // Handle successful room creation
+    // Handle successful room creation/update
     const handleRoomCreated = (lobbyCode: string) => {
         setShowCreator(false);
-        // Show the new room URL
-        const url = `${window.location.origin}/${lobbyCode}`;
-        alert(`Room created! Share this URL: ${url}`);
-        // Refresh lobbies to show the new one
+        setEditingLobby(null);
+        if (editingLobby) {
+            alert('Room updated successfully!');
+        } else {
+            // Show the new room URL
+            const url = `${window.location.origin}/${lobbyCode}`;
+            alert(`Room created! Share this URL: ${url}`);
+        }
+        // Refresh lobbies to show changes
         if (activeTab === 'all') {
             loadCustomLobbies();
         } else {
             loadMyRooms();
         }
+    };
+
+    // Handle room editing
+    const handleEditRoom = (lobby: Lobby) => {
+        setEditingLobby(lobby);
+        setShowCreator(true);
     };
 
     // Handle room deletion
@@ -523,6 +535,15 @@ const LobbySelector = () => {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
+                                                    className="px-3 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                                                    onClick={() => handleEditRoom(lobby)}
+                                                    title="Edit room"
+                                                >
+                                                    ✏️
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
                                                     className="px-3 text-red-400 hover:text-red-300 hover:bg-red-900/20"
                                                     onClick={() => handleDeleteRoom(lobby.lobbyId, lobby.name)}
                                                     title="Delete room"
@@ -579,8 +600,12 @@ const LobbySelector = () => {
                 {/* Lobby Creator Modal */}
                 {showCreator && (
                     <LobbyCreator
-                        onClose={() => setShowCreator(false)}
+                        onClose={() => {
+                            setShowCreator(false);
+                            setEditingLobby(null);
+                        }}
                         onSuccess={handleRoomCreated}
+                        editingLobby={editingLobby}
                     />
                 )}
 

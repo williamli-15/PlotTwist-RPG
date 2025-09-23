@@ -546,7 +546,7 @@ const PeerJSVoiceChat: React.FC = () => {
     // Monitor position changes and proximity
     useEffect(() => {
         if (!currentLobby || !profile || !isEnabled) {
-            addDebugLog(`⚠️ Position monitoring disabled - lobby: ${!!currentLobby}, profile: ${!!profile}, enabled: ${isEnabled}`);
+            // Silently skip position monitoring when disabled
             return;
         }
 

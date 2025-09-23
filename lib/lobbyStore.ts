@@ -104,6 +104,21 @@ interface LobbyStore extends LobbyState {
     loadMyCustomLobbies: () => Promise<Lobby[]>;
     joinCustomLobbyByCode: (lobbyCode: string) => Promise<boolean>;
     deleteCustomLobby: (lobbyCode: string) => Promise<boolean>;
+    updateCustomLobby: (
+        lobbyCode: string,
+        name: string,
+        description: string,
+        theme: string,
+        maxPlayers: number,
+        isPublic: boolean,
+        tags?: string[],
+        hostData?: {
+            useMyProfile: boolean;
+            customHostName?: string;
+            customHostAvatar?: string;
+            additionalKnowledge?: string;
+        }
+    ) => Promise<boolean>;
 }
 
 export const useLobbyStore = create<LobbyStore>()(
@@ -721,7 +736,8 @@ export const useLobbyStore = create<LobbyStore>()(
                                     maxPlayers: customLobby.max_players,
                                     currentPlayers: [], // TODO: load actual players
                                     backgroundColor: customLobby.background_color || '#1a1a2e',
-                                    environmentImage: customLobby.environment_image || 'neutral'
+                                    environmentImage: customLobby.environment_image || 'neutral',
+                                    additionalKnowledge: customLobby.additional_host_knowledge || undefined
                                 };
                             })
                         );
@@ -793,7 +809,8 @@ export const useLobbyStore = create<LobbyStore>()(
                         maxPlayers: data.max_players,
                         currentPlayers: [],
                         backgroundColor: data.background_color || '#1a1a2e',
-                        environmentImage: data.environment_image || 'neutral'
+                        environmentImage: data.environment_image || 'neutral',
+                        additionalKnowledge: data.additional_host_knowledge || undefined
                     };
 
                     // Add this lobby to available lobbies so it can be found
@@ -839,7 +856,8 @@ export const useLobbyStore = create<LobbyStore>()(
                             maxPlayers: customLobby.max_players,
                             currentPlayers: [],
                             backgroundColor: customLobby.background_color || '#1a1a2e',
-                            environmentImage: customLobby.environment_image || 'neutral'
+                            environmentImage: customLobby.environment_image || 'neutral',
+                            additionalKnowledge: customLobby.additional_host_knowledge || undefined
                         }));
 
                         return myLobbies;
@@ -866,6 +884,52 @@ export const useLobbyStore = create<LobbyStore>()(
                     return !error;
                 } catch (error) {
                     console.error('Error deleting custom lobby:', error);
+                    return false;
+                }
+            },
+
+            // Update custom lobby (only by creator, preserves lobby code)
+            updateCustomLobby: async (
+                lobbyCode: string,
+                name: string,
+                description: string,
+                theme: string,
+                maxPlayers: number,
+                isPublic: boolean,
+                tags?: string[],
+                hostData?: {
+                    useMyProfile: boolean;
+                    customHostName?: string;
+                    customHostAvatar?: string;
+                    additionalKnowledge?: string;
+                }
+            ) => {
+                try {
+                    const { profile } = get();
+                    if (!profile) return false;
+
+                    const { error } = await supabase
+                        .from('custom_lobbies')
+                        .update({
+                            name,
+                            description,
+                            theme,
+                            max_players: maxPlayers,
+                            is_public: isPublic,
+                            tags: tags || [],
+                            // Host configuration
+                            host_uses_creator_profile: hostData?.useMyProfile ?? true,
+                            custom_host_name: hostData?.customHostName || null,
+                            custom_host_avatar: hostData?.customHostAvatar || null,
+                            additional_host_knowledge: hostData?.additionalKnowledge || null,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('lobby_code', lobbyCode.toUpperCase())
+                        .eq('created_by', profile.id);
+
+                    return !error;
+                } catch (error) {
+                    console.error('Error updating custom lobby:', error);
                     return false;
                 }
             }

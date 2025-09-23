@@ -328,7 +328,7 @@ const Scene = ({ currentLobby }) => {
         const swordKeywords = ['sword', 'blade', 'dagger', 'bat'];
 
         // log weaponName
-        console.log('inferWeaponType input weaponName', weaponName);
+        // console.log('inferWeaponType input weaponName', weaponName);
 
         // Check weapon name first
         for (const keyword of pistolKeywords) {
@@ -427,7 +427,7 @@ const Scene = ({ currentLobby }) => {
 
     useEffect(() => {
         equippedWeaponRef.current = equippedWeapon;
-        console.log('Equipped weapon ref updated:', equippedWeaponRef.current);
+        // console.log('Equipped weapon ref updated:', equippedWeaponRef.current);
     }, [equippedWeapon]);
 
     useEffect(() => {
@@ -535,7 +535,7 @@ const Scene = ({ currentLobby }) => {
     }, [isNearNPC, currentLobby?.hostAvatar?.name]);
 
     useEffect(() => {
-        console.log('Equipped weapon changed:', equippedWeapon);
+        // console.log('Equipped weapon changed:', equippedWeapon);
     }, [equippedWeapon]);
 
     // Update the mobile detection useEffect

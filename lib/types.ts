@@ -63,6 +63,7 @@ export interface Lobby {
     environmentImage?: string;
     isPublic?: boolean;      // Whether the lobby is public or private
     createdBy?: string;      // Profile ID of the creator
+    additionalKnowledge?: string;  // Additional host knowledge from database
 }
 
 // Base lobby state (what components need to know about)
