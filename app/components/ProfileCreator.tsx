@@ -75,9 +75,27 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
     // Initialize custom personality state when editing existing profiles
     useEffect(() => {
         if (editingProfile?.ai_personality_prompt) {
-            const isCurrentPersonalityCustom = !personalityTemplates.slice(0, -1)
-                .some(template => template.value === editingProfile.ai_personality_prompt);
-            setIsCustomPersonality(isCurrentPersonalityCustom);
+            // Extract just the personality part from the full AI prompt
+            // Look for "Personality: " and extract the part after it until "Background:"
+            const fullPrompt = editingProfile.ai_personality_prompt;
+            const personalityMatch = fullPrompt.match(/Personality: ([^.]+\.)/);
+            let extractedPersonality = '';
+
+            if (personalityMatch) {
+                extractedPersonality = personalityMatch[1].replace(/\.$/, '').trim();
+            }
+
+            // Check if it matches any of our templates
+            const matchingTemplate = personalityTemplates.slice(0, -1)
+                .find(template => template.value === extractedPersonality);
+
+            if (matchingTemplate) {
+                setPersonality(matchingTemplate.value);
+                setIsCustomPersonality(false);
+            } else {
+                setPersonality(extractedPersonality || editingProfile.ai_personality_prompt);
+                setIsCustomPersonality(true);
+            }
         }
     }, [editingProfile]);
 
@@ -241,7 +259,7 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
                 {step === 3 && (
                     <div className="space-y-6">
                         <div>
-                            <label className="text-white mb-2 block">Your Personality</label>
+                            <label className="text-white mb-2 block">Personality</label>
                             <div className="space-y-2 mb-3">
                                 {personalityTemplates.map((template) => (
                                     <button
@@ -249,14 +267,15 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
                                         onClick={() => {
                                             if (template.label === 'Custom') {
                                                 setIsCustomPersonality(true);
-                                                setPersonality('');
+                                                // Keep current personality value when switching to custom
                                             } else {
                                                 setIsCustomPersonality(false);
                                                 setPersonality(template.value);
                                             }
                                         }}
                                         className={`w-full text-left p-2 rounded border ${
-                                            (template.label === 'Custom' && isCustomPersonality) || personality === template.value
+                                            (template.label === 'Custom' && isCustomPersonality) ||
+                                            (!isCustomPersonality && personality === template.value)
                                                 ? 'border-blue-500 bg-blue-500/20'
                                                 : 'border-gray-600 bg-gray-700'
                                         }`}
@@ -268,15 +287,13 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
                                     </button>
                                 ))}
                             </div>
-                            {isCustomPersonality && (
-                                <Textarea
-                                    placeholder="Describe your personality..."
-                                    value={personality}
-                                    onChange={(e) => setPersonality(e.target.value)}
-                                    className="bg-gray-700 border-gray-600 text-white"
-                                    rows={3}
-                                />
-                            )}
+                            <Textarea
+                                placeholder="Describe your personality..."
+                                value={personality}
+                                onChange={(e) => setPersonality(e.target.value)}
+                                className="bg-gray-700 border-gray-600 text-white"
+                                rows={3}
+                            />
                         </div>
 
                         <div>

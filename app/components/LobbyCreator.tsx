@@ -617,7 +617,7 @@ const LobbyCreator = ({ onClose, onSuccess, editingLobby }: LobbyCreatorProps) =
                     {/* Info */}
                     <div className="mt-6 p-4 bg-blue-900/20 border border-blue-800 rounded-lg">
                         <p className="text-blue-300 text-sm">
-                            💡 Your room will get a unique URL like <strong>YNGO.vercel.app/ABC123</strong> that you can share with others!
+                            💡 Your room will get a unique URL like <strong>YNGO.vercel.app/ABC123</strong>
                         </p>
                     </div>
                 </CardContent>
