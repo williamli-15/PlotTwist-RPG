@@ -29,6 +29,7 @@ const PeerJSVoiceChat: React.FC = () => {
     const audioContextRef = useRef<AudioContext | null>(null);
     const analyserRef = useRef<AnalyserNode | null>(null);
     const connectingUsersRef = useRef<Set<string>>(new Set()); // Track connection attempts
+    const manuallyDisconnectedRef = useRef<Set<string>>(new Set()); // Track manually disconnected users
 
     // Debug logging function
     const addDebugLog = useCallback((message: string) => {
@@ -161,8 +162,34 @@ const PeerJSVoiceChat: React.FC = () => {
     // Disconnect from a specific user
     const disconnectFromUser = useCallback((userId: string) => {
         addDebugLog(`🔌 Manually disconnecting from ${userId}`);
+        manuallyDisconnectedRef.current.add(userId);
         cleanupConnection(userId);
     }, [addDebugLog, cleanupConnection]);
+
+    // Reconnect to a specific user
+    const reconnectToUser = useCallback((userId: string) => {
+        addDebugLog(`🔄 Manually reconnecting to ${userId}`);
+        manuallyDisconnectedRef.current.delete(userId);
+        // Force proximity check to reconnect (will be called after monitorProximity is defined)
+        setTimeout(() => {
+            const { otherAvatars } = useLobbyStore.getState();
+            if (otherAvatars.has(userId)) {
+                // Trigger a new proximity check
+                window.dispatchEvent(new CustomEvent('forceProximityCheck'));
+            }
+        }, 0);
+    }, [addDebugLog]);
+
+    // Toggle mute for a specific connection
+    const toggleMuteConnection = useCallback((userId: string) => {
+        const audioElement = audioElementsRef.current.get(userId);
+        if (audioElement) {
+            audioElement.muted = !audioElement.muted;
+            addDebugLog(`🔇 ${audioElement.muted ? 'Muted' : 'Unmuted'} ${userId}`);
+            // Force re-render by updating connected users state
+            setConnectedUsers(prev => [...prev]);
+        }
+    }, [addDebugLog]);
 
     // Disconnect from all users
     const disconnectFromAll = useCallback(() => {
@@ -500,8 +527,8 @@ const PeerJSVoiceChat: React.FC = () => {
             if (distance <= proximityRange) {
                 currentProximityUsers.push(profileId);
 
-                // Should connect if not already connected
-                if (!connectedUsers.includes(profileId)) {
+                // Should connect if not already connected and not manually disconnected
+                if (!connectedUsers.includes(profileId) && !manuallyDisconnectedRef.current.has(profileId)) {
                     usersToConnect.push(profileId);
                     addDebugLog(`➕ Will connect to ${profileId.substring(0, 8)}`);
                 }
@@ -594,6 +621,19 @@ const PeerJSVoiceChat: React.FC = () => {
 
         return () => clearInterval(interval);
     }, [currentLobby, profile, isEnabled, monitorProximity, addDebugLog]);
+
+    // Handle custom event to force proximity check (for reconnect functionality)
+    useEffect(() => {
+        const handleForceProximityCheck = () => {
+            if (isEnabled && monitorProximity) {
+                addDebugLog('🔄 Forcing proximity check from reconnect');
+                monitorProximity();
+            }
+        };
+
+        window.addEventListener('forceProximityCheck', handleForceProximityCheck);
+        return () => window.removeEventListener('forceProximityCheck', handleForceProximityCheck);
+    }, [isEnabled, monitorProximity, addDebugLog]);
 
     // Keep updating our last_seen timestamp
     useEffect(() => {
@@ -895,13 +935,22 @@ const PeerJSVoiceChat: React.FC = () => {
                             const { profilesCache } = useLobbyStore.getState();
                             const userProfile = profilesCache.get(userId);
                             const displayName = userProfile?.username || userId.substring(0, 8);
+                            const audioElement = audioElementsRef.current.get(userId);
+                            const isMuted = audioElement?.muted || false;
 
                             return (
                                 <div key={userId} className="flex items-center gap-2 text-xs mb-1">
                                     <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                                     <span className="text-gray-300 flex-1 text-[10px]">
-                                        {displayName}
+                                        {displayName} {isMuted ? '🔇' : '🔊'}
                                     </span>
+                                    <button
+                                        onClick={() => toggleMuteConnection(userId)}
+                                        className="text-blue-400 hover:text-blue-300 text-xs"
+                                        title={isMuted ? "Unmute" : "Mute"}
+                                    >
+                                        {isMuted ? '🔇' : '🔊'}
+                                    </button>
                                     <button
                                         onClick={() => disconnectFromUser(userId)}
                                         className="text-red-400 hover:text-red-300 text-xs"
@@ -916,7 +965,35 @@ const PeerJSVoiceChat: React.FC = () => {
                 </div>
             )}
 
+            {/* Disconnected users in proximity */}
+            {isEnabled && proximityUsers.filter(userId => manuallyDisconnectedRef.current.has(userId)).length > 0 && (
+                <div className="border-t border-gray-600 pt-2 mb-3">
+                    <div className="text-xs text-gray-400 mb-1">Nearby Disconnected:</div>
+                    <div className="max-h-16 overflow-y-auto">
+                        {proximityUsers.filter(userId => manuallyDisconnectedRef.current.has(userId)).map(userId => {
+                            const { profilesCache } = useLobbyStore.getState();
+                            const userProfile = profilesCache.get(userId);
+                            const displayName = userProfile?.username || userId.substring(0, 8);
 
+                            return (
+                                <div key={userId} className="flex items-center gap-2 text-xs mb-1">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-500" />
+                                    <span className="text-gray-400 flex-1 text-[10px]">
+                                        {displayName}
+                                    </span>
+                                    <button
+                                        onClick={() => reconnectToUser(userId)}
+                                        className="text-green-400 hover:text-green-300 text-xs"
+                                        title="Reconnect"
+                                    >
+                                        🔄
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
         </div>
     );

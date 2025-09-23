@@ -486,8 +486,8 @@ const Scene = ({ currentLobby }) => {
         const bgX = (canvas.width - bgWidth) / 2;
         const bgY = (canvas.height - bgHeight) / 2;
 
-        // Use a more contrasting background (gold tint for host)
-        context.fillStyle = isHost ? 'rgba(30, 20, 0, 0.8)' : 'rgba(0, 0, 0, 0.7)';
+        // Use a consistent dark background for all names
+        context.fillStyle = 'rgba(0, 0, 0, 0.7)';
         if (context.roundRect) {
             context.roundRect(bgX, bgY, bgWidth, bgHeight, 16);
             context.fill();

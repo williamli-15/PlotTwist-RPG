@@ -30,6 +30,8 @@ const RoomChat = ({ lobbyId }: RoomChatProps) => {
     const [isResizing, setIsResizing] = useState(false);
     const [resizeHandle, setResizeHandle] = useState<string>('');
     const chatRef = useRef<HTMLDivElement>(null);
+    const [lastMessageId, setLastMessageId] = useState<string | null>(null);
+    const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     // Auto-scroll to bottom when new messages arrive
     const scrollToBottom = () => {
@@ -57,6 +59,48 @@ const RoomChat = ({ lobbyId }: RoomChatProps) => {
             }
         } catch (error) {
             console.error('Error loading messages:', error);
+        }
+    };
+
+    // Polling fallback for when real-time doesn't work
+    const startPolling = () => {
+        console.log('🔄 Starting polling fallback for chat messages');
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+        }
+
+        pollingIntervalRef.current = setInterval(async () => {
+            try {
+                const { supabase } = await import('@/lib/supabase');
+
+                const { data, error } = await supabase
+                    .from('room_messages')
+                    .select('*')
+                    .eq('lobby_id', lobbyId)
+                    .order('created_at', { ascending: true })
+                    .limit(50);
+
+                if (!error && data) {
+                    setMessages(prevMessages => {
+                        // Only update if we have new messages
+                        if (data.length !== prevMessages.length) {
+                            console.log('🔄 Polling found new messages:', data.length - prevMessages.length);
+                            return data;
+                        }
+                        return prevMessages;
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Error polling for messages:', error);
+            }
+        }, 2000); // Poll every 2 seconds
+    };
+
+    const stopPolling = () => {
+        if (pollingIntervalRef.current) {
+            console.log('⏹️ Stopping chat message polling');
+            clearInterval(pollingIntervalRef.current);
+            pollingIntervalRef.current = null;
         }
     };
 
@@ -91,50 +135,73 @@ const RoomChat = ({ lobbyId }: RoomChatProps) => {
         }
     };
 
-    // Set up real-time subscription
+    // Set up real-time subscription (always active to receive messages)
     useEffect(() => {
-        if (!isOpen) return;
 
         let subscription: any = null;
 
         const setupSubscription = async () => {
-            const { supabase } = await import('@/lib/supabase');
+            try {
+                const { supabase } = await import('@/lib/supabase');
 
-            subscription = supabase
-                .channel(`room_chat:${lobbyId}`)
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'room_messages',
-                        filter: `lobby_id=eq.${lobbyId}`
-                    },
-                    (payload) => {
-                        console.log('New message received:', payload);
-                        const newMessage = payload.new as ChatMessage;
-                        setMessages(prev => {
-                            // Avoid duplicates
-                            const exists = prev.some(msg => msg.id === newMessage.id);
-                            if (exists) return prev;
-                            return [...prev, newMessage];
-                        });
-                    }
-                )
-                .subscribe((status) => {
-                    console.log('Subscription status:', status);
-                });
+                subscription = supabase
+                    .channel(`room_chat:${lobbyId}`)
+                    .on(
+                        'postgres_changes',
+                        {
+                            event: 'INSERT',
+                            schema: 'public',
+                            table: 'room_messages',
+                            filter: `lobby_id=eq.${lobbyId}`
+                        },
+                        (payload) => {
+                            console.log('🔔 New message received via subscription:', payload);
+                            const newMessage = payload.new as ChatMessage;
+                            console.log('📨 Adding message from:', newMessage.username, '-', newMessage.message);
+                            setMessages(prev => {
+                                // Avoid duplicates
+                                const exists = prev.some(msg => msg.id === newMessage.id);
+                                if (exists) {
+                                    console.log('⚠️ Duplicate message detected, skipping');
+                                    return prev;
+                                }
+                                console.log('✅ Message added to chat');
+                                return [...prev, newMessage];
+                            });
+                        }
+                    )
+                    .subscribe((status) => {
+                        console.log('💌 Chat subscription status:', status);
+                        if (status === 'SUBSCRIBED') {
+                            console.log('✅ Successfully subscribed to room chat for lobby:', lobbyId);
+                        } else if (status === 'CHANNEL_ERROR') {
+                            console.error('❌ Chat subscription failed for lobby:', lobbyId, '- falling back to polling');
+                            startPolling();
+                        } else if (status === 'CLOSED') {
+                            console.log('📡 Chat subscription closed, attempting to reconnect...');
+                            setTimeout(setupSubscription, 2000);
+                        }
+                    });
+            } catch (error) {
+                console.error('❌ Error setting up subscription:', error);
+                startPolling();
+            }
         };
 
         setupSubscription();
-        loadMessages();
 
         return () => {
             if (subscription) {
                 subscription.unsubscribe();
             }
+            stopPolling();
         };
-    }, [isOpen, lobbyId]);
+    }, [lobbyId]);
+
+    // Load messages immediately when component mounts
+    useEffect(() => {
+        loadMessages();
+    }, [lobbyId]); // Load messages when component mounts or lobby changes
 
     // Global keyboard handlers
     useEffect(() => {
