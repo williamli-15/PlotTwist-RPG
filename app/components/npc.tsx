@@ -120,7 +120,8 @@ const Scene = ({ currentLobby }) => {
 
     // ADD THESE NEW REFS:
     const nearestAvatarRef = useRef<any>(null);
-    const INTERACTION_DISTANCE = 2.5; // Move this constant here
+    const INTERACTION_DISTANCE = 2.5; // Distance for F to talk interaction
+    const HOST_NAME_DISTANCE = 12.5; // Distance for showing host name and crown (5x interaction distance)
 
     // ============================================
     // MOVE THESE FUNCTIONS OUTSIDE init()
@@ -463,7 +464,7 @@ const Scene = ({ currentLobby }) => {
     }, [currentLobby?.lobbyId]); // Only trigger when the actual lobby ID changes
 
     // Move createTextSprite function outside useEffect so it can be reused
-    const createTextSprite = (text) => {
+    const createTextSprite = (text, isHost = false) => {
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         canvas.width = 512;
@@ -473,8 +474,11 @@ const Scene = ({ currentLobby }) => {
         context.textBaseline = 'middle';
         context.font = '48px Arial';
 
+        // Prepare text with crown if host
+        const displayText = isHost ? `👑 ${text}` : text;
+
         // Add a background with rounded corners for readability
-        const textMetrics = context.measureText(text);
+        const textMetrics = context.measureText(displayText);
         const padding = 20;
         const bgWidth = textMetrics.width + padding * 2;
         const bgHeight = 64;
@@ -482,8 +486,8 @@ const Scene = ({ currentLobby }) => {
         const bgX = (canvas.width - bgWidth) / 2;
         const bgY = (canvas.height - bgHeight) / 2;
 
-        // Use a more contrasting background
-        context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        // Use a more contrasting background (gold tint for host)
+        context.fillStyle = isHost ? 'rgba(30, 20, 0, 0.8)' : 'rgba(0, 0, 0, 0.7)';
         if (context.roundRect) {
             context.roundRect(bgX, bgY, bgWidth, bgHeight, 16);
             context.fill();
@@ -491,9 +495,9 @@ const Scene = ({ currentLobby }) => {
             context.fillRect(bgX, bgY, bgWidth, bgHeight);
         }
 
-        // Draw the main text
-        context.fillStyle = 'white';
-        context.fillText(text, canvas.width / 2, canvas.height / 2);
+        // Draw the main text (gold for host, white for others)
+        context.fillStyle = isHost ? '#FFD700' : 'white';
+        context.fillText(displayText, canvas.width / 2, canvas.height / 2);
 
         const texture = new THREE.CanvasTexture(canvas);
         texture.minFilter = THREE.LinearFilter;
@@ -527,10 +531,12 @@ const Scene = ({ currentLobby }) => {
                 sprite.material.dispose();
             });
 
-            // Create new name sprite with updated name
-            const nameSprite = createTextSprite(currentLobby.hostAvatar.name);
+            // Create new name sprite with updated name (host with crown)
+            const nameSprite = createTextSprite(currentLobby.hostAvatar.name, true);
             npcRef.current.scene.add(nameSprite);
-            nameSprite.visible = isNearNPC;
+            // Show host name from further distance
+            const hostDistance = avatarRef.current ? avatarRef.current.scene.position.distanceTo(npcRef.current.scene.position) : Infinity;
+            nameSprite.visible = hostDistance < HOST_NAME_DISTANCE;
         }
     }, [isNearNPC, currentLobby?.hostAvatar?.name]);
 
@@ -1085,7 +1091,7 @@ const Scene = ({ currentLobby }) => {
         setCurrentMessage('');
 
         setChatMessages(prev => [...prev, {
-            sender: 'Player',
+            sender: profile?.username || 'Player',
             message: userMessage
         }]);
 
@@ -1458,9 +1464,9 @@ const Scene = ({ currentLobby }) => {
                     obj.frustumCulled = false;
                 });
 
-                // Create and add name sprite (only if name exists)
+                // Create and add name sprite (only if name exists) - host with crown
                 if (currentLobby.hostAvatar.name) {
-                    const nameSprite = createTextSprite(currentLobby.hostAvatar.name);
+                    const nameSprite = createTextSprite(currentLobby.hostAvatar.name, true);
                     vrm.scene.add(nameSprite);
                 }
 
@@ -1543,6 +1549,16 @@ const Scene = ({ currentLobby }) => {
                 } else {
                     setIsNearNPC(false);
                     nearestAvatarRef.current = null;
+                }
+
+                // Update host name sprite visibility based on distance
+                if (npcRef.current?.scene) {
+                    const hostNameSprite = npcRef.current.scene.children.find(
+                        child => child instanceof THREE.Sprite
+                    );
+                    if (hostNameSprite) {
+                        hostNameSprite.visible = npcDistance < HOST_NAME_DISTANCE;
+                    }
                 }
 
                 // MOVEMENT LOGIC
@@ -2181,8 +2197,8 @@ const Scene = ({ currentLobby }) => {
 
         return (
             <div key={index} className="mb-4">
-                <div className="font-bold">{message.sender}</div>
-                <div className="mt-1">{cleanMessage}</div>
+                <div className="font-bold select-text">{message.sender}</div>
+                <div className="mt-1 select-text cursor-text">{cleanMessage}</div>
                 {tags.map((tag, tagIndex) => {
                     if (tag.type === 'try_weapon') {
                         return (
@@ -2538,10 +2554,10 @@ const Scene = ({ currentLobby }) => {
                             <div className="flex-1 flex flex-col">
                                 <div
                                     ref={chatContainerRef}
-                                    className="flex-1 overflow-y-auto mb-4 space-y-2"
+                                    className="flex-1 overflow-y-auto mb-4 space-y-2 select-text"
                                 >
                                     {chatMessages.map((msg, index) => {
-                                        if (msg.sender === 'Player' || msg.message || !msg.isStreaming) {
+                                        if (msg.sender === (profile?.username || 'Player') || msg.message || !msg.isStreaming) {
                                             // Should check against the active chat target:
                                             const { cleanMessage, tags } = msg.sender === activeChatTarget?.name
                                                 ? parseMessageTags(msg.message)
@@ -2550,7 +2566,7 @@ const Scene = ({ currentLobby }) => {
                                             return (
                                                 <div
                                                     key={index}
-                                                    className={`p-3 rounded ${msg.sender === 'Player'
+                                                    className={`p-3 rounded ${msg.sender === (profile?.username || 'Player')
                                                         ? 'bg-blue-100/95 ml-8'
                                                         : 'bg-gray-100/95 mr-8'
                                                         }`}
