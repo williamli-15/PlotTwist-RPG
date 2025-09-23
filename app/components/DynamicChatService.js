@@ -113,14 +113,13 @@ class DynamicChatService {
             }
         }
 
-        // Get attendee context for this lobby
+        // Get attendee context for this lobby with context management
         const attendees = await this.getLobbyAttendees();
         if (attendees.length > 0) {
-            prompt += `\n\nAttendees you know about in this lobby:\n`;
-            attendees.forEach(attendee => {
-                prompt += `- ${attendee.username}: ${attendee.ai_personality_prompt || 'A participant in the hackathon'}\n`;
-            });
-            prompt += `\nYou can reference these attendees in conversations, mention their interests, and help connect people with similar backgrounds.`;
+            const attendeeContext = this.buildAttendeeContext(attendees, prompt);
+            if (attendeeContext) {
+                prompt += attendeeContext;
+            }
         }
 
         return prompt;
@@ -387,6 +386,85 @@ class DynamicChatService {
     }
 
     /**
+     * Build attendee context with smart context limit management
+     */
+    buildAttendeeContext(attendees, currentPrompt) {
+        // Estimate current prompt size (rough character count)
+        const currentSize = currentPrompt.length;
+        const maxTotalSize = 15000; // Conservative limit to stay under typical context windows
+        const availableSpace = maxTotalSize - currentSize;
+
+        // Reserve space for the context introduction and closing
+        const reservedSpace = 300;
+        const attendeeSpace = availableSpace - reservedSpace;
+
+        if (attendeeSpace < 500) {
+            // Not enough space for meaningful attendee context
+            console.log('Insufficient context space for attendee information');
+            return null;
+        }
+
+        // Sort attendees by recent activity (most recent first)
+        const sortedAttendees = [...attendees].sort((a, b) => {
+            // If we have last_seen data, use it, otherwise treat as equally recent
+            const aTime = a.last_seen ? new Date(a.last_seen) : new Date();
+            const bTime = b.last_seen ? new Date(b.last_seen) : new Date();
+            return bTime - aTime;
+        });
+
+        let context = `\n\nAttendees currently in this lobby:\n`;
+        let usedSpace = context.length;
+        let includedCount = 0;
+
+        for (const attendee of sortedAttendees) {
+            // Build attendee description
+            const bio = attendee.bio?.trim() || '';
+            const interests = attendee.interests?.length > 0 ? attendee.interests.join(', ') : '';
+            const personality = attendee.ai_personality_prompt?.trim() || '';
+
+            // Create a concise but informative description
+            let description = `- **${attendee.username}**`;
+
+            // Add the most relevant information in order of priority
+            if (bio && bio.length < 200) {
+                description += `: ${bio}`;
+            } else if (personality && personality.length < 150) {
+                description += `: ${personality}`;
+            } else if (interests) {
+                description += `: Interested in ${interests}`;
+            } else {
+                description += `: A participant in the room`;
+            }
+
+            // Add interests if we have space and they're not already included
+            if (interests && !description.includes(interests) && description.length < 200) {
+                description += `. Enjoys: ${interests}`;
+            }
+
+            description += `\n`;
+
+            // Check if we have space for this attendee
+            if (usedSpace + description.length > attendeeSpace) {
+                break;
+            }
+
+            context += description;
+            usedSpace += description.length;
+            includedCount++;
+        }
+
+        // Add helpful instruction for the host
+        const totalAttendees = attendees.length;
+        if (includedCount < totalAttendees) {
+            context += `\n(And ${totalAttendees - includedCount} other attendees)\n`;
+        }
+
+        context += `\nYou can introduce people to each other, mention their interests and backgrounds in conversations, and help create connections between attendees with similar interests. Be welcoming and help facilitate meaningful interactions.`;
+
+        return context;
+    }
+
+    /**
      * Get all attendees (profiles) for this lobby
      */
     async getLobbyAttendees() {
@@ -415,7 +493,7 @@ class DynamicChatService {
             const profileIds = avatarStates.map(state => state.profile_id);
             const { data: profiles, error: profileError } = await supabase
                 .from('profiles')
-                .select('id, username, ai_personality_prompt, bio, interests')
+                .select('id, username, ai_personality_prompt, bio, interests, last_seen')
                 .in('id', profileIds);
 
             if (profileError) {
