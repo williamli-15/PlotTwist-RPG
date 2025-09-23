@@ -145,7 +145,7 @@ const RoomChat = ({ lobbyId }: RoomChatProps) => {
                 const { supabase } = await import('@/lib/supabase');
 
                 subscription = supabase
-                    .channel(`room_chat:${lobbyId}`)
+                    .channel('room_messages_changes')
                     .on(
                         'postgres_changes',
                         {
@@ -174,6 +174,8 @@ const RoomChat = ({ lobbyId }: RoomChatProps) => {
                         console.log('💌 Chat subscription status:', status);
                         if (status === 'SUBSCRIBED') {
                             console.log('✅ Successfully subscribed to room chat for lobby:', lobbyId);
+                            // Stop polling since subscription is working
+                            stopPolling();
                         } else if (status === 'CHANNEL_ERROR') {
                             console.error('❌ Chat subscription failed for lobby:', lobbyId, '- falling back to polling');
                             startPolling();
