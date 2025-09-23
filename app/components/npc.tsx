@@ -1632,9 +1632,14 @@ const Scene = ({ currentLobby }) => {
                             rotation: { x: rot.x, y: rot.y, z: rot.z },
                             animation: currentAnimationRef.current?.getClip().name || 'Idle'
                         });
-                        
+
                         avatarRef.current.lastSyncedPosition = { x: pos.x, y: pos.y, z: pos.z };
                         avatarRef.current.lastSyncedAnimation = currentAnimationRef.current?.getClip().name;
+                    }
+
+                    // Expose current avatar position to global window for voice chat proximity detection
+                    if (typeof window !== 'undefined') {
+                        (window as any).currentAvatarPosition = { x: pos.x, y: pos.y, z: pos.z };
                     }
                 }
                 

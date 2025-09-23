@@ -17,6 +17,11 @@ const NPC = dynamic(() => import("./components/npc"), {
   )
 });
 
+// Import PeerJS voice chat
+const PeerJSVoiceChat = dynamic(() => import("./components/PeerJSVoiceChat"), {
+  ssr: false
+});
+
 export default function Home() {
   const { 
     showLobbySelector, 
@@ -58,6 +63,7 @@ export default function Home() {
       <NPC currentLobby={currentLobby} />
       {currentLobby && <RoomChat lobbyId={currentLobby.lobbyId} />}
       {showLobbySelector && <LobbySelector />}
+      <PeerJSVoiceChat />
     </>
   );
 }
