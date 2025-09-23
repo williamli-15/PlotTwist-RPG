@@ -72,6 +72,32 @@ const PeerJSVoiceChat: React.FC = () => {
         }
     }, [profile?.id, profile?.username, currentLobby?.lobbyId, addDebugLog]);
 
+    // Get profile ID for a peer from database (reverse lookup)
+    const getProfileIdFromPeerId = useCallback(async (peerId: string): Promise<string | null> => {
+        if (!currentLobby?.lobbyId) return null;
+
+        try {
+            const { data, error } = await supabase
+                .from('peer_connections')
+                .select('profile_id')
+                .eq('lobby_id', currentLobby.lobbyId)
+                .eq('peer_id', peerId)
+                .eq('is_online', true)
+                .single();
+
+            if (error || !data) {
+                addDebugLog(`❌ No profile found for peer ID: ${peerId.substring(0, 20)}...`);
+                return null;
+            }
+
+            addDebugLog(`✅ Found profile ID for peer ${peerId.substring(0, 20)}: ${data.profile_id.substring(0, 8)}`);
+            return data.profile_id;
+        } catch (error) {
+            addDebugLog(`❌ Error getting profile ID from peer: ${error}`);
+            return null;
+        }
+    }, [currentLobby?.lobbyId, addDebugLog]);
+
     // Get peer ID for a user from database
     const getPeerIdFromDatabase = useCallback(async (profileId: string): Promise<string | null> => {
         if (!currentLobby?.lobbyId) return null;
@@ -383,7 +409,7 @@ const PeerJSVoiceChat: React.FC = () => {
                 addDebugLog('✅ PeerJS connected and peer ID stored');
             });
 
-            peer.on('call', (call) => {
+            peer.on('call', async (call) => {
                 addDebugLog('📞 Direct incoming call received (not from signaling)');
                 if (!localStreamRef.current) {
                     addDebugLog('❌ Cannot answer call - no local stream');
@@ -395,17 +421,45 @@ const PeerJSVoiceChat: React.FC = () => {
                 addDebugLog(`🎤 Answering with ${audioTracks.length} audio tracks, enabled: ${audioTracks.map(t => t.enabled).join(',')}`);
                 call.answer(localStreamRef.current);
 
-                call.on('stream', (remoteStream) => {
+                call.on('stream', async (remoteStream) => {
                     const remoteTracks = remoteStream.getAudioTracks();
                     addDebugLog(`🔊 Received direct stream - tracks: ${remoteTracks.length}, enabled: ${remoteTracks.map(t => t.enabled).join(',')}`);
 
-                    // Don't create a "direct-" entry for proximity calls - they should use profile IDs
-                    // This prevents the persistent direct-xxx entries from appearing
-                    addDebugLog(`📞 Direct call answered, but not adding to connected users list (should be handled by proximity system)`);
+                    // Get the caller's peer ID and look up their profile ID
+                    const callerPeerId = call.peer;
+                    const callerProfileId = await getProfileIdFromPeerId(callerPeerId);
+
+                    if (callerProfileId) {
+                        // Use profile ID for connection tracking
+                        playRemoteAudio(callerProfileId, remoteStream);
+                        setConnectedUsers(prev => [...prev.filter(id => id !== callerProfileId), callerProfileId]);
+
+                        // Get username for status display
+                        const { profilesCache } = useLobbyStore.getState();
+                        const userProfile = profilesCache.get(callerProfileId);
+                        const userName = userProfile?.username || callerProfileId.substring(0, 8);
+                        setConnectionStatus(`Connected to ${userName}`);
+                        addDebugLog(`✅ Set up audio playback and connection for incoming call from ${userName}`);
+
+                        // Store connection using profile ID
+                        connectionsRef.current.set(callerProfileId, call);
+                    } else {
+                        // Fallback to peer ID if profile lookup fails
+                        playRemoteAudio(callerPeerId, remoteStream);
+                        setConnectedUsers(prev => [...prev.filter(id => id !== callerPeerId), callerPeerId]);
+                        setConnectionStatus(`Connected to ${callerPeerId.substring(0, 20)}...`);
+                        addDebugLog(`⚠️ Using peer ID as fallback for incoming call from ${callerPeerId}`);
+                        connectionsRef.current.set(callerPeerId, call);
+                    }
                 });
 
-                call.on('close', () => {
-                    addDebugLog('📴 Direct call closed');
+                call.on('close', async () => {
+                    const callerPeerId = call.peer;
+                    const callerProfileId = await getProfileIdFromPeerId(callerPeerId);
+                    const connectionId = callerProfileId || callerPeerId;
+
+                    addDebugLog(`📴 Direct call closed from ${connectionId.substring(0, 20)}`);
+                    cleanupConnection(connectionId);
                     setConnectionStatus('Disconnected');
                 });
             });
@@ -473,18 +527,22 @@ const PeerJSVoiceChat: React.FC = () => {
 
                 playRemoteAudio(profileId, remoteStream);
                 setConnectedUsers(prev => [...prev.filter(id => id !== profileId), profileId]);
+                setConnectionStatus(`Connected to ${userName}`);
+                addDebugLog(`✅ Successfully connected to ${userName}`);
             });
 
             call.on('close', () => {
                 addDebugLog(`📴 Auto-disconnected from ${userName}`);
                 connectingUsersRef.current.delete(profileId);
                 cleanupConnection(profileId);
+                setConnectionStatus('Disconnected');
             });
 
             call.on('error', (error) => {
                 addDebugLog(`❌ Auto-connection error with ${userName}: ${error.message}`);
                 connectingUsersRef.current.delete(profileId);
                 cleanupConnection(profileId);
+                setConnectionStatus('Connection failed');
             });
 
             connectionsRef.current.set(profileId, call);
