@@ -42,7 +42,7 @@ const LobbyCreator = ({ onClose, onSuccess, editingLobby }: LobbyCreatorProps) =
                 description: editingLobby.description,
                 theme: editingLobby.theme,
                 maxPlayers: editingLobby.maxPlayers,
-                isPublic: editingLobby.isPublic,
+                isPublic: editingLobby.isPublic ?? true,
                 tags: [] // TODO: extract tags if stored
             });
 
