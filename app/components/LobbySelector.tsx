@@ -15,6 +15,7 @@ const LobbySelector = () => {
     const scrollbarStyles = `
         .scrollbar-visible {
             overflow-y: scroll !important;
+            -webkit-overflow-scrolling: touch;
         }
         .scrollbar-visible::-webkit-scrollbar {
             width: 12px;
@@ -35,6 +36,13 @@ const LobbySelector = () => {
         }
         .scrollbar-visible::-webkit-scrollbar-corner {
             background: #1F2937;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            .scrollbar-visible::-webkit-scrollbar {
+                width: 8px;
+            }
         }
     `;
     const {
@@ -241,8 +249,8 @@ const LobbySelector = () => {
     return (
         <>
             <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
-            <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-                <div className="bg-gray-900/80 backdrop-blur-sm rounded-xl max-w-5xl w-full h-[90vh] max-h-[90vh] overflow-hidden border border-gray-700 relative flex flex-col">
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-2 sm:p-4 z-50">
+                <div className="bg-gray-900/80 backdrop-blur-sm rounded-xl max-w-5xl w-full h-[95vh] sm:h-[90vh] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto scrollbar-visible border border-gray-700 relative flex flex-col">
                     {/* Close button */}
                     <button
                         onClick={hideLobbySelection}
