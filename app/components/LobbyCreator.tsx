@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 interface LobbyCreatorProps {
     onClose: () => void;
     onSuccess: (lobbyCode: string) => void;
-    editingLobby?: Lobby;  // Optional lobby to edit
+    editingLobby?: Lobby | null;  // Optional lobby to edit
 }
 
 const LobbyCreator = ({ onClose, onSuccess, editingLobby }: LobbyCreatorProps) => {
