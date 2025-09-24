@@ -391,14 +391,14 @@ class DynamicChatService {
     buildAttendeeContext(attendees, currentPrompt) {
         // Estimate current prompt size (rough character count)
         const currentSize = currentPrompt.length;
-        const maxTotalSize = 15000; // Conservative limit to stay under typical context windows
+        const maxTotalSize = 200000; // Modern AI models support much larger contexts (200k chars ≈ 50k tokens)
         const availableSpace = maxTotalSize - currentSize;
 
         // Reserve space for the context introduction and closing
-        const reservedSpace = 300;
+        const reservedSpace = 1000; // More space for richer context formatting
         const attendeeSpace = availableSpace - reservedSpace;
 
-        if (attendeeSpace < 500) {
+        if (attendeeSpace < 2000) {
             // Not enough space for meaningful attendee context
             console.log('Insufficient context space for attendee information');
             return null;
@@ -425,10 +425,10 @@ class DynamicChatService {
             // Create a concise but informative description
             let description = `- **${attendee.username}**`;
 
-            // Add the most relevant information in order of priority
-            if (bio && bio.length < 200) {
+            // Add the most relevant information in order of priority - now with more generous limits
+            if (bio && bio.length < 800) {
                 description += `: ${bio}`;
-            } else if (personality && personality.length < 150) {
+            } else if (personality && personality.length < 600) {
                 description += `: ${personality}`;
             } else if (interests) {
                 description += `: Interested in ${interests}`;
@@ -437,7 +437,7 @@ class DynamicChatService {
             }
 
             // Add interests if we have space and they're not already included
-            if (interests && !description.includes(interests) && description.length < 200) {
+            if (interests && !description.includes(interests) && description.length < 1000) {
                 description += `. Enjoys: ${interests}`;
             }
 
