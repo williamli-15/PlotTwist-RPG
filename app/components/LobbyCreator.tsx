@@ -20,14 +20,14 @@ const LobbyCreator = ({ onClose, onSuccess, editingLobby }: LobbyCreatorProps) =
         name: '',
         description: '',
         theme: 'general',
-        maxPlayers: 50,
+        maxPlayers: 10,
         isPublic: true,
         tags: [] as string[]
     });
 
     // Host customization state
     const [hostData, setHostData] = useState({
-        useMyProfile: true,
+        useMyProfile: false,
         customHostName: '',
         customHostAvatar: '/avatars/raiden.vrm',
         additionalKnowledge: ''
@@ -48,7 +48,7 @@ const LobbyCreator = ({ onClose, onSuccess, editingLobby }: LobbyCreatorProps) =
 
             // For editing mode, we'll use the current host setup
             setHostData({
-                useMyProfile: true, // Default to using profile
+                useMyProfile: false, // Default to custom host
                 customHostName: editingLobby.hostAvatar?.name || '',
                 customHostAvatar: editingLobby.hostAvatar?.model || '/avatars/raiden.vrm',
                 additionalKnowledge: editingLobby.additionalKnowledge || ''
@@ -380,11 +380,40 @@ const LobbyCreator = ({ onClose, onSuccess, editingLobby }: LobbyCreatorProps) =
                                     type="checkbox"
                                     id="useMyProfile"
                                     checked={hostData.useMyProfile}
-                                    onChange={(e) => setHostData({ ...hostData, useMyProfile: e.target.checked })}
+                                    onChange={(e) => {
+                                        const checked = e.target.checked;
+                                        if (checked && profile?.bio) {
+                                            // Adding profile - prepend profile background if not already there
+                                            const profileBackground = `Profile Background:\n${profile.bio}`;
+                                            if (!hostData.additionalKnowledge.includes('Profile Background:')) {
+                                                setHostData(prev => ({
+                                                    ...prev,
+                                                    useMyProfile: checked,
+                                                    additionalKnowledge: profileBackground + (prev.additionalKnowledge ? '\n\n' + prev.additionalKnowledge : '')
+                                                }));
+                                            } else {
+                                                setHostData(prev => ({ ...prev, useMyProfile: checked }));
+                                            }
+                                        } else if (!checked) {
+                                            // Removing profile - remove profile background section
+                                            const cleanedKnowledge = hostData.additionalKnowledge
+                                                .replace(/Profile Background:\n[\s\S]*?\n\n/, '')  // Remove profile background section
+                                                .replace(/^Profile Background:\n[\s\S]*$/, '')     // Remove if it's the only content
+                                                .trim();
+
+                                            setHostData(prev => ({
+                                                ...prev,
+                                                useMyProfile: checked,
+                                                additionalKnowledge: cleanedKnowledge
+                                            }));
+                                        } else {
+                                            setHostData(prev => ({ ...prev, useMyProfile: checked }));
+                                        }
+                                    }}
                                     className="rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500"
                                 />
                                 <label htmlFor="useMyProfile" className="text-sm text-gray-300">
-                                    Use my profile as room host (recommended)
+                                    Use my profile as room host
                                 </label>
                             </div>
 

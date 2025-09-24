@@ -293,7 +293,9 @@ const ProfileCreator = ({ onComplete, editingProfile, isEditing = false }: Profi
                                 onChange={(e) => setPersonality(e.target.value)}
                                 className="bg-gray-700 border-gray-600 text-white"
                                 rows={3}
+                                maxLength={10000}
                             />
+                            <p className="text-xs text-gray-400 mt-1">{personality.length}/10,000 characters</p>
                         </div>
 
                         <div>
