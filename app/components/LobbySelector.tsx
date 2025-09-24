@@ -454,7 +454,7 @@ const LobbySelector = () => {
                                                             )}
                                                             {twins > 0 && (
                                                                 <Badge variant="outline" className="text-xs border-blue-500 text-blue-400">
-                                                                    📖 {twins}
+                                                                    🤖 {twins}
                                                                 </Badge>
                                                             )}
                                                         </div>

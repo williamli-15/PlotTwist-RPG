@@ -122,6 +122,7 @@ const Scene = ({ currentLobby }) => {
     const nearestAvatarRef = useRef<any>(null);
     const INTERACTION_DISTANCE = 2.5; // Distance for F to talk interaction
     const HOST_NAME_DISTANCE = 12.5; // Distance for showing host name and crown (5x interaction distance)
+    const PLAYER_NAME_DISTANCE = 8.0; // Distance for showing other players' usernames
 
     // ============================================
     // MOVE THESE FUNCTIONS OUTSIDE init()
@@ -164,13 +165,21 @@ const Scene = ({ currentLobby }) => {
 
             // Apply VRM rotation
             VRMUtils.rotateVRM0(vrm);
-            
+
+            // Create username sprite for this player
+            const username = profile?.username || 'Player';
+            const isDigitalTwin = !avatarState.is_online;
+            const displayName = isDigitalTwin ? `🤖 ${username}` : `🟢 ${username}`;
+            const usernameSprite = createTextSprite(displayName, false);
+            vrm.scene.add(usernameSprite);
+
             // Store in ref
             otherAvatarsRef.current.set(profileId, {
                 vrm: vrm,
                 mixer: new THREE.AnimationMixer(vrm.scene),
                 currentAnimation: avatarState.animation,
-                isOnline: avatarState.is_online
+                isOnline: avatarState.is_online,
+                usernameSprite: usernameSprite
             });
 
             // Load animations for this avatar
@@ -243,6 +252,13 @@ const Scene = ({ currentLobby }) => {
         // Remove avatars that left
         otherAvatarsRef.current.forEach((avatarData, profileId) => {
             if (!otherAvatars.has(profileId)) {
+                // Clean up username sprite
+                if (avatarData.usernameSprite) {
+                    avatarData.vrm.scene.remove(avatarData.usernameSprite);
+                    avatarData.usernameSprite.material.map?.dispose();
+                    avatarData.usernameSprite.material.dispose();
+                }
+
                 // Remove from scene
                 if (sceneRef.current && avatarData.vrm) {
                     sceneRef.current.remove(avatarData.vrm.scene);
@@ -1560,6 +1576,14 @@ const Scene = ({ currentLobby }) => {
                         hostNameSprite.visible = npcDistance < HOST_NAME_DISTANCE;
                     }
                 }
+
+                // Update other players' username sprites visibility based on distance
+                otherAvatarsRef.current.forEach((avatarData, profileId) => {
+                    if (avatarData.vrm && avatarData.usernameSprite) {
+                        const playerDistance = avatar.position.distanceTo(avatarData.vrm.scene.position);
+                        avatarData.usernameSprite.visible = playerDistance < PLAYER_NAME_DISTANCE;
+                    }
+                });
 
                 // MOVEMENT LOGIC
                 if (!isChatting && !isJumpingRef.current && !isTransitioningRef.current) {
