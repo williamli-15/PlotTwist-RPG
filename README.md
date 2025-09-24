@@ -1,4 +1,4 @@
-# Assemble - 3D Virtual Event Platform
+# YNGO - 3D Virtual Event Platform
 
 A revolutionary 3D virtual event platform that creates immersive digital twin experiences for attendees. Assemble transforms virtual events from passive viewing experiences into interactive networking environments where meaningful connections happen naturally through spatial proximity and AI-enhanced conversations.
 
