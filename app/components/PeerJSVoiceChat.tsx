@@ -21,6 +21,7 @@ const PeerJSVoiceChat: React.FC = () => {
     const [debugLogs, setDebugLogs] = useState<string[]>([]);
     const [proximityUsers, setProximityUsers] = useState<string[]>([]);
     const [myPosition, setMyPosition] = useState({ x: 0, y: 0, z: 0 });
+    const [noiseSuppression, setNoiseSuppression] = useState(true);
 
     const localStreamRef = useRef<MediaStream | null>(null);
     const peerRef = useRef<Peer | null>(null);
@@ -28,6 +29,8 @@ const PeerJSVoiceChat: React.FC = () => {
     const audioElementsRef = useRef<Map<string, HTMLAudioElement>>(new Map());
     const audioContextRef = useRef<AudioContext | null>(null);
     const analyserRef = useRef<AnalyserNode | null>(null);
+    const noiseSuppressionContextRef = useRef<AudioContext | null>(null);
+    const noiseSuppressionStreamRef = useRef<MediaStream | null>(null);
     const connectingUsersRef = useRef<Set<string>>(new Set()); // Track connection attempts
     const manuallyDisconnectedRef = useRef<Set<string>>(new Set()); // Track manually disconnected users
 
@@ -39,6 +42,56 @@ const PeerJSVoiceChat: React.FC = () => {
         setDebugLogs(prev => [...prev.slice(-4), logMessage]); // Keep last 5 logs
     }, []);
 
+    // Apply noise suppression to a media stream
+    const applyNoiseSuppression = useCallback(async (inputStream: MediaStream): Promise<MediaStream> => {
+        if (!noiseSuppression) {
+            return inputStream;
+        }
+
+        try {
+            const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(inputStream);
+
+            // Create a compressor to reduce background noise
+            const compressor = audioContext.createDynamicsCompressor();
+            compressor.threshold.setValueAtTime(-50, audioContext.currentTime);
+            compressor.knee.setValueAtTime(40, audioContext.currentTime);
+            compressor.ratio.setValueAtTime(12, audioContext.currentTime);
+            compressor.attack.setValueAtTime(0, audioContext.currentTime);
+            compressor.release.setValueAtTime(0.25, audioContext.currentTime);
+
+            // Create a high-pass filter to remove low-frequency noise
+            const highPassFilter = audioContext.createBiquadFilter();
+            highPassFilter.type = 'highpass';
+            highPassFilter.frequency.setValueAtTime(100, audioContext.currentTime);
+            highPassFilter.Q.setValueAtTime(1, audioContext.currentTime);
+
+            // Create a notch filter to reduce electrical hum (50/60 Hz)
+            const notchFilter = audioContext.createBiquadFilter();
+            notchFilter.type = 'notch';
+            notchFilter.frequency.setValueAtTime(60, audioContext.currentTime);
+            notchFilter.Q.setValueAtTime(30, audioContext.currentTime);
+
+            // Connect the audio processing chain
+            source.connect(highPassFilter);
+            highPassFilter.connect(notchFilter);
+            notchFilter.connect(compressor);
+
+            // Create output stream
+            const destination = audioContext.createMediaStreamDestination();
+            compressor.connect(destination);
+
+            // Store references for cleanup
+            noiseSuppressionContextRef.current = audioContext;
+            noiseSuppressionStreamRef.current = destination.stream;
+
+            addDebugLog('🔇 Noise suppression applied to audio stream');
+            return destination.stream;
+        } catch (error) {
+            addDebugLog(`❌ Failed to apply noise suppression: ${error}`);
+            return inputStream; // Return original stream on error
+        }
+    }, [noiseSuppression, addDebugLog]);
 
     // Store our peer ID in database
     const storePeerIdInDatabase = useCallback(async (peerId: string) => {
@@ -230,7 +283,7 @@ const PeerJSVoiceChat: React.FC = () => {
     // and we use proximity-based auto-connection instead of manual invitations
 
     // Handle incoming call
-    const handleIncomingCall = useCallback((fromUserId: string, peerId: string) => {
+    const handleIncomingCall = useCallback(async (fromUserId: string, peerId: string) => {
         if (!peerRef.current || !localStreamRef.current) {
             addDebugLog(`Cannot handle call from ${fromUserId} - peer or stream missing`);
             return;
@@ -243,8 +296,11 @@ const PeerJSVoiceChat: React.FC = () => {
         const audioTracks = localStreamRef.current.getAudioTracks();
         addDebugLog(`🎤 Local audio tracks: ${audioTracks.length}, enabled: ${audioTracks.map(t => t.enabled).join(',')}`);
 
+        // Apply noise suppression to outgoing stream
+        const streamToSend = await applyNoiseSuppression(localStreamRef.current);
+
         // Call the other peer
-        const call = peerRef.current.call(peerId, localStreamRef.current);
+        const call = peerRef.current.call(peerId, streamToSend);
 
         call.on('stream', (remoteStream) => {
             const remoteTracks = remoteStream.getAudioTracks();
@@ -267,7 +323,7 @@ const PeerJSVoiceChat: React.FC = () => {
         });
 
         connectionsRef.current.set(fromUserId, call);
-    }, [cleanupConnection, addDebugLog]);
+    }, [cleanupConnection, addDebugLog, applyNoiseSuppression]);
 
     // Play remote audio stream
     const playRemoteAudio = useCallback((userId: string, stream: MediaStream) => {
@@ -342,9 +398,12 @@ const PeerJSVoiceChat: React.FC = () => {
         addDebugLog('🔧 Starting microphone test...');
 
         try {
+            // Apply noise suppression if enabled
+            const streamToTest = await applyNoiseSuppression(localStreamRef.current);
+
             // Create temporary audio element to play back microphone input
             const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-            const source = audioContext.createMediaStreamSource(localStreamRef.current);
+            const source = audioContext.createMediaStreamSource(streamToTest);
             const gainNode = audioContext.createGain();
 
             // 30% volume for better audibility
@@ -352,7 +411,7 @@ const PeerJSVoiceChat: React.FC = () => {
             source.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
-            addDebugLog('🔊 Playing microphone input (low volume)');
+            addDebugLog(noiseSuppression ? '🔊 Playing microphone input with noise suppression (low volume)' : '🔊 Playing microphone input (low volume)');
 
             // Test for 2 seconds (shorter to reduce feedback risk)
             setTimeout(() => {
@@ -416,10 +475,11 @@ const PeerJSVoiceChat: React.FC = () => {
                     return;
                 }
 
-                // Answer the call with our stream
+                // Apply noise suppression to outgoing stream and answer the call
                 const audioTracks = localStreamRef.current.getAudioTracks();
                 addDebugLog(`🎤 Answering with ${audioTracks.length} audio tracks, enabled: ${audioTracks.map(t => t.enabled).join(',')}`);
-                call.answer(localStreamRef.current);
+                const streamToSend = await applyNoiseSuppression(localStreamRef.current);
+                call.answer(streamToSend);
 
                 call.on('stream', async (remoteStream) => {
                     const remoteTracks = remoteStream.getAudioTracks();
@@ -516,7 +576,10 @@ const PeerJSVoiceChat: React.FC = () => {
         try {
             addDebugLog(`🔗 Auto-connecting to ${userName}...`);
 
-            const call = peerRef.current.call(targetPeerId, localStreamRef.current);
+            // Apply noise suppression to outgoing stream
+            const streamToSend = await applyNoiseSuppression(localStreamRef.current);
+
+            const call = peerRef.current.call(targetPeerId, streamToSend);
 
             call.on('stream', (remoteStream) => {
                 const remoteTracks = remoteStream.getAudioTracks();
@@ -550,7 +613,7 @@ const PeerJSVoiceChat: React.FC = () => {
             addDebugLog(`❌ Failed to auto-connect to ${profileId}: ${error}`);
             connectingUsersRef.current.delete(profileId);
         }
-    }, [getPeerIdFromDatabase, addDebugLog, cleanupConnection, playRemoteAudio]);
+    }, [getPeerIdFromDatabase, addDebugLog, cleanupConnection, playRemoteAudio, applyNoiseSuppression]);
 
     // Monitor proximity and manage voice connections
     const monitorProximity = useCallback(() => {
@@ -764,10 +827,16 @@ const PeerJSVoiceChat: React.FC = () => {
                     peerRef.current = null;
                 }
 
-                // Close audio context
+                // Close audio contexts
                 if (audioContextRef.current) {
                     audioContextRef.current.close();
                     audioContextRef.current = null;
+                }
+
+                if (noiseSuppressionContextRef.current) {
+                    noiseSuppressionContextRef.current.close();
+                    noiseSuppressionContextRef.current = null;
+                    noiseSuppressionStreamRef.current = null;
                 }
 
                 // Mark as offline in database
@@ -825,9 +894,13 @@ const PeerJSVoiceChat: React.FC = () => {
                 peerRef.current.destroy();
             }
 
-            // Close audio context
+            // Close audio contexts
             if (audioContextRef.current) {
                 audioContextRef.current.close();
+            }
+
+            if (noiseSuppressionContextRef.current) {
+                noiseSuppressionContextRef.current.close();
             }
         };
     }, [cleanupConnection]);
@@ -926,6 +999,23 @@ const PeerJSVoiceChat: React.FC = () => {
                             style={{ width: `${Math.min(micLevel, 100)}%` }}
                         />
                     </div>
+                </div>
+            )}
+
+            {/* Noise Suppression Toggle */}
+            {isEnabled && (
+                <div className="mb-3">
+                    <button
+                        onClick={() => setNoiseSuppression(!noiseSuppression)}
+                        className={`w-full px-2 py-1 rounded text-xs flex items-center justify-center gap-2 ${
+                            noiseSuppression
+                                ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                                : 'bg-gray-600 hover:bg-gray-700 text-white'
+                        }`}
+                    >
+                        <span>{noiseSuppression ? '🔇' : '🔊'}</span>
+                        <span>Noise Suppression: {noiseSuppression ? 'ON' : 'OFF'}</span>
+                    </button>
                 </div>
             )}
 
