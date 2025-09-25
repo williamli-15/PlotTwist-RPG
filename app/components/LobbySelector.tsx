@@ -265,7 +265,7 @@ const LobbySelector = () => {
             }
 
             // Filter and format the data
-            const users = avatarStates?.map(state => ({
+            const users = avatarStates?.map((state: any) => ({
                 profileId: state.profile_id,
                 username: state.profiles?.username || 'Unknown User',
                 avatarModel: state.profiles?.selected_avatar_model,
