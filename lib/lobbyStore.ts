@@ -378,7 +378,7 @@ export const useLobbyStore = create<LobbyStore>()(
                         },
                         async (payload) => {
                             const { otherAvatars, profile: currentProfile } = get();
-                            
+
                             if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
                                 const avatarState = payload.new as AvatarState;
                                 

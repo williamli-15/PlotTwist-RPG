@@ -67,6 +67,9 @@ const LobbySelector = () => {
     const [myRooms, setMyRooms] = useState<Lobby[]>([]);
     const [showProfileEditor, setShowProfileEditor] = useState(false);
     const [lobbyOccupancy, setLobbyOccupancy] = useState<Map<string, {online: number, twins: number}>>(new Map());
+    const [showUsersModal, setShowUsersModal] = useState(false);
+    const [selectedLobbyForUsers, setSelectedLobbyForUsers] = useState<Lobby | null>(null);
+    const [lobbyUsers, setLobbyUsers] = useState<any[]>([]);
 
     // Load lobbies on mount and tab change
     useEffect(() => {
@@ -229,6 +232,143 @@ const LobbySelector = () => {
             loadMyRooms(); // Refresh my rooms
         } else {
             alert('Failed to delete room. Please try again.');
+        }
+    };
+
+    // Handle viewing users in a lobby
+    const handleViewUsers = async (lobby: Lobby) => {
+        setSelectedLobbyForUsers(lobby);
+        setShowUsersModal(true);
+
+        try {
+            // Import supabase here to avoid issues with Next.js
+            const { supabase } = await import('@/lib/supabase');
+
+            const { data: avatarStates, error } = await supabase
+                .from('avatar_states')
+                .select(`
+                    profile_id,
+                    is_online,
+                    last_activity,
+                    position,
+                    profiles:profile_id (
+                        username,
+                        selected_avatar_model
+                    )
+                `)
+                .eq('lobby_id', lobby.lobbyId);
+
+            if (error) {
+                console.error('Error fetching lobby users:', error);
+                alert('Failed to load users. Please try again.');
+                return;
+            }
+
+            // Filter and format the data
+            const users = avatarStates?.map(state => ({
+                profileId: state.profile_id,
+                username: state.profiles?.username || 'Unknown User',
+                avatarModel: state.profiles?.selected_avatar_model,
+                isOnline: state.is_online,
+                lastActivity: state.last_activity,
+                position: state.position,
+                type: state.is_online ? 'Live Player' : 'Digital Twin'
+            })) || [];
+
+            setLobbyUsers(users);
+        } catch (error) {
+            console.error('Error fetching lobby users:', error);
+            alert('Failed to load users. Please try again.');
+        }
+    };
+
+    // Handle forgetting a user from the lobby
+    const handleForgetUser = async (user: any, lobby: Lobby) => {
+        // Prevent forgetting yourself if you're currently online (live)
+        if (user.profileId === profile?.id && user.isOnline) {
+            alert("You cannot forget yourself while you're currently in the room!");
+            return;
+        }
+
+        const userType = user.isOnline ? 'live player' : 'digital twin';
+        const confirmMessage = `Are you sure you want to forget ${user.username} (${userType}) from "${lobby.name}"?\n\nThis will ${user.isOnline ? 'remove them from the room list' : 'remove their digital twin from the room'}.`;
+
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+
+        try {
+            // Import supabase here to avoid issues with Next.js
+            const { supabase } = await import('@/lib/supabase');
+
+            // Remove the user's avatar state from the lobby
+            // The real-time listener in the lobby store will automatically detect this deletion
+            // and force the user out of the room if they're currently online
+            const { error } = await supabase
+                .from('avatar_states')
+                .delete()
+                .eq('profile_id', user.profileId)
+                .eq('lobby_id', lobby.lobbyId);
+
+            if (error) {
+                console.error('Error forgetting user:', error);
+                alert('Failed to forget user. Please try again.');
+                return;
+            }
+
+            // Remove the user from the current list
+            setLobbyUsers(prevUsers =>
+                prevUsers.filter(u => u.profileId !== user.profileId)
+            );
+
+            alert(`${user.username} has been forgotten from the room.`);
+        } catch (error) {
+            console.error('Error forgetting user:', error);
+            alert('Failed to forget user. Please try again.');
+        }
+    };
+
+    // Handle forgetting all users from the lobby
+    const handleForgetAllUsers = async (lobby: Lobby) => {
+        const otherUsers = lobbyUsers.filter(user => user.profileId !== profile?.id);
+
+        if (otherUsers.length === 0) {
+            alert("No other users to forget from this room.");
+            return;
+        }
+
+        const confirmMessage = `Are you sure you want to forget ALL ${otherUsers.length} users from "${lobby.name}"?\n\nThis will remove all live players and digital twins from the room.`;
+
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+
+        try {
+            // Import supabase here to avoid issues with Next.js
+            const { supabase } = await import('@/lib/supabase');
+
+            // Remove all avatar states except the room creator
+            const { error } = await supabase
+                .from('avatar_states')
+                .delete()
+                .eq('lobby_id', lobby.lobbyId)
+                .neq('profile_id', profile?.id);
+
+            if (error) {
+                console.error('Error forgetting all users:', error);
+                alert('Failed to forget all users. Please try again.');
+                return;
+            }
+
+            // Update the user list to only show the room creator (if they're in the room)
+            setLobbyUsers(prevUsers =>
+                prevUsers.filter(user => user.profileId === profile?.id)
+            );
+
+            alert(`All ${otherUsers.length} users have been forgotten from the room.`);
+        } catch (error) {
+            console.error('Error forgetting all users:', error);
+            alert('Failed to forget all users. Please try again.');
         }
     };
 
@@ -543,6 +683,15 @@ const LobbySelector = () => {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
+                                                    className="px-3 text-green-400 hover:text-green-300 hover:bg-green-900/20"
+                                                    onClick={() => handleViewUsers(lobby)}
+                                                    title="View users in room"
+                                                >
+                                                    👥
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
                                                     className="px-3 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
                                                     onClick={() => handleEditRoom(lobby)}
                                                     title="Edit room"
@@ -615,6 +764,126 @@ const LobbySelector = () => {
                         onSuccess={handleRoomCreated}
                         editingLobby={editingLobby}
                     />
+                )}
+
+                {/* Users Modal */}
+                {showUsersModal && selectedLobbyForUsers && (
+                    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+                        <Card className="w-full max-w-2xl bg-gray-900/95 backdrop-blur-sm border-gray-700 max-h-[80vh] overflow-hidden flex flex-col">
+                            <CardHeader>
+                                <div className="flex justify-between items-center">
+                                    <CardTitle className="text-xl text-white">
+                                        👥 Users in "{selectedLobbyForUsers.name}"
+                                    </CardTitle>
+                                    <button
+                                        onClick={() => {
+                                            setShowUsersModal(false);
+                                            setSelectedLobbyForUsers(null);
+                                            setLobbyUsers([]);
+                                        }}
+                                        className="text-gray-400 hover:text-white"
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </CardHeader>
+
+                            <CardContent className="flex-1 overflow-y-auto">
+                                {lobbyUsers.length === 0 ? (
+                                    <div className="text-center text-gray-400 py-8">
+                                        <p className="text-lg">No users currently in this room</p>
+                                        <p className="text-sm mt-2">Users will appear here when they join or leave digital twins</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {lobbyUsers.map((user, index) => (
+                                            <div
+                                                key={`${user.profileId}-${index}`}
+                                                className="bg-gray-800/50 rounded-lg p-4 flex items-center justify-between"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-3 h-3 rounded-full ${user.isOnline ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                                                    <div>
+                                                        <div className="text-white font-medium">
+                                                            {user.isOnline ? '🟢' : '🤖'} {user.username}
+                                                        </div>
+                                                        <div className="text-gray-400 text-sm">
+                                                            {user.type}
+                                                        </div>
+                                                        {!user.isOnline && user.lastActivity && (
+                                                            <div className="text-gray-500 text-xs">
+                                                                Last activity: {new Date(user.lastActivity).toLocaleString()}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-3">
+                                                    {user.position && (
+                                                        <div className="text-gray-400 text-sm">
+                                                            Position: ({Math.round(user.position.x)}, {Math.round(user.position.z)})
+                                                        </div>
+                                                    )}
+                                                    {user.profileId !== profile?.id && (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="px-3 text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                                            onClick={() => handleForgetUser(user, selectedLobbyForUsers)}
+                                                            title={`Forget ${user.username} from the room`}
+                                                        >
+                                                            🧠 Forget
+                                                        </Button>
+                                                    )}
+                                                    {user.profileId === profile?.id && user.isOnline && (
+                                                        <div className="px-3 py-1.5 text-xs text-blue-400 font-medium">
+                                                            (Owner)
+                                                        </div>
+                                                    )}
+                                                    {user.profileId === profile?.id && !user.isOnline && (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="px-3 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                                                            onClick={() => handleForgetUser(user, selectedLobbyForUsers)}
+                                                            title="Forget your own digital twin from the room"
+                                                        >
+                                                            🧠 Forget Owner
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+
+                            <div className="p-4 border-t border-gray-700">
+                                <div className="flex justify-between items-center mb-3">
+                                    <div className="text-sm text-gray-400">
+                                        <span>Total Users: {lobbyUsers.length}</span>
+                                        <span className="ml-4">
+                                            Live: {lobbyUsers.filter(u => u.isOnline).length} |
+                                            Digital Twins: {lobbyUsers.filter(u => !u.isOnline).length}
+                                        </span>
+                                    </div>
+                                    {lobbyUsers.filter(u => u.profileId !== profile?.id).length > 0 && (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                            onClick={() => handleForgetAllUsers(selectedLobbyForUsers)}
+                                            title="Forget all users from the room"
+                                        >
+                                            🧠 Forget All Users
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
                 )}
 
                 {/* Profile Editor Modal */}
