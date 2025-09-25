@@ -620,15 +620,15 @@ const PeerJSVoiceChat: React.FC = () => {
         const { otherAvatars, profile } = useLobbyStore.getState();
 
         if (!profile || !isEnabled) {
-            addDebugLog(`⚠️ Proximity check skipped - profile: ${!!profile}, enabled: ${isEnabled}`);
             return;
         }
 
-        addDebugLog(`🔍 Proximity check: My pos (${myPosition.x.toFixed(1)}, ${myPosition.y.toFixed(1)}, ${myPosition.z.toFixed(1)}), Others: ${otherAvatars.size}`);
-
-        // Debug: log all other users
+        // Only log proximity details when there are actual changes
         const otherProfileIds = Array.from(otherAvatars.keys());
-        addDebugLog(`👥 Other users: ${otherProfileIds.map(id => id.substring(0, 8)).join(', ')}`);
+        if (otherProfileIds.length > 0) {
+            addDebugLog(`🔍 Proximity check: My pos (${myPosition.x.toFixed(1)}, ${myPosition.y.toFixed(1)}, ${myPosition.z.toFixed(1)}), Others: ${otherAvatars.size}`);
+            addDebugLog(`👥 Other users: ${otherProfileIds.map(id => id.substring(0, 8)).join(', ')}`);
+        }
 
         const currentProximityUsers: string[] = [];
         const usersToConnect: string[] = [];
@@ -709,7 +709,6 @@ const PeerJSVoiceChat: React.FC = () => {
             // Method 1: Try to get from global window (set by npc.tsx)
             if (typeof window !== 'undefined' && (window as any).currentAvatarPosition) {
                 myPos = (window as any).currentAvatarPosition;
-                addDebugLog(`📍 Got my position from global: (${myPos.x.toFixed(1)}, ${myPos.y.toFixed(1)}, ${myPos.z.toFixed(1)})`);
             }
 
             // Method 2: From otherAvatars (This won't work for current user, but keep for debugging)
@@ -717,7 +716,6 @@ const PeerJSVoiceChat: React.FC = () => {
                 const myAvatarState = otherAvatars.get(profile.id);
                 if (myAvatarState?.position) {
                     myPos = myAvatarState.position;
-                    addDebugLog(`📍 Got my position from otherAvatars: (${myPos.x.toFixed(1)}, ${myPos.y.toFixed(1)}, ${myPos.z.toFixed(1)})`);
                 }
             }
 
@@ -726,7 +724,6 @@ const PeerJSVoiceChat: React.FC = () => {
                 const sceneElement = document.getElementById('npc-scene');
                 if (sceneElement && (sceneElement as any).avatarPosition) {
                     myPos = (sceneElement as any).avatarPosition;
-                    addDebugLog(`📍 Got my position from scene element: (${myPos.x.toFixed(1)}, ${myPos.y.toFixed(1)}, ${myPos.z.toFixed(1)})`);
                 }
             }
 
@@ -734,10 +731,8 @@ const PeerJSVoiceChat: React.FC = () => {
             if (myPos) {
                 setMyPosition(myPos);
                 monitorProximity();
-            } else {
-                addDebugLog(`❌ Could not get current position - otherAvatars size: ${otherAvatars.size}, skipping proximity check`);
-                // Don't set a default position - just skip this proximity check cycle
             }
+            // Silently skip if no position found - reduces console spam
         }, 2000);
 
         return () => clearInterval(interval);
