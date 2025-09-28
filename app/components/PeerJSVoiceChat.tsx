@@ -45,7 +45,12 @@ const PeerJSVoiceChat: React.FC = () => {
     // Apply noise suppression to a media stream
     const applyNoiseSuppression = useCallback(async (inputStream: MediaStream): Promise<MediaStream> => {
         if (!noiseSuppression) {
-            return inputStream;
+            // Even without noise suppression, ensure mute state is respected
+            const clonedStream = inputStream.clone();
+            clonedStream.getAudioTracks().forEach(track => {
+                track.enabled = !isMuted && isEnabled;
+            });
+            return clonedStream;
         }
 
         try {
@@ -81,17 +86,28 @@ const PeerJSVoiceChat: React.FC = () => {
             const destination = audioContext.createMediaStreamDestination();
             compressor.connect(destination);
 
+            // Apply mute state to the processed stream
+            destination.stream.getAudioTracks().forEach(track => {
+                track.enabled = !isMuted && isEnabled;
+                addDebugLog(`🔇 Applied mute state to processed track: enabled=${track.enabled}, isMuted=${isMuted}, isEnabled=${isEnabled}`);
+            });
+
             // Store references for cleanup
             noiseSuppressionContextRef.current = audioContext;
             noiseSuppressionStreamRef.current = destination.stream;
 
-            addDebugLog('🔇 Noise suppression applied to audio stream');
+            addDebugLog('🔇 Noise suppression applied to audio stream with mute state respected');
             return destination.stream;
         } catch (error) {
             addDebugLog(`❌ Failed to apply noise suppression: ${error}`);
-            return inputStream; // Return original stream on error
+            // Return original stream with mute state applied on error
+            const fallbackStream = inputStream.clone();
+            fallbackStream.getAudioTracks().forEach(track => {
+                track.enabled = !isMuted && isEnabled;
+            });
+            return fallbackStream;
         }
-    }, [noiseSuppression, addDebugLog]);
+    }, [noiseSuppression, isMuted, isEnabled, addDebugLog]);
 
     // Store our peer ID in database
     const storePeerIdInDatabase = useCallback(async (peerId: string) => {
@@ -362,31 +378,102 @@ const PeerJSVoiceChat: React.FC = () => {
     }, [addDebugLog]);
 
     // Set up microphone level monitoring
-    const setupMicrophoneAnalysis = (stream: MediaStream) => {
+    const setupMicrophoneAnalysis = async (stream: MediaStream) => {
         try {
-            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-            analyserRef.current = audioContextRef.current.createAnalyser();
+            addDebugLog('🎤 Setting up microphone level monitoring...');
 
-            const source = audioContextRef.current.createMediaStreamSource(stream);
-            source.connect(analyserRef.current);
+            // Clean up any existing audio context first
+            if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+                addDebugLog('🧹 Cleaning up existing AudioContext...');
+                audioContextRef.current.close();
+                audioContextRef.current = null;
+                analyserRef.current = null;
+            }
 
-            analyserRef.current.fftSize = 256;
-            const bufferLength = analyserRef.current.frequencyBinCount;
+            // Verify stream has audio tracks
+            const audioTracks = stream.getAudioTracks();
+            addDebugLog(`🔧 Stream has ${audioTracks.length} audio tracks: ${audioTracks.map(t => `${t.label} (enabled: ${t.enabled})`).join(', ')}`);
+
+            if (audioTracks.length === 0) {
+                addDebugLog('❌ No audio tracks found in stream');
+                return;
+            }
+
+            // Create a separate audio context for level monitoring
+            const levelAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+            addDebugLog(`🔧 AudioContext created, state: ${levelAudioContext.state}`);
+
+            // Force resume the audio context if it's suspended
+            if (levelAudioContext.state === 'suspended') {
+                await levelAudioContext.resume();
+                addDebugLog(`🔧 AudioContext resumed, new state: ${levelAudioContext.state}`);
+            }
+
+            const levelAnalyser = levelAudioContext.createAnalyser();
+
+            // Set up analyser with more sensitive settings
+            levelAnalyser.fftSize = 512; // Reduced for faster updates
+            levelAnalyser.smoothingTimeConstant = 0.1; // Less smoothing for quicker response
+            levelAnalyser.minDecibels = -100;
+            levelAnalyser.maxDecibels = -10;
+
+            const source = levelAudioContext.createMediaStreamSource(stream);
+            source.connect(levelAnalyser);
+
+            const bufferLength = levelAnalyser.frequencyBinCount;
             const dataArray = new Uint8Array(bufferLength);
 
+            // Store references for level monitoring
+            audioContextRef.current = levelAudioContext;
+            analyserRef.current = levelAnalyser;
+
+            // Create unique ID for this analyser instance
+            const analyserId = `mic-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
+            addDebugLog(`🔧 Analyser setup complete [${analyserId}] - FFT: ${levelAnalyser.fftSize}, Buffer: ${bufferLength}, Context state: ${levelAudioContext.state}`);
+
+            let frameCount = 0;
             const updateMicLevel = () => {
-                if (analyserRef.current && isEnabled && !isMuted) {
+                frameCount++;
+
+                // Always monitor microphone level when analyser exists, regardless of isEnabled
+                if (analyserRef.current && audioContextRef.current?.state === 'running') {
                     analyserRef.current.getByteFrequencyData(dataArray);
-                    const average = dataArray.reduce((a, b) => a + b) / bufferLength;
-                    setMicLevel(Math.floor((average / 255) * 100));
+
+                    // Calculate average amplitude
+                    let sum = 0;
+                    let max = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                        if (dataArray[i] > max) max = dataArray[i];
+                    }
+                    const average = sum / bufferLength;
+                    const level = Math.floor((average / 255) * 100);
+
+                    // Debug log every 60 frames (~1 second at 60fps)
+                    if (frameCount % 60 === 0) {
+                        addDebugLog(`🎤 [${analyserId}] Frame ${frameCount}: Avg=${average.toFixed(1)}, Max=${max}, Level=${level}%, VoiceChat=${isEnabled ? 'ON' : 'OFF'}, Sample=[${dataArray.slice(0, 8).join(',')}]`);
+                    }
+
+                    // Show mic level unless muted (show level even if voice chat is disabled)
+                    if (isMuted) {
+                        setMicLevel(0);
+                    } else {
+                        setMicLevel(level);
+                    }
                 } else {
                     setMicLevel(0);
+                    if (frameCount % 60 === 0) {
+                        addDebugLog(`🎤 [${analyserId}] Frame ${frameCount}: Not running - analyser=${!!analyserRef.current}, context=${audioContextRef.current?.state}, voiceChat=${isEnabled}`);
+                    }
                 }
                 requestAnimationFrame(updateMicLevel);
             };
+
             updateMicLevel();
+            addDebugLog('✅ Microphone level monitoring started');
         } catch (error) {
-            console.warn('Failed to setup microphone analysis:', error);
+            addDebugLog(`❌ Failed to setup microphone analysis: ${error}`);
+            console.error('Failed to setup microphone analysis:', error);
         }
     };
 
@@ -406,14 +493,14 @@ const PeerJSVoiceChat: React.FC = () => {
             const source = audioContext.createMediaStreamSource(streamToTest);
             const gainNode = audioContext.createGain();
 
-            // 30% volume for better audibility
-            gainNode.gain.value = 0.3;
+            // 20% volume for better audibility without feedback
+            gainNode.gain.value = 0.2;
             source.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
-            addDebugLog(noiseSuppression ? '🔊 Playing microphone input with noise suppression (low volume)' : '🔊 Playing microphone input (low volume)');
+            addDebugLog(noiseSuppression ? '🔊 Playing microphone with noise suppression (2s test)' : '🔊 Playing raw microphone input (2s test)');
 
-            // Test for 2 seconds (shorter to reduce feedback risk)
+            // Test for 2 seconds
             setTimeout(() => {
                 gainNode.disconnect();
                 source.disconnect();
@@ -426,6 +513,7 @@ const PeerJSVoiceChat: React.FC = () => {
             setIsTestingMic(false);
         }
     };
+
 
     // Initialize microphone and PeerJS
     const initializeMicrophone = async () => {
@@ -444,7 +532,7 @@ const PeerJSVoiceChat: React.FC = () => {
             setIsEnabled(true);
 
             // Set up microphone level monitoring
-            setupMicrophoneAnalysis(stream);
+            await setupMicrophoneAnalysis(stream);
 
             // Initialize PeerJS with public server
             const peerId = `user-${profile?.id}-${Date.now()}`;
@@ -863,12 +951,45 @@ const PeerJSVoiceChat: React.FC = () => {
     const toggleMute = () => {
         const newMutedState = !isMuted;
         setIsMuted(newMutedState);
+        addDebugLog(`🔇 ${newMutedState ? 'Muting' : 'Unmuting'} microphone`);
 
+        // Disable/enable local stream tracks
         if (localStreamRef.current) {
             localStreamRef.current.getAudioTracks().forEach(track => {
                 track.enabled = !newMutedState && isEnabled;
+                addDebugLog(`🎤 Set local track enabled: ${track.enabled}`);
             });
         }
+
+        // Also disable/enable noise suppression stream tracks
+        if (noiseSuppressionStreamRef.current) {
+            noiseSuppressionStreamRef.current.getAudioTracks().forEach(track => {
+                track.enabled = !newMutedState && isEnabled;
+                addDebugLog(`🔇 Set noise suppression track enabled: ${track.enabled}`);
+            });
+        }
+
+        // Update all active connections to use the new mute state
+        connectionsRef.current.forEach(async (connection, userId) => {
+            if (connection && !connection.destroyed && localStreamRef.current) {
+                try {
+                    // Get the stream that should be sent (with proper mute state)
+                    const streamToSend = await applyNoiseSuppression(localStreamRef.current);
+
+                    // Update the connection with the new stream
+                    const sender = connection.peerConnection?.getSenders?.()?.find(
+                        s => s.track?.kind === 'audio'
+                    );
+
+                    if (sender && streamToSend.getAudioTracks()[0]) {
+                        await sender.replaceTrack(streamToSend.getAudioTracks()[0]);
+                        addDebugLog(`🔄 Updated audio track for ${userId} with mute state: ${newMutedState}`);
+                    }
+                } catch (error) {
+                    addDebugLog(`❌ Failed to update mute state for ${userId}: ${error}`);
+                }
+            }
+        });
     };
 
     // Cleanup on unmount
@@ -982,16 +1103,52 @@ const PeerJSVoiceChat: React.FC = () => {
             )}
 
             {/* Microphone Level Indicator */}
-            {isEnabled && !!micLevel && (
+            {isEnabled && (
                 <div className="mb-3">
                     <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs text-gray-400">Mic Level:</span>
-                        <span className="text-xs text-green-400">{micLevel}%</span>
+                        <span className={`text-xs ${isMuted ? 'text-red-400' : 'text-green-400'}`}>
+                            {isMuted ? 'MUTED' : `${micLevel}%`}
+                        </span>
+                        {/* Debug and fix button */}
+                        <button
+                            onClick={async () => {
+                                addDebugLog(`🎤 Current mic level state: ${micLevel}%, muted: ${isMuted}, enabled: ${isEnabled}`);
+                                addDebugLog(`🔧 Analyser exists: ${!!analyserRef.current}, AudioContext state: ${audioContextRef.current?.state}`);
+
+                                // Try to fix suspended audio context
+                                if (audioContextRef.current?.state === 'suspended') {
+                                    addDebugLog('🔧 Attempting to resume suspended AudioContext...');
+                                    try {
+                                        await audioContextRef.current.resume();
+                                        addDebugLog(`✅ AudioContext resumed: ${audioContextRef.current.state}`);
+                                    } catch (error) {
+                                        addDebugLog(`❌ Failed to resume AudioContext: ${error}`);
+                                    }
+                                }
+
+                                // Restart mic monitoring if needed
+                                if (localStreamRef.current && (!analyserRef.current || audioContextRef.current?.state !== 'running')) {
+                                    addDebugLog('🔄 Restarting microphone monitoring...');
+                                    await setupMicrophoneAnalysis(localStreamRef.current);
+                                }
+                            }}
+                            className="text-xs text-blue-400 hover:text-blue-300"
+                            title="Debug and fix mic level"
+                        >
+                            🔧
+                        </button>
                     </div>
                     <div className="w-full h-1 bg-gray-700 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-gradient-to-r from-green-500 to-yellow-500 transition-all duration-100"
-                            style={{ width: `${Math.min(micLevel, 100)}%` }}
+                            className={`h-full transition-all duration-100 ${
+                                isMuted
+                                    ? 'bg-red-500'
+                                    : 'bg-gradient-to-r from-green-500 to-yellow-500'
+                            }`}
+                            style={{
+                                width: isMuted ? '100%' : `${Math.min(micLevel || 1, 100)}%` // Show at least 1% when not muted
+                            }}
                         />
                     </div>
                 </div>
@@ -1011,6 +1168,11 @@ const PeerJSVoiceChat: React.FC = () => {
                         <span>{noiseSuppression ? '🔇' : '🔊'}</span>
                         <span>Noise Suppression: {noiseSuppression ? 'ON' : 'OFF'}</span>
                     </button>
+                    {noiseSuppression && (
+                        <div className="mt-1 text-xs text-purple-300 text-center">
+                            Active: High-pass + Notch + Compressor
+                        </div>
+                    )}
                 </div>
             )}
 
