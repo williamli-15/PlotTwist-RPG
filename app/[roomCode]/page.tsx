@@ -2,9 +2,25 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import NPC from "../components/npc";
+import dynamic from 'next/dynamic';
 import ProfileCreator from "../components/ProfileCreator";
+import RoomChat from "../components/RoomChat";
 import { useLobbyStore } from "@/lib/lobbyStore";
+
+// Dynamically import components with no SSR to avoid "window is not defined" errors
+const NPC = dynamic(() => import("../components/npc"), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="text-white">Loading 3D environment...</div>
+    </div>
+  )
+});
+
+// Import PeerJS voice chat
+const PeerJSVoiceChat = dynamic(() => import("../components/PeerJSVoiceChat"), {
+  ssr: false
+});
 
 export default function RoomPage() {
   const { roomCode } = useParams();
@@ -78,10 +94,12 @@ export default function RoomPage() {
     );
   }
 
-  // Room view with custom back navigation
+  // Room view with chat and voice components
   return (
-    <div>
+    <>
       <NPC currentLobby={currentLobby} />
+      {currentLobby && <RoomChat lobbyId={currentLobby.lobbyId} />}
+      <PeerJSVoiceChat />
       {/* Custom back button overlay */}
       <button
         onClick={() => router.push('/')}
@@ -89,6 +107,6 @@ export default function RoomPage() {
       >
         ← Back to Lobby
       </button>
-    </div>
+    </>
   );
 }
