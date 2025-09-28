@@ -978,7 +978,7 @@ const PeerJSVoiceChat: React.FC = () => {
 
                     // Update the connection with the new stream
                     const sender = connection.peerConnection?.getSenders?.()?.find(
-                        s => s.track?.kind === 'audio'
+                        (s: RTCRtpSender) => s.track?.kind === 'audio'
                     );
 
                     if (sender && streamToSend.getAudioTracks()[0]) {
