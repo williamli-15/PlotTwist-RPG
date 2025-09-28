@@ -203,42 +203,64 @@ const Scene = () => {
     const model2Url = model3Url;
 
     function loadUniqueVrm(modelUrl: string, callback: (err: any, data: any) => void) {
-
       const loader = new GLTFLoader();
       loader.crossOrigin = 'anonymous';
 
+      // Properly dispose existing helper objects
+      helperRoot.traverse((child) => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(mat => mat.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
+      });
       helperRoot.clear();
 
       loader.register((parser) => {
-
         return new VRMLoaderPlugin(parser, { helperRoot: helperRoot, autoUpdateHumanBones: true });
-
       });
 
       loader.load(
-        // URL of the VRM you want to load
         modelUrl,
-
-        // called when the resource is loaded
         (gltf) => {
-
           const vrm = gltf.userData.vrm;
 
-          vrmList.push(vrm);
+          // Limit the number of VRMs to prevent memory accumulation
+          if (vrmList.length >= 10) { // Arbitrary limit
+            const oldVrm = vrmList.shift();
+            if (oldVrm) {
+              scene.remove(oldVrm.scene);
+              // Dispose old VRM resources
+              oldVrm.scene.traverse((obj: THREE.Object3D) => {
+                if (obj.geometry) obj.geometry.dispose();
+                if (obj.material) {
+                  if (Array.isArray(obj.material)) {
+                    obj.material.forEach(mat => {
+                      if (mat.map) mat.map.dispose();
+                      mat.dispose();
+                    });
+                  } else {
+                    if (obj.material.map) obj.material.map.dispose();
+                    obj.material.dispose();
+                  }
+                }
+              });
+              oldVrm.dispose?.();
+            }
+          }
 
+          vrmList.push(vrm);
           scene.add(vrm.scene);
 
-          // Disable frustum culling
+          // Enable frustum culling for better performance
           vrm.scene.traverse((obj: THREE.Object3D) => {
-
-            obj.frustumCulled = false;
-
+            obj.frustumCulled = true; // Changed to true for performance
           });
 
-          // rotate if the VRM is VRM0.0
           VRMUtils.rotateVRM0(vrm);
-
-          console.log('vrm', vrm);
 
           if (callback) {
             callback(null, {
@@ -247,12 +269,11 @@ const Scene = () => {
             });
           }
         },
-
-        // called while loading is progressing
         (progress) => console.log('Loading model...', 100.0 * (progress.loaded / progress.total), '%'),
-
-        // called when loading has errors
-        (error) => console.error(error),
+        (error) => {
+          console.error('VRM loading error:', error);
+          if (callback) callback(error, null);
+        }
       );
     }
 

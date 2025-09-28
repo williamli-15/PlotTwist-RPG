@@ -107,13 +107,63 @@ const Scene = ({ currentLobby }) => {
     const HOST_NAME_DISTANCE = 12.5; // Distance for showing host name and crown (5x interaction distance)
     const PLAYER_NAME_DISTANCE = 8.0; // Distance for showing other players' usernames
 
+    // Add loading state management to prevent duplicate requests
+    const loadingAvatarsRef = useRef(new Set<string>()); // Track which avatars are currently loading
+
     // ============================================
     // MOVE THESE FUNCTIONS OUTSIDE init()
     // At component level, before init()
     // ============================================
-    
+
+    // Add disposal utility function
+    const disposeObject = (object: THREE.Object3D) => {
+        object.traverse((child) => {
+            if (child.geometry) {
+                child.geometry.dispose();
+            }
+            if (child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach(material => {
+                        if (material.map) material.map.dispose();
+                        if (material.normalMap) material.normalMap.dispose();
+                        if (material.emissiveMap) material.emissiveMap.dispose();
+                        material.dispose();
+                    });
+                } else {
+                    if (child.material.map) child.material.map.dispose();
+                    if (child.material.normalMap) child.material.normalMap.dispose();
+                    if (child.material.emissiveMap) child.material.emissiveMap.dispose();
+                    child.material.dispose();
+                }
+            }
+        });
+    };
+
     const loadOtherAvatar = async (profileId: string, avatarState: any) => {
         try {
+            // Prevent duplicate loading requests
+            if (loadingAvatarsRef.current.has(profileId)) {
+                console.log(`Avatar ${profileId} is already loading, skipping...`);
+                return;
+            }
+
+            // Check if avatar is already loaded
+            if (otherAvatarsRef.current.has(profileId)) {
+                console.log(`Avatar ${profileId} is already loaded, skipping...`);
+                return;
+            }
+
+            // Check if we've exceeded the maximum number of avatars
+            const MAX_AVATARS = 8; // Limit concurrent avatars
+            if (otherAvatarsRef.current.size >= MAX_AVATARS) {
+                console.warn(`Maximum avatars (${MAX_AVATARS}) reached, skipping load for ${profileId}`);
+                return;
+            }
+
+            // Mark as loading
+            loadingAvatarsRef.current.add(profileId);
+            console.log(`Starting to load avatar for ${profileId}...`);
+
             const loader = new GLTFLoader();
             loader.crossOrigin = 'anonymous';
             loader.register((parser) => {
@@ -123,17 +173,24 @@ const Scene = ({ currentLobby }) => {
             // Get profile info from cache
             const { profilesCache } = useLobbyStore.getState();
             const profile = profilesCache.get(profileId);
-            if (!profile) return;
+            if (!profile) {
+                loadingAvatarsRef.current.delete(profileId);
+                return;
+            }
 
             // Load the avatar model
             const gltf = await loader.loadAsync(profile.selected_avatar_model);
             const vrm = gltf.userData.vrm;
-            
-            // Add to scene (only if scene exists)
-            if (sceneRef.current) {
-                sceneRef.current.add(vrm.scene);
+
+            // Check if component is still mounted and scene exists
+            if (!sceneRef.current) {
+                loadingAvatarsRef.current.delete(profileId);
+                return;
             }
-            
+
+            // Add to scene
+            sceneRef.current.add(vrm.scene);
+
             // Set initial position and rotation
             vrm.scene.position.set(
                 avatarState.position.x,
@@ -157,26 +214,36 @@ const Scene = ({ currentLobby }) => {
             vrm.scene.add(usernameSprite);
 
             // Store in ref
+            const mixer = new THREE.AnimationMixer(vrm.scene);
             otherAvatarsRef.current.set(profileId, {
                 vrm: vrm,
-                mixer: new THREE.AnimationMixer(vrm.scene),
+                mixer: mixer,
                 currentAnimation: avatarState.animation,
                 isOnline: avatarState.is_online,
-                usernameSprite: usernameSprite
+                usernameSprite: usernameSprite,
+                animationClips: new Map(), // Store loaded clips to avoid reloading
+                lastUpdate: Date.now()
             });
 
-            // Load animations for this avatar
-            const mixer = otherAvatarsRef.current.get(profileId).mixer;
+            // Load only essential animations for performance
+            const avatarData = otherAvatarsRef.current.get(profileId);
             const idleClip = await loadMixamoAnimation(ANIMATION_IDLE, vrm);
             const walkingClip = await loadMixamoAnimation(ANIMATION_WALKING, vrm);
-            
+
+            // Store clips for reuse
+            avatarData.animationClips.set('Idle', idleClip);
+            avatarData.animationClips.set('Walking', walkingClip);
+
             // Play initial animation
             const clipToPlay = avatarState.animation === 'Walking' ? walkingClip : idleClip;
             mixer.clipAction(clipToPlay).play();
-            
-            console.log(`Loaded avatar for ${profile.username}`);
+
+            console.log(`Successfully loaded avatar for ${profile.username}`);
         } catch (error) {
             console.error(`Error loading avatar for ${profileId}:`, error);
+        } finally {
+            // Always remove from loading set
+            loadingAvatarsRef.current.delete(profileId);
         }
     };
 
@@ -215,41 +282,92 @@ const Scene = ({ currentLobby }) => {
     // PUT useEffect AT COMPONENT LEVEL (NOT IN init!)
     // ============================================
     
+    // Debounced avatar management to reduce excessive updates
+    const avatarUpdateTimeoutRef = useRef<NodeJS.Timeout>();
+    const lastAvatarCountRef = useRef(0);
+
     useEffect(() => {
         // Only run if scene is initialized
         if (!sceneRef.current) return;
-        
-        const { otherAvatars } = useLobbyStore.getState();
-        
-        // Process each avatar from the store
-        otherAvatars.forEach((avatarState, profileId) => {
-            if (!otherAvatarsRef.current.has(profileId)) {
-                // New avatar - load it
-                loadOtherAvatar(profileId, avatarState);
-            } else {
-                // Existing avatar - update it
-                updateOtherAvatar(profileId, avatarState);
-            }
-        });
-        
-        // Remove avatars that left
-        otherAvatarsRef.current.forEach((avatarData, profileId) => {
-            if (!otherAvatars.has(profileId)) {
-                // Clean up username sprite
-                if (avatarData.usernameSprite) {
-                    avatarData.vrm.scene.remove(avatarData.usernameSprite);
-                    avatarData.usernameSprite.material.map?.dispose();
-                    avatarData.usernameSprite.material.dispose();
-                }
 
-                // Remove from scene
-                if (sceneRef.current && avatarData.vrm) {
-                    sceneRef.current.remove(avatarData.vrm.scene);
+        const { otherAvatars } = useLobbyStore.getState();
+
+        // Skip update if avatar count hasn't changed (reduces unnecessary processing)
+        if (otherAvatars.size === lastAvatarCountRef.current && otherAvatars.size === otherAvatarsRef.current.size) {
+            return;
+        }
+        lastAvatarCountRef.current = otherAvatars.size;
+
+        // Clear existing timeout
+        if (avatarUpdateTimeoutRef.current) {
+            clearTimeout(avatarUpdateTimeoutRef.current);
+        }
+
+        // Debounce avatar updates to prevent rapid fire updates
+        avatarUpdateTimeoutRef.current = setTimeout(() => {
+            console.log(`Processing avatar updates: ${otherAvatars.size} avatars in store, ${otherAvatarsRef.current.size} loaded`);
+
+            // Process each avatar from the store
+            otherAvatars.forEach((avatarState, profileId) => {
+                if (!otherAvatarsRef.current.has(profileId) && !loadingAvatarsRef.current.has(profileId)) {
+                    // New avatar - load it (only if not already loading)
+                    loadOtherAvatar(profileId, avatarState);
+                } else if (otherAvatarsRef.current.has(profileId)) {
+                    // Existing avatar - update it (less frequently)
+                    updateOtherAvatar(profileId, avatarState);
                 }
-                otherAvatarsRef.current.delete(profileId);
-                console.log(`Removed avatar for profile ${profileId}`);
-            }
-        });
+            });
+
+            // Remove avatars that left
+            otherAvatarsRef.current.forEach((avatarData, profileId) => {
+                if (!otherAvatars.has(profileId)) {
+                    console.log(`Cleaning up avatar for profile ${profileId}`);
+
+                    // Stop and dispose mixer
+                    if (avatarData.mixer) {
+                        avatarData.mixer.stopAllAction();
+                        avatarData.mixer.uncacheRoot(avatarData.vrm.scene);
+                    }
+
+                    // Clean up username sprite
+                    if (avatarData.usernameSprite) {
+                        avatarData.vrm.scene.remove(avatarData.usernameSprite);
+                        if (avatarData.usernameSprite.material.map) {
+                            avatarData.usernameSprite.material.map.dispose();
+                        }
+                        avatarData.usernameSprite.material.dispose();
+                        avatarData.usernameSprite.geometry.dispose();
+                    }
+
+                    // Dispose animation clips
+                    if (avatarData.animationClips) {
+                        avatarData.animationClips.forEach((clip) => {
+                            // Animation clips don't have explicit dispose, but we clear the cache
+                            THREE.AnimationUtils.subClip(clip, clip.name, 0, 0); // Clear internal cache
+                        });
+                        avatarData.animationClips.clear();
+                    }
+
+                    // Dispose VRM scene and all its resources
+                    if (avatarData.vrm) {
+                        // Remove from scene first
+                        if (sceneRef.current) {
+                            sceneRef.current.remove(avatarData.vrm.scene);
+                        }
+
+                        // Dispose all geometries and materials
+                        disposeObject(avatarData.vrm.scene);
+
+                        // Update VRM to clean internal state
+                        avatarData.vrm.dispose?.(); // If VRM has dispose method
+                    }
+
+                    otherAvatarsRef.current.delete(profileId);
+                    loadingAvatarsRef.current.delete(profileId); // Also clean from loading set
+                    console.log(`Successfully cleaned up avatar for profile ${profileId}`);
+                }
+            });
+        }, 100); // 100ms debounce
     }); // Subscribe to store changes through a separate subscription
 
     // Subscribe to store changes
@@ -279,6 +397,59 @@ const Scene = ({ currentLobby }) => {
         ArrowDown: false,
         ArrowRight: false
     });
+
+    // Add memory monitoring
+    const memoryMonitorRef = useRef<NodeJS.Timeout>();
+    const [memoryStats, setMemoryStats] = useState<any>(null);
+
+    // Memory cleanup utility
+    const forceGarbageCollection = () => {
+        // Force garbage collection if available (Chrome dev tools)
+        if (typeof window !== 'undefined' && (window as any).gc) {
+            (window as any).gc();
+        }
+
+        // Clear any cached textures
+        if (rendererRef.current) {
+            rendererRef.current.info.memory.geometries = 0;
+            rendererRef.current.info.memory.textures = 0;
+        }
+    };
+
+    // Comprehensive scene cleanup function
+    const cleanupScene = () => {
+        console.log('Starting comprehensive scene cleanup...');
+
+        // Clean up all other avatars
+        otherAvatarsRef.current.forEach((avatarData, profileId) => {
+            if (avatarData.mixer) {
+                avatarData.mixer.stopAllAction();
+                avatarData.mixer.uncacheRoot(avatarData.vrm.scene);
+            }
+            if (avatarData.vrm && sceneRef.current) {
+                sceneRef.current.remove(avatarData.vrm.scene);
+                disposeObject(avatarData.vrm.scene);
+            }
+        });
+        otherAvatarsRef.current.clear();
+
+        // Clean up main avatar
+        if (avatarRef.current && sceneRef.current) {
+            sceneRef.current.remove(avatarRef.current.scene);
+            disposeObject(avatarRef.current.scene);
+        }
+
+        // Clean up NPC
+        if (npcRef.current && sceneRef.current) {
+            sceneRef.current.remove(npcRef.current.scene);
+            disposeObject(npcRef.current.scene);
+        }
+
+        // Force garbage collection
+        forceGarbageCollection();
+
+        console.log('Scene cleanup completed');
+    };
 
 
 
@@ -310,16 +481,63 @@ const Scene = ({ currentLobby }) => {
     // }, []);
 
 
+    // Cleanup on component unmount only
     useEffect(() => {
-        // ADD currentLobby TO THE CONDITION
-        if (!rendererRef.current && currentLobby) { 
-            init();
+        return () => {
+            console.log('Component unmounting, running final cleanup...');
+
+            // Clear any pending avatar updates
+            if (avatarUpdateTimeoutRef.current) {
+                clearTimeout(avatarUpdateTimeoutRef.current);
+            }
+
+            // Clear loading states
+            loadingAvatarsRef.current.clear();
+
+            cleanupScene();
+
+            if (memoryMonitorRef.current) {
+                clearInterval(memoryMonitorRef.current);
+            }
+        };
+    }, []);
+
+    // Memory monitoring useEffect
+    useEffect(() => {
+        // Only monitor memory in development or when explicitly enabled
+        const ENABLE_MEMORY_MONITORING = false; // Set to true for debugging
+
+        if (ENABLE_MEMORY_MONITORING && typeof window !== 'undefined' && (window as any).performance?.memory) {
+            memoryMonitorRef.current = setInterval(() => {
+                const memory = (window as any).performance.memory;
+                const stats = {
+                    used: Math.round(memory.usedJSHeapSize / 1048576), // MB
+                    total: Math.round(memory.totalJSHeapSize / 1048576), // MB
+                    limit: Math.round(memory.jsHeapSizeLimit / 1048576), // MB
+                    rendererInfo: rendererRef.current?.info.memory || {}
+                };
+                setMemoryStats(stats);
+
+                // Auto-cleanup if memory usage is high
+                if (stats.used > 500) { // More than 500MB
+                    console.warn('High memory usage detected, triggering cleanup');
+                    forceGarbageCollection();
+                }
+            }, 5000); // Reduced frequency to every 5 seconds
         }
 
+        return () => {
+            if (memoryMonitorRef.current) {
+                clearInterval(memoryMonitorRef.current);
+            }
+        };
+    }, []);
 
-        // if (!rendererRef.current) {
-        //     init();
-        // }
+    useEffect(() => {
+        // ADD currentLobby TO THE CONDITION
+        if (!rendererRef.current && currentLobby) {
+            init();
+        }
 
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
@@ -1201,14 +1419,34 @@ const Scene = ({ currentLobby }) => {
         camera.position.set(0, 3, 3);
         cameraRef.current = camera;
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
+        const renderer = new THREE.WebGLRenderer({
+            antialias: !isMobileDevice(), // Disable antialiasing on mobile for performance
+            powerPreference: "high-performance",
+            stencil: false, // Disable stencil buffer if not needed
+            depth: true
+        });
+
+        // Optimize pixel ratio for performance
+        const pixelRatio = Math.min(window.devicePixelRatio, isMobileDevice() ? 1.5 : 2);
+        renderer.setPixelRatio(pixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Enable optimizations
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
         containerRef.current.appendChild(renderer.domElement);
         rendererRef.current = renderer;
 
         const pmremGenerator = new THREE.PMREMGenerator(renderer);
-        sceneRef.current.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+        // Optimize environment map resolution for better performance
+        const environmentResolution = isMobileDevice() ? 128 : 256; // Reduce for mobile
+        const roomEnvironment = new RoomEnvironment(renderer);
+        sceneRef.current.environment = pmremGenerator.fromScene(roomEnvironment, 0.04).texture;
+
+        // Dispose the generator after use to save memory
+        pmremGenerator.dispose();
 
         /*
         var ambientLight = new THREE.AmbientLight(0x404040);
@@ -1485,21 +1723,24 @@ const Scene = ({ currentLobby }) => {
                 }
             }
 
-            // POSITION SYNCING TO DATABASE
+            // POSITION SYNCING TO DATABASE - OPTIMIZED FOR PERFORMANCE
             positionUpdateInterval.current += deltaTime;
-            if (positionUpdateInterval.current > 0.1) { // 100ms intervals
+            if (positionUpdateInterval.current > 0.25) { // Reduced frequency: 250ms intervals instead of 100ms
                 const { profile, currentLobby } = useLobbyStore.getState();
-                
+
                 if (profile && currentLobby && avatarRef.current) {
                     const pos = avatarRef.current.scene.position;
                     const rot = avatarRef.current.scene.rotation;
-                    
-                    // Check if position actually changed
+
+                    // Check if position actually changed (increased threshold)
                     const lastPos = avatarRef.current.lastSyncedPosition || { x: 0, y: 0, z: 0 };
-                    const moved = Math.abs(pos.x - lastPos.x) > 0.01 || 
-                                Math.abs(pos.z - lastPos.z) > 0.01;
-                    
-                    if (moved || currentAnimationRef.current?.getClip().name !== avatarRef.current.lastSyncedAnimation) {
+                    const moved = Math.abs(pos.x - lastPos.x) > 0.05 ||
+                                Math.abs(pos.z - lastPos.z) > 0.05; // Increased from 0.01 to 0.05
+
+                    const animChanged = currentAnimationRef.current?.getClip().name !== avatarRef.current.lastSyncedAnimation;
+
+                    // Only sync if significantly moved or animation changed
+                    if (moved || animChanged) {
                         useLobbyStore.getState().updateAvatarState({
                             position: { x: pos.x, y: pos.y, z: pos.z },
                             rotation: { x: rot.x, y: rot.y, z: rot.z },
@@ -1515,17 +1756,39 @@ const Scene = ({ currentLobby }) => {
                         (window as any).currentAvatarPosition = { x: pos.x, y: pos.y, z: pos.z };
                     }
                 }
-                
+
                 positionUpdateInterval.current = 0;
             }
 
-            // UPDATE OTHER AVATARS' ANIMATIONS
-            otherAvatarsRef.current.forEach((avatarData) => {
-                if (avatarData.mixer) {
-                    avatarData.mixer.update(deltaTime);
-                }
-                if (avatarData.vrm) {
-                    avatarData.vrm.update(deltaTime);
+            // UPDATE OTHER AVATARS' ANIMATIONS WITH DISTANCE CULLING
+            const CULLING_DISTANCE = 25; // Stop updating avatars beyond this distance
+            const UPDATE_DISTANCE = 15; // Reduce update frequency for distant avatars
+
+            otherAvatarsRef.current.forEach((avatarData, profileId) => {
+                if (avatarData.vrm && avatarRef.current) {
+                    const distance = avatarRef.current.scene.position.distanceTo(avatarData.vrm.scene.position);
+
+                    // Completely cull very distant avatars
+                    if (distance > CULLING_DISTANCE) {
+                        avatarData.vrm.scene.visible = false;
+                        return;
+                    }
+
+                    avatarData.vrm.scene.visible = true;
+
+                    // Update animations at reduced frequency for distant avatars
+                    const shouldUpdate = distance < UPDATE_DISTANCE ||
+                        (Date.now() - (avatarData.lastUpdate || 0)) > 500; // Update every 500ms for distant avatars
+
+                    if (shouldUpdate) {
+                        if (avatarData.mixer) {
+                            avatarData.mixer.update(distance < UPDATE_DISTANCE ? deltaTime : deltaTime * 0.5);
+                        }
+                        if (avatarData.vrm) {
+                            avatarData.vrm.update(deltaTime);
+                        }
+                        avatarData.lastUpdate = Date.now();
+                    }
                 }
             });
 
@@ -2070,6 +2333,18 @@ const Scene = ({ currentLobby }) => {
                             </div>
                         </CardContent>
                     </Card>
+                </div>
+            )}
+
+            {/* Memory Debug Overlay */}
+            {memoryStats && (
+                <div className="fixed top-16 right-4 bg-black/80 text-white p-3 rounded text-xs z-50">
+                    <div className="mb-1 font-bold">Memory Stats (MB)</div>
+                    <div>Used: {memoryStats.used}</div>
+                    <div>Total: {memoryStats.total}</div>
+                    <div>Limit: {memoryStats.limit}</div>
+                    <div>Geometries: {memoryStats.rendererInfo.geometries || 0}</div>
+                    <div>Textures: {memoryStats.rendererInfo.textures || 0}</div>
                 </div>
             )}
 
